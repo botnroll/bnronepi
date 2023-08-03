@@ -82,13 +82,63 @@ def test_lcd(bnrOneA):
     
 def main() -> int:    
     
-    bnrOneA = onepi.BnrOneA(0) # creates a BotnRoll interface with spi in channel 0
+    bnrOneA = onepi.BnrOneA(0, 0) # creates a BotnRoll interface with spi in channel 0
     
     print("battery = ", bnrOneA.read_battery())
     blink(bnrOneA, 6, 200)
     test_scroll_text(bnrOneA)
     test_read_button(bnrOneA)
     #test_lcd(bnrOneA)
-        
+    
+    # functions to test:
+    
+    #open_spi(self):
+    #close_spi(self):
+    #__request_byte(self, command):
+    #__request_word(self, command):
+    #__send_data(self, command, msg = ''):
+    #move(self, left_speed, right_speed):
+    #move_calibrate(self, left_power, right_power):
+    #move_1m(self, motor, speed):
+    #stop(self):
+    #stop_1m(self, motor):
+    #brake(self, left_torque, right_torque):
+    #brake_1m(self, motor, torque):
+    #brake1m(self, motor):
+    #reset_left_encoder(self):
+    #reset_right_encoder(self):
+    #led(self, state):
+    #obstacle_emitters(self, state):
+    #__servo(self, command, position):
+    #servo1(self, position):
+    #servo2(self, position):
+    #__float_to_bytes(self, number):
+    #min_battery(self, batmin):
+    #save_calibrate(self, bat, left_power, right_power):
+    #read_button(self):
+    #read_battery(self):
+    #read_left_encoder(self):
+    #read_right_encoder(self):
+    #read_left_encoder_increment(self):
+    #read_right_encoder_increment(self):
+    #read_firmware(self):
+    #obstacle_sensors(self):
+    #read_IR_sensors(self):
+    #read_left_range(self):
+    #read_right_range(self):
+    #read_adc(self, channel):
+    #read_adc_0(self):
+    #read_adc_1(self):
+    #read_adc_2(self):
+    #read_adc_3(self):
+    #read_adc_4(self):
+    #read_adc_5(self):
+    #read_adc_6(self):
+    #read_adc_7(self):
+    #read_DBG(self, index):
+    #text_to_bytes(self, text, length):
+    #__lcd(self, lcd_line, text1, text2 = None, text3 = None, text4 = None):
+    #lcd1(self, text1, text2 = None, text3 = None, text4 = None):
+    #lcd2(self, text1, text2 = None, text3 = None, text4 = None):
 if __name__ == '__main__':
     main()

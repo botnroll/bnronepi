@@ -105,58 +105,102 @@ class BnrOneA:
     high_byte = lambda self, x: (x >> 8) & 0xff
     low_byte = lambda self, x: x & 0xff
 
-    def __init__(self, device): # device is the chip select pin. Set to 0 or 1, depending on the connections
-        self.bus = 0    # raspberry bus
+    def __init__(self, bus, device):
+        """
+        Constructor for BnrOneA class
+
+        :param bus: specifies which bus to use, in the case of raspberry pi should be 0
+        :param device: is the chip select pin. Set to 0 or 1, depending on the connections
+        """
+        self.bus = bus
         self.device = device
         self._spi = spidev.SpiDev()
         return
         
-    def open_spi(self):
+    def __open_spi(self):
+        """
+        Opens a spi connection and specifies the speed and mode
+        """
         self._spi.open(self.bus, self.device)
         self._spi.max_speed_hz = 500000
         self._spi.mode = 1
         return
 
-    def close_spi(self):
+    def __close_spi(self):
+        """
+        Closes the spi connection
+        """
         self._spi.close()
         self.usSleep(self.delaySS)
         return
         
     def __request_byte(self, command):
-        self.open_spi()
+        """
+        Reads a byte from the spi device
+
+        :param command: Command to be sent to the device
+        :return: returns a byte containing the information requested by the command
+        :rtype: byte
+        """
+        self.__open_spi()
         msg = [command, self.KEY1, self.KEY2]
         self._spi.xfer2(msg)
         self.usSleep(self.delayTR)
         result = self._spi.readbytes(1)
-        self.close_spi()
+        self.__close_spi()
         return result
         
     def __request_word(self, command):
-        self.open_spi()
+        """
+        Reads a word from the spi device
+
+        :param command: Command to be sent to the device
+        :return: returns a word containing the information requested by the command
+        :rtype: word
+        """
+        self.__open_spi()
         msg = [command, self.KEY1, self.KEY2]
         self._spi.xfer2(msg)
         self.usSleep(self.delayTR)
         high_byte = self._spi.readbytes(1)
         low_byte = self._spi.readbytes(1)
-        self.close_spi()
+        self.__close_spi()
         return ((high_byte[0] << 8) + low_byte[0])
 
     def __send_data(self, command, msg = ''):
-        self.open_spi()
+        """
+        Sends data to the spi device containing the command, the authentication keys and the message
+
+        :param command: Command to be sent to the device
+        :param msg: Message to be sent to the device
+        """
+        self.__open_spi()
         to_send = [command, self.KEY1, self.KEY2]
         if msg != '':
             to_send.extend(msg)
         self._spi.xfer2(to_send)
-        self.close_spi()
+        self.__close_spi()
         return
 
     def move(self, left_speed, right_speed):
+        """
+        Sends left and right wheel speeds to the spi device.
+
+        :param left_speed: desired left wheel speed
+        :param right_speed: desired right wheel speed
+        """
         msg = [self.high_byte(left_speed), self.low_byte(left_speed), self.high_byte(right_speed), self.low_byte(right_speed)]
         self.__send_data(self.COMMAND_MOVE, msg)
         self.msSleep(2)
         return
 
     def move_calibrate(self, left_power, right_power):
+        """
+        Sends calibration power data to the spi device
+
+        :param left_power: power for left wheel
+        :param right_power: power for right wheel
+        """
         msg = [self.high_byte(left_power), self.low_byte(left_power), self.high_byte(right_power), self.low_byte(right_power)]
         self.__send_data(self.COMMAND_MOVE_CALIBRATE, msg)
         self.msSleep(2)
@@ -300,91 +344,133 @@ class BnrOneA:
     def read_right_range(self):
         return self.__request_byte(self.COMMAND_RANGE_RIGHT)
 
+    def __get_command_adc(self, channel):
+        """
+        converts a channel to the correspondig device command
+        """
+        if channel == 0:
+            return self.COMMAND_ADC0
+        elif channel == 1:
+            return self.COMMAND_ADC1
+        elif channel == 2:
+            return self.COMMAND_ADC2
+        elif channel == 3:
+            return self.COMMAND_ADC3
+        elif channel == 4:
+            return self.COMMAND_ADC4
+        elif channel == 5:
+            return self.COMMAND_ADC5
+        elif channel == 6:
+            return self.COMMAND_ADC6
+        elif channel == 7:
+            return self.COMMAND_ADC7
+        else:
+            return 0x00
+        
     def read_adc(self, channel):
-        command = 0x00
-        #match(channel):
-        #    case 0:
-        #        command = self.COMMAND_ADC0
-        #    case 1:
-        #        command = self.COMMAND_ADC1
-        #    case 2:
-        #        command = self.COMMAND_ADC2
-        #    case 3:
-        #        command = self.COMMAND_ADC3
-        #    case 4:
-        #        command = self.COMMAND_ADC4
-        #    case 5:
-        #        command = self.COMMAND_ADC5
-        #    case 6:
-        #        command = self.COMMAND_ADC6
-        #    case 7:
-        #        command = self.COMMAND_ADC7
-        #    case _:
-        #        command = 0x00
+        """
+        Reads adc channel
+
+        :param channel: adc input channel to read from
+        """
+        command = self.__get_command_adc(channel)
         return self.__request_word(command)
 
     def read_adc_0(self):
+        """
+        Reads adc channel 0
+        """
         return self.__request_word(self.COMMAND_ADC0)
 
     def read_adc_1(self):
+        """
+        Reads adc channel 1
+        """
         return self.__request_word(self.COMMAND_ADC1)
 
     def read_adc_2(self):
+        """
+        Reads adc channel 2
+        """
         return self.__request_word(self.COMMAND_ADC2)
 
     def read_adc_3(self):
+        """
+        Reads adc channel 3
+        """
         return self.__request_word(self.COMMAND_ADC3)
 
     def read_adc_4(self):
+        """
+        Reads adc channel 4
+        """
         return self.__request_word(self.COMMAND_ADC4)
 
     def read_adc_5(self):
+        """
+        Reads adc channel 5
+        """
         return self.__request_word(self.COMMAND_ADC5)
 
     def read_adc_6(self):
+        """
+        Reads adc channel 6
+        """
         return self.__request_word(self.COMMAND_ADC6)
 
     def read_adc_7(self):
+        """
+        Reads adc channel 7
+        """
         return self.__request_word(self.COMMAND_ADC7)
 
+    def __get_command_dbg(self, index):
+        """
+        Converts the index into a command
+        """
+        if index == 0:
+            return 0xB9
+        elif index == 1:
+            return 0xB8
+        elif index == 2:
+            return 0xB7
+        elif index == 3:
+            return 0xB6
+        else:
+            return 0x00
+        
     def read_DBG(self, index):
-        command = 0x00
-        #match(index):
-        #    case 0:
-        #        command = 0xB9
-        #    case 1:
-        #        command = 0xB8
-        #    case 2:
-        #        command = 0xB7
-        #    case 3:
-        #        command = 0xB6
+        """
+        Reads debug info from the device
+        """
+        command = self.__get_command_dbg(index)
         return self.__request_word(command)
 
-    # converts text to bytes with the predefined length
-    # crops the text if larger than the specified length
-    # and adds spaces if smaller than the specified length
     def text_to_bytes(self, text, length):
+        """
+        Converts text to bytes with the predefined length.
+        Crops the text if larger than the specified length
+        and adds spaces if smaller than the specified length
+        """
         text_length = len(text)
         if text_length < length:
             text += ((length - text_length) * ' ')
         text = text[:length]
         return text.encode('latin-1')
         
-    # LCD LINE 1 Handlers
     def __lcd(self, lcd_line, text1, text2 = None, text3 = None, text4 = None):
+        """
+        Sends data to be displayed on the lcd
+        """
         if text2 is None:
-            #just use 1st
             text_to_send = self.text_to_bytes(str(text1), self.LCD_CHARS_PER_LINE)
         else:
             if text3 is None:
-                #just use 1st and 2nd
                 text_to_send = self.text_to_bytes(str(text1) + " " + str(text2), self.LCD_CHARS_PER_LINE)
             else:
-                if text4 is None:    
-                # just use 1st, 2nd, and 3rd
+                if text4 is None:
                     text_to_send = self.text_to_bytes(str(text1) + " " + str(text2) + " " + str(text3), self.LCD_CHARS_PER_LINE)
                 else:
-                #use all four
                     text1 = self.text_to_bytes(str(text1), int(self.LCD_CHARS_PER_LINE / 4))
                     text2 = self.text_to_bytes(str(text2), int(self.LCD_CHARS_PER_LINE / 4)) 
                     text3 = self.text_to_bytes(str(text3), int(self.LCD_CHARS_PER_LINE / 4))
@@ -396,7 +482,13 @@ class BnrOneA:
         return
     
     def lcd1(self, text1, text2 = None, text3 = None, text4 = None):
+        """
+        Sends data to the first line of the lcd
+        """
         self.__lcd(self.COMMAND_LCD_L1, text1, text2, text3, text4)
     
     def lcd2(self, text1, text2 = None, text3 = None, text4 = None):
+        """
+        Sends data to the second line of the lcd
+        """
         self.__lcd(self.COMMAND_LCD_L2, text1, text2, text3, text4)
