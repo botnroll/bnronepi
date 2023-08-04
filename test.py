@@ -116,14 +116,13 @@ def main() -> int:
     """
     Main method to test interface with BotnRoll One A
     """
-    bnr_one_a = onepi.BnrOneA(
-        0, 0
-    )  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     print("battery = ", bnr_one_a.read_battery())
     blink(bnr_one_a, 6, 200)
     test_scroll_text(bnr_one_a)
     test_read_button(bnr_one_a)
+
     # test_lcd(bnr_one_a)
 
     # functions to test:
