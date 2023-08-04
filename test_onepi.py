@@ -23,8 +23,8 @@ def blink(bnr_one_a, number_of_times, duration_ms):
     :param number_of_times: number of times to toggle the led
     :duration between toggling
     """
-    state = 0
-    for i in range(number_of_times):
+    state = 1
+    for i in range(1, number_of_times + 1):
         state = i % 2
         print("LED: ", state)
         bnr_one_a.led(state)
@@ -46,11 +46,14 @@ def scroll_text(text, size_of_line):
         yield text
 
 
-def test_scroll_text(bnr_one_a):
+def test_scroll_text():
     """
     Sends scrolling text to the robot
     Text should be displayed in lcd line 2
     """
+    print("=== Testing LCD scrolling text ===")
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+
     text = "Hi Raspberry Pi!"
     for text in scroll_text(text, 16):
         print(text, end="\n")
@@ -59,72 +62,94 @@ def test_scroll_text(bnr_one_a):
     print(" ")
 
 
-def test_read_button(bnr_one_a):
+def test_read_button():
     """
     Reads button pressed from the robot
     Note: User should press the buttons on the robot
     """
+    print("=== Testing read button ===")
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+
     print("Please press a button on the robot")
-    for _ in range(100):
-        print(bnr_one_a.read_button())
+    ms_sleep(1000)
+    for i in range(20):
+        print("Test", i, "/ 20. Button pressed: ", bnr_one_a.read_button())
         ms_sleep(300)
 
 
-def test_lcd(bnr_one_a):
+def test_lcd():
     """
     Sends different types of text using both lines of the lcd
     User should verify the output by looking at the lcd on the robot
     """
+    print("=== Testing writing data to LCD ===")
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+
+    delay_ms = 1600
     bnr_one_a.lcd1("")
     bnr_one_a.lcd2("Hi Raspberry Pi!")
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1("Hi Raspberry Pi!")
     bnr_one_a.lcd2("Day:", 31, "7", 2023)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1("Day:", 31, "7", 2023)
     bnr_one_a.lcd2(17, "h", 15, "min")
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1(17, "h", 15, "min")
     bnr_one_a.lcd2("Ver.", 1, "Sub.", 3)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1("Ver.", 1, "Sub.", 3)
     bnr_one_a.lcd2("Test number:", 1)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1("Test number:", 1)
     bnr_one_a.lcd2("System", "test:", 1)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1("System", "test:", 1)
     bnr_one_a.lcd2(1234567890123456)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1(1234567890123456)
     bnr_one_a.lcd2(12345678, 1234567)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1(12345678, 1234567)
     bnr_one_a.lcd2(12345, 12345, 1234)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1(12345, 12345, 1234)
     bnr_one_a.lcd2(1111, 2222, 3333, 4444)
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1(1111, 2222, 3333, 4444)
     bnr_one_a.lcd2("      END       ")
-    ms_sleep(2000)
+    ms_sleep(delay_ms)
     bnr_one_a.lcd1("      END       ")
     bnr_one_a.lcd2("")
 
 
-def main() -> int:
+def test_led():
     """
     Main method to test interface with BotnRoll One A
     """
+    print("=== Testing led blinking ===")
     bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
-
-    print("battery = ", bnr_one_a.read_battery())
     blink(bnr_one_a, 6, 200)
-    test_scroll_text(bnr_one_a)
-    test_read_button(bnr_one_a)
 
-    # test_lcd(bnr_one_a)
 
+def test_read_battery():
+    """
+    Test voltage battery reading
+    """
+    print("=== Testing read battery ===")
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Battery voltage = ", bnr_one_a.read_battery())
+
+
+def main():
+    """
+    Main method to test interface with BotnRoll One A
+    """
+    test_scroll_text()
+    test_read_button()
+    test_lcd()
+    test_led()
+    test_read_battery()
     # functions to test:
 
     # open_spi(self):
@@ -175,7 +200,6 @@ def main() -> int:
     # __lcd(self, lcd_line, text1, text2 = None, text3 = None, text4 = None):
     # lcd1(self, text1, text2 = None, text3 = None, text4 = None):
     # lcd2(self, text1, text2 = None, text3 = None, text4 = None):
-    return 0
 
 
 if __name__ == "__main__":
