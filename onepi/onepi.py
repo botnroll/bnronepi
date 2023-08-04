@@ -682,7 +682,9 @@ class BnrOneA:
         if data2 is None:
             trimmed_data = self.text_to_bytes(str(data1), self._LCD_CHARS_PER_LINE)
         elif data3 is None:
-            trimmed_data = self.text_to_bytes(str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE)
+            trimmed_data = self.text_to_bytes(
+                str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE
+            )
         elif data4 is None:
             trimmed_data = self.text_to_bytes(
                 str(data1) + " " + str(data2) + " " + str(data3),
@@ -720,114 +722,82 @@ class BnrOneA:
         data_to_send = self.__join_and_trim_data(data1, data2, data3, data4)
         self.__send_data(self._COMMAND_LCD_L2, data_to_send)
 
-    # def read_line():
+    def read_line(self):
+        """
+        Reads line sensors and returns a value between -100 and 100 
+        depending on the position the line is detected
 
+        :return: value between -100 and 100
+        :rtype: float
+        """
+        v_max = 1000
+        s_val_max = [1023] * 8 # creates array of 8 elements
+        s_val_min = [0] * 8 # creates array of 8 elements
+        # s_fact[8]
+        v_trans = 50
+        load_flag = 0
 
-# /***********************************************************************************************/
-# int BnrOneA::readLine()
-# {
-# 	  #define VMAX 1000
-# 	  static int SValMax[8]={1023,1023,1023,1023,1023,1023,1023,1023};
-# 	  static int SValMin[8]={0,0,0,0,0,0,0,0};
-# 	  static double SFact[8];
-# 	  static int Vtrans=50;  //
-# 	  static bool loadFlag=0;
+        vrt1 = s_val_min[1] * 2
+        vrt2 = s_val_min[6] * 2
+        # s_val_r[8]
+        s_val_n = [vrt1] + [0] * 8 + [vrt2] # creates array of 10 elements
+        id_max = -1
+        s_max = -1
+        line_value = -1
+        flag = -1
+        prev_line_value = 0
 
-# 	  int Vrt1=SValMin[1]*2, Vrt2=SValMin[6]*2;
-#       int SValR[8];
-#       int SValN[10]={Vrt1,0,0,0,0,0,0,0,0,Vrt2};
-#       int idMax=-1, SMax=-1;
-#       int lineValue=-1;
-#       int flag=-1;
-#       static int prevLineValue=0;
+        if load_flag == 0:
+            # load from file
+            # s_val_max = read_file() # read 8 values (int) from file
+            # s_val_min = read_file() # read 8 values (int) from file
+            # v_trans = read_file() # read value (int) from file
 
-# 	  if(loadFlag==0)
-# 	  {
-# 		   //Ler valores da EEPROM
-# 		   byte eepromADD=100;
-# 		   for(int i=0;i<8;i++)
-# 		   {
-# 			   SValMax[i]=(int)EEPROM.read(eepromADD);
-# 			   SValMax[i]=SValMax[i]<<8;
-# 			   eepromADD++;
-# 			   SValMax[i]+=(int)EEPROM.read(eepromADD);
-# 			   eepromADD++;
-# 		   }
-# 		   for(int i=0;i<8;i++)
-# 		   {
-# 			   SValMin[i]=(int)EEPROM.read(eepromADD);
-# 			   SValMin[i]=SValMin[i]<<8;
-# 			   eepromADD++;
-# 			   SValMin[i]+=(int)EEPROM.read(eepromADD);
-# 			   eepromADD++;
-# 		   }
-# 		   Vtrans=(int)EEPROM.read(eepromADD);
-# 		   Vtrans=Vtrans<<8;
-# 		   eepromADD++;
-# 		   Vtrans+=(int)EEPROM.read(eepromADD);
+            # Calculate factor for each sensor
+            for i in range(8):
+                s_fact[i] = v_max / (s_val_max[i] - s_val_min[i])
 
-# 		   for(int i=0;i<8;i++)
-# 		   {
-# 			  SFact[i]=(double)VMAX/(double)(SValMax[i]-SValMin[i]); //Calcular fator de cada sensor
-# 		   }
-# 		   loadFlag=1;
-# 	  }
+            load_flag = 1
 
-#       //Leitura dos valores dos 8 sensores
-#       for(int i=0;i<8;i++)
-#       {
-#           SValR[i]=readAdc(i);
-#       }
+            # Read 8 sensors
+            for i in range(8):
+                s_val_r[i] = self.read_adc(i)
 
-#       //Normalizar valores entre 0 e 1000
-#       for(int i=1;i<9;i++)
-#       {
-#           SValN[i]=(int)((double)((SValR[i-1]-SValMin[i-1]))*SFact[i-1]); //Registar o valor efetivo m�ximo de cada sensor
-#           if(SValN[i]>SMax)
-#             {
-#               SMax=SValN[i]; //Identificar o sensor com valor efectivo m�ximo
-#               idMax=i;      //Registar o indice do sensor
-#             }
-#       }
+        # Normalize values between 0 and 1000
+        for i in range(1, 9):
+            # Register the max value of each sensor
+            s_val_n[i] = ((s_val_r[i-1] - s_val_min[i-1])) * s_fact[i-1]
+            if (s_val_n[i] > s_max):
+                s_max = s_val_n[i] # Determine the sensor with max value
+                id_max = i         # Save the sensor index
 
-#       if(SMax>Vtrans && SValN[idMax-1]>=SValN[idMax+1]) //Se o anterior for maior que o seguinte
-#       {
-#           lineValue=VMAX*(idMax-1)+SValN[idMax];
-#              flag=0;
-#       }
-#       else if(SMax>Vtrans && SValN[idMax-1]<SValN[idMax+1]) //Se o anterior for menor que o seguinte
-#       {
-#           if(idMax!=8) // Se n�o � o �ltimo sensor
-#           {
-#              lineValue=VMAX*idMax+SValN[idMax+1];
-#              flag=1;
-#           }
-#           else //Se � o �ltimo sensor
-#           {
-#              lineValue=VMAX*idMax+VMAX-SValN[idMax];
-#              flag=2;
-#           }
-#       }
+        # If the previous is greater than the following
+        is_previous_greater_than_following = (s_val_n[id_max-1] >= s_val_n[id_max+1])
+        if (s_max > v_trans):
+            if (is_previous_greater_than_following):
+                line_value = v_max * (id_max-1) + s_val_n[id_max]
+                flag = 0
+            # If previous smaller than following
+            elif (not is_previous_greater_than_following):
+                # if not the last sensor
+                if (id_max != 8):
+                    line_value = (v_max * id_max) + s_val_n[id_max+1]
+                    flag = 1
+                # if it's the last sensor
+                else:
+                    line_value = v_max * id_max + v_max - s_val_n[id_max]
+                    flag = 2
 
-#       if(lineValue==-1)//sa�u da linha -> tudo branco
-#       {
-#         if(prevLineValue>4500)
-#         {
-#           lineValue=9000;
-#         }
-#         else
-#         {
-#           lineValue=0;
-#         }
-#       }
-#       else if(lineValue<-1 || lineValue>9000) //Possiveis erros de leitura
-#       {
-#         lineValue=prevLineValue;
-#       }
-#       else //se valores normais
-#       {
-#         prevLineValue=lineValue;
-#       }
-# //      return lineValue;  // Valores de 0 a 9000
-#       return (int)((double)(lineValue+1)*0.022222)-100;  // Valores de -100 a 100
-# }
+        # out of the line -> all white
+        if (line_value == -1):
+            if (prev_line_value > 4500):
+                line_value = 9000
+            else:
+                line_value = 0
+        # possible reading errors
+        elif (line_value < -1 or line_value > 9000):
+            line_value = prev_line_value
+        # if normal values
+        else:
+            prev_line_value = line_value
+        return ((line_value + 1) * 0.022222) - 100  # values ranging from -100 to 100
