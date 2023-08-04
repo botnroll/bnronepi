@@ -719,3 +719,115 @@ class BnrOneA:
         """
         data_to_send = self.__join_and_trim_data(data1, data2, data3, data4)
         self.__send_data(self._COMMAND_LCD_L2, data_to_send)
+
+    # def read_line():
+
+
+# /***********************************************************************************************/
+# int BnrOneA::readLine()
+# {
+# 	  #define VMAX 1000
+# 	  static int SValMax[8]={1023,1023,1023,1023,1023,1023,1023,1023};
+# 	  static int SValMin[8]={0,0,0,0,0,0,0,0};
+# 	  static double SFact[8];
+# 	  static int Vtrans=50;  //
+# 	  static bool loadFlag=0;
+
+# 	  int Vrt1=SValMin[1]*2, Vrt2=SValMin[6]*2;
+#       int SValR[8];
+#       int SValN[10]={Vrt1,0,0,0,0,0,0,0,0,Vrt2};
+#       int idMax=-1, SMax=-1;
+#       int lineValue=-1;
+#       int flag=-1;
+#       static int prevLineValue=0;
+
+# 	  if(loadFlag==0)
+# 	  {
+# 		   //Ler valores da EEPROM
+# 		   byte eepromADD=100;
+# 		   for(int i=0;i<8;i++)
+# 		   {
+# 			   SValMax[i]=(int)EEPROM.read(eepromADD);
+# 			   SValMax[i]=SValMax[i]<<8;
+# 			   eepromADD++;
+# 			   SValMax[i]+=(int)EEPROM.read(eepromADD);
+# 			   eepromADD++;
+# 		   }
+# 		   for(int i=0;i<8;i++)
+# 		   {
+# 			   SValMin[i]=(int)EEPROM.read(eepromADD);
+# 			   SValMin[i]=SValMin[i]<<8;
+# 			   eepromADD++;
+# 			   SValMin[i]+=(int)EEPROM.read(eepromADD);
+# 			   eepromADD++;
+# 		   }
+# 		   Vtrans=(int)EEPROM.read(eepromADD);
+# 		   Vtrans=Vtrans<<8;
+# 		   eepromADD++;
+# 		   Vtrans+=(int)EEPROM.read(eepromADD);
+
+# 		   for(int i=0;i<8;i++)
+# 		   {
+# 			  SFact[i]=(double)VMAX/(double)(SValMax[i]-SValMin[i]); //Calcular fator de cada sensor
+# 		   }
+# 		   loadFlag=1;
+# 	  }
+
+#       //Leitura dos valores dos 8 sensores
+#       for(int i=0;i<8;i++)
+#       {
+#           SValR[i]=readAdc(i);
+#       }
+
+#       //Normalizar valores entre 0 e 1000
+#       for(int i=1;i<9;i++)
+#       {
+#           SValN[i]=(int)((double)((SValR[i-1]-SValMin[i-1]))*SFact[i-1]); //Registar o valor efetivo m�ximo de cada sensor
+#           if(SValN[i]>SMax)
+#             {
+#               SMax=SValN[i]; //Identificar o sensor com valor efectivo m�ximo
+#               idMax=i;      //Registar o indice do sensor
+#             }
+#       }
+
+#       if(SMax>Vtrans && SValN[idMax-1]>=SValN[idMax+1]) //Se o anterior for maior que o seguinte
+#       {
+#           lineValue=VMAX*(idMax-1)+SValN[idMax];
+#              flag=0;
+#       }
+#       else if(SMax>Vtrans && SValN[idMax-1]<SValN[idMax+1]) //Se o anterior for menor que o seguinte
+#       {
+#           if(idMax!=8) // Se n�o � o �ltimo sensor
+#           {
+#              lineValue=VMAX*idMax+SValN[idMax+1];
+#              flag=1;
+#           }
+#           else //Se � o �ltimo sensor
+#           {
+#              lineValue=VMAX*idMax+VMAX-SValN[idMax];
+#              flag=2;
+#           }
+#       }
+
+#       if(lineValue==-1)//sa�u da linha -> tudo branco
+#       {
+#         if(prevLineValue>4500)
+#         {
+#           lineValue=9000;
+#         }
+#         else
+#         {
+#           lineValue=0;
+#         }
+#       }
+#       else if(lineValue<-1 || lineValue>9000) //Possiveis erros de leitura
+#       {
+#         lineValue=prevLineValue;
+#       }
+#       else //se valores normais
+#       {
+#         prevLineValue=lineValue;
+#       }
+# //      return lineValue;  // Valores de 0 a 9000
+#       return (int)((double)(lineValue+1)*0.022222)-100;  // Valores de -100 a 100
+# }

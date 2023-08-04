@@ -141,6 +141,50 @@ def test_read_battery():
     print("Battery voltage = ", bnr_one_a.read_battery())
 
 
+def test_move():
+    """
+    Test move method
+    """
+    print("=== Testing move ===")
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    delay_ms = 1000
+    bnr_one_a.move(30, 30)
+    ms_sleep(delay_ms)
+    bnr_one_a.move(30, -30)
+    ms_sleep(delay_ms)
+    bnr_one_a.move(-30, 30)
+    ms_sleep(delay_ms)
+    bnr_one_a.move(-30, -30)
+    ms_sleep(delay_ms)
+    bnr_one_a.move(0, 0)
+
+
+def move_and_stop(bnr_one_a, left_speed, right_speed, delay_ms, extra_delay_ms):
+    bnr_one_a.move(left_speed, right_speed)
+    ms_sleep(delay_ms)
+    bnr_one_a.move(0, 0)
+    ms_sleep(extra_delay_ms)
+
+
+def test_move_calibrate():
+    """
+    Test move calibrate method
+    """
+    print("=== Testing move calibrate ===")
+    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    delay_ms = 1000
+    print("Moving at 80% speed")
+    move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)
+
+    print("Calibrating for 20% power on left motor. Moving at 80% speed")
+    bnr_one_a.move_calibrate(20, 100)
+    move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)
+
+    print("Calibrating for 20% power on right motor. Moving at 80% speed")
+    bnr_one_a.move_calibrate(100, 20)
+    move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)
+
+
 def main():
     """
     Main method to test interface with BotnRoll One A
@@ -150,15 +194,10 @@ def main():
     test_lcd()
     test_led()
     test_read_battery()
-    # functions to test:
 
-    # open_spi(self):
-    # close_spi(self):
-    # __request_byte(self, command):
-    # __request_word(self, command):
-    # __send_data(self, command, msg = ''):
-    # move(self, left_speed, right_speed):
-    # move_calibrate(self, left_power, right_power):
+    # functions to test:
+    test_move()
+    test_move_calibrate()
     # move_1m(self, motor, speed):
     # stop(self):
     # stop_1m(self, motor):
