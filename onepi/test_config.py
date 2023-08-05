@@ -1,0 +1,35 @@
+from config import Config
+
+
+def test_config():
+    """
+    Test config class and it's methods namely:
+     - loading values from config file
+     - saving values to config file
+    """
+    cfg = Config("test_cfg.json")
+    print(">> Create config file")
+    cfg.sensor_min = [100, 200, 300, 300]
+    cfg.sensor_max = [500, 400, 700, 800]
+    cfg.threshold = 18
+    cfg.print()
+    print(">> Saving config values into file...")
+    cfg.save()
+    cfg.print()
+    print(">> Loading config values from file...")
+    cfg.load()
+    cfg.print()
+    assert cfg.sensor_min == [100, 200, 300, 300]
+    assert cfg.sensor_max == [500, 400, 700, 800]
+    assert cfg.threshold == 18
+    print(">> Changing values directly in config...")
+    cfg.sensor_min = [100, 100, 100, 100]
+    cfg.sensor_max = [200, 200, 200, 200]
+    cfg.threshold = 22
+    cfg.print()
+    print(">> Assert that after loading values changed back")
+    cfg.load()
+    cfg.print()
+    assert cfg.sensor_min == [100, 200, 300, 300]
+    assert cfg.sensor_max == [500, 400, 700, 800]
+    assert cfg.threshold == 18

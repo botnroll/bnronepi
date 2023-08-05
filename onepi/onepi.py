@@ -2,6 +2,7 @@
 
 import time
 import spidev
+from line_detector import LineDetector
 
 
 class BnrOneA:
@@ -105,7 +106,7 @@ class BnrOneA:
     _delay_TR = 20  # 20 MinStable:15  Crash:14
     _delay_SS = 20  # 20 Crash: No crash even with 0 (ZERO)
 
-    def __init__(self, bus, device):
+    def __init__(self, bus=0, device=0):
         """
         Constructor for BnrOneA class
 
@@ -115,6 +116,7 @@ class BnrOneA:
         self.bus = bus
         self.device = device
         self._spi = spidev.SpiDev()
+        self.line_detector = LineDetector()
 
     def __us_sleep(self, microseconds):
         """
@@ -682,9 +684,7 @@ class BnrOneA:
         if data2 is None:
             trimmed_data = self.text_to_bytes(str(data1), self._LCD_CHARS_PER_LINE)
         elif data3 is None:
-            trimmed_data = self.text_to_bytes(
-                str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE
-            )
+            trimmed_data = self.text_to_bytes(str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE)
         elif data4 is None:
             trimmed_data = self.text_to_bytes(
                 str(data1) + " " + str(data2) + " " + str(data3),
@@ -722,82 +722,26 @@ class BnrOneA:
         data_to_send = self.__join_and_trim_data(data1, data2, data3, data4)
         self.__send_data(self._COMMAND_LCD_L2, data_to_send)
 
+    def read_line_sensors(self):
+        """
+        reads sensors from adc channels 0 to 7
+
+        :return: sensor readings in a list
+        :rtype: list of integers
+        """
+        sensor_reading = [0] * 8
+        for i in range(8):
+            sensor_reading[i] = self.read_adc(i)
+        return sensor_reading
+
     def read_line(self):
         """
-        Reads line sensors and returns a value between -100 and 100 
+        Reads line sensors and returns a value between -100 and 100
         depending on the position the line is detected
 
         :return: value between -100 and 100
         :rtype: float
         """
-        v_max = 1000
-        s_val_max = [1023] * 8 # creates array of 8 elements
-        s_val_min = [0] * 8 # creates array of 8 elements
-        # s_fact[8]
-        v_trans = 50
-        load_flag = 0
-
-        vrt1 = s_val_min[1] * 2
-        vrt2 = s_val_min[6] * 2
-        # s_val_r[8]
-        s_val_n = [vrt1] + [0] * 8 + [vrt2] # creates array of 10 elements
-        id_max = -1
-        s_max = -1
-        line_value = -1
-        flag = -1
-        prev_line_value = 0
-
-        if load_flag == 0:
-            # load from file
-            # s_val_max = read_file() # read 8 values (int) from file
-            # s_val_min = read_file() # read 8 values (int) from file
-            # v_trans = read_file() # read value (int) from file
-
-            # Calculate factor for each sensor
-            for i in range(8):
-                s_fact[i] = v_max / (s_val_max[i] - s_val_min[i])
-
-            load_flag = 1
-
-            # Read 8 sensors
-            for i in range(8):
-                s_val_r[i] = self.read_adc(i)
-
-        # Normalize values between 0 and 1000
-        for i in range(1, 9):
-            # Register the max value of each sensor
-            s_val_n[i] = ((s_val_r[i-1] - s_val_min[i-1])) * s_fact[i-1]
-            if (s_val_n[i] > s_max):
-                s_max = s_val_n[i] # Determine the sensor with max value
-                id_max = i         # Save the sensor index
-
-        # If the previous is greater than the following
-        is_previous_greater_than_following = (s_val_n[id_max-1] >= s_val_n[id_max+1])
-        if (s_max > v_trans):
-            if (is_previous_greater_than_following):
-                line_value = v_max * (id_max-1) + s_val_n[id_max]
-                flag = 0
-            # If previous smaller than following
-            elif (not is_previous_greater_than_following):
-                # if not the last sensor
-                if (id_max != 8):
-                    line_value = (v_max * id_max) + s_val_n[id_max+1]
-                    flag = 1
-                # if it's the last sensor
-                else:
-                    line_value = v_max * id_max + v_max - s_val_n[id_max]
-                    flag = 2
-
-        # out of the line -> all white
-        if (line_value == -1):
-            if (prev_line_value > 4500):
-                line_value = 9000
-            else:
-                line_value = 0
-        # possible reading errors
-        elif (line_value < -1 or line_value > 9000):
-            line_value = prev_line_value
-        # if normal values
-        else:
-            prev_line_value = line_value
-        return ((line_value + 1) * 0.022222) - 100  # values ranging from -100 to 100
+        sensor_reading = self.read_line_sensors()
+        line = self.line_detector.compute_line(sensor_reading)
+        return line
