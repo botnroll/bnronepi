@@ -187,7 +187,7 @@ def test_move_calibrate():
 
 def main():
     """
-    Main method to test interface with BotnRoll One A
+    Calls functions to test public interface with BotnRoll One A
     """
     test_scroll_text()
     test_read_button()
