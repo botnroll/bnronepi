@@ -2,7 +2,7 @@
 
 import time
 import spidev
-from line_detector import LineDetector
+from utils.line_detector import LineDetector
 
 
 class BnrOneA:

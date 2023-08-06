@@ -8,6 +8,7 @@ in a file for next time.
 """
 
 import json
+import os
 
 
 class Config:
@@ -23,7 +24,8 @@ class Config:
 
     def __init__(self, filename=None):
         if filename is None:
-            self.cfg_file = "config.json"
+            file_name = "config.json"
+            self.cfg_file = os.path.join(os.path.dirname(__file__), file_name)
         else:
             self.cfg_file = filename
 

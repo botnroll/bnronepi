@@ -7,7 +7,7 @@ visualise the readings and line output in the chart
 """
 
 from onepi import BnrOneA
-from line_detector import LineDetector
+from utils.line_detector import LineDetector
 import matplotlib.pyplot as plt
 
 plt.ion()
@@ -40,7 +40,7 @@ def plot_line_sensor():
         key_events = plt.ginput(n=1, timeout=0.001)
         if key_events:
             key, _ = key_events[0]
-            if key == 'q' or 'Q' or 'Esc' or '.':  # Exit loop when 'q' key is pressed
+            if key == "q" or "Q" or "Esc" or ".":  # Exit loop when 'q' key is pressed
                 break
         sensor_readings = one.read_line_sensors()
         line = line_detector.compute_line(sensor_readings)
