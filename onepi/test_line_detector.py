@@ -81,16 +81,25 @@ def test_compute_line_from_gaussian():
     std = 600
     num_values = 8
 
-    for mean in range(0, 10000, 25):
+    for mean in range(0, 10000, 100):
         values, probabilities = discretize_gaussian(mean, std, num_values)
-        line = line_detector.compute_mean_gaussian(probabilities)
+        # line = line_detector.compute_mean_gaussian(probabilities)
+        line = line_detector.compute_line(probabilities)
         print("Line = ", int(line), "\treadings: ", probabilities)
-        plot_bar(probabilities, "Sensor Readings")
+        plot_bar(probabilities, "Line = " + str(int(line)))
+
+
+def test_normalise_line_value():
+    line_detector = LineDetector()
+    for val in range(0, 8100, 100):
+        normalised_value = int(line_detector.normalise_line_value(val, 8))
+        print("val", val, "normalised_value", normalised_value)
 
 
 def main():
     # test_compute_mean_gaussian()
-    test_compute_line_from_gaussian()
+    # test_compute_line_from_gaussian()
+    test_normalise_line_value()
 
 
 if __name__ == "__main__":

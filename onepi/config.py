@@ -18,6 +18,7 @@ class Config:
     sensor_min = [0] * 8  # array of 8 elements with min value for each line sensor
     sensor_max = [1000] * 8  # array of 8 elements with max value for each line sensor
     threshold = 50
+    correction_factor = 6
     cfg_file = None
 
     def __init__(self, filename=None):
@@ -34,11 +35,13 @@ class Config:
         self.sensor_min = data["sensor_min"]
         self.sensor_max = data["sensor_max"]
         self.threshold = data["threshold"]
+        self.correction_factor = data["correction_factor"]
 
     def print(self):
         print("sensor_max:", self.sensor_max)
         print("sensor_min:", self.sensor_min)
         print("threshold:", self.threshold)
+        print("correction_factor:", self.correction_factor)
 
     def save(self):
         # Save the updated dictionary back to the JSON file
@@ -46,6 +49,7 @@ class Config:
             "sensor_max": self.sensor_max,
             "sensor_min": self.sensor_min,
             "threshold": self.threshold,
+            "correction_factor": self.correction_factor,
         }
 
         with open(self.cfg_file, "w") as f:
