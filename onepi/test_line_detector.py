@@ -3,7 +3,11 @@ Test line detector
 """
 
 from line_detector import LineDetector
+import matplotlib.pyplot as plt
 import numpy as np
+import time
+
+plt.ion()
 
 
 def test_line_detector():
@@ -57,16 +61,31 @@ def test_discretise_gaussian():
     print("Probab:", probabilities)
 
 
+def plot_bar(probabilities, title):
+    plt.clf()
+    categories = ["0", "1", "2", "3", "4", "5", "6", "7"]
+    plt.bar(categories, probabilities)
+    # plt.hist(probabilities, bins=8, edgecolor="black")
+    # Set labels and title
+    plt.xlabel("Line sensor")
+    plt.ylabel("Reading")
+    plt.title(title)
+    plt.ylim(0, 1200)
+    plt.draw()
+    plt.pause(0.01)
+
+
 def test_compute_line_from_gaussian():
     line_detector = LineDetector()
     # mean = 5000
     std = 600
     num_values = 8
 
-    for mean in range(0, 10000, 66):
+    for mean in range(0, 10000, 25):
         values, probabilities = discretize_gaussian(mean, std, num_values)
         line = line_detector.compute_mean_gaussian(probabilities)
         print("Line = ", int(line), "\treadings: ", probabilities)
+        plot_bar(probabilities, "Sensor Readings")
 
 
 def main():
