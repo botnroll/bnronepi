@@ -14,7 +14,7 @@ class LineDetector:
     """
 
     _ref_max = 1000
-    _load_flag = False  # flag to signal whether or not the config values have been read already
+    _cfg_loaded = False  # flag to signal whether or not the config values have been read already
     _scaling_factor = [0] * 8  # array of 8 elements with correction factor for each line sensor
     _previous_line_value = 0
     _config = Config()
@@ -53,7 +53,7 @@ class LineDetector:
         """
         Loads values from config if they weren't loaded before
         """
-        if not self._load_flag:
+        if not self._cfg_loaded:
             self._config.load()
             self._scaling_factor = self.__calculate_factors(
                 self._ref_max, self._config.sensor_min, self._config.sensor_max
@@ -143,9 +143,7 @@ class LineDetector:
             line_value = self._previous_line_value
         # if normal values
         else:
-            self._previous_line_value = (
-                line_value  # only updates previous line value if the current is detecting something
-            )
+            self._previous_line_value = line_value
         return line_value
 
     def compute_mean_gaussian(self, reading):
@@ -188,10 +186,12 @@ class LineDetector:
     def prune(self, readings):
         """
         Deals with edge cases such when the max readings is on one of the sensors at the extremety
+        In such cases it bumps up the value of the sensor to be at the threshold level
         """
         max_value, max_index = self.get_max_value_and_index(readings)
         if max_value < self._config.threshold:
-            readings[max_index] = self._config.threshold
+            if max_index == 0 or max_index == (len(readings) - 1):
+                readings[max_index] = self._config.threshold
         return readings
 
     def compute_line(self, readings):
