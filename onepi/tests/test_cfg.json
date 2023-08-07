@@ -11,5 +11,6 @@
         300,
         300
     ],
-    "threshold": 18
+    "threshold": 18,
+    "correction_factor": 6
 }
