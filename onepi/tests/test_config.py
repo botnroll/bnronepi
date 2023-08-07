@@ -1,4 +1,13 @@
-from config import Config
+
+import sys
+import os
+
+# these steps are necessary in order to import modules
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.append(project_root)
+
+from utils.config import Config
 
 
 def test_config():
@@ -33,3 +42,10 @@ def test_config():
     assert cfg.sensor_min == [100, 200, 300, 300]
     assert cfg.sensor_max == [500, 400, 700, 800]
     assert cfg.threshold == 18
+
+
+def main():
+    print("Run tests using: pytest", os.path.basename(__file__), "-s")
+
+if __name__ == "__main__":
+    main()
