@@ -72,7 +72,7 @@ def test_read_button():
 
     print("Please press a button on the robot")
     ms_sleep(1000)
-    for i in range(20):
+    for i in range(30):
         print("Test", i, "/ 20. Button pressed: ", bnr_one_a.read_button())
         ms_sleep(300)
 
@@ -148,14 +148,19 @@ def test_move():
     print("=== Testing move ===")
     bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     delay_ms = 1000
+    print("Move forward")
     bnr_one_a.move(30, 30)
     ms_sleep(delay_ms)
+    print("Rotate right")
     bnr_one_a.move(30, -30)
     ms_sleep(delay_ms)
+    print("Rotate left")
     bnr_one_a.move(-30, 30)
     ms_sleep(delay_ms)
+    print("Move backwards")
     bnr_one_a.move(-30, -30)
     ms_sleep(delay_ms)
+    print("Stop")
     bnr_one_a.move(0, 0)
 
 
@@ -172,35 +177,119 @@ def test_move_calibrate():
     """
     print("=== Testing move calibrate ===")
     bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
-    delay_ms = 1000
-    print("Moving at 80% speed")
-    move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)
+    delay_ms = 2000
+    for i in range(0, 101, 5):
+        print("Duty_cycle:", i)
+        bnr_one_a.move_calibrate(i, i)
+        time.sleep(0.5)
+    print("Stopping both motors")
+    bnr_one_a.move_calibrate(0, 0)
+    print("At the start motors are not supposed to move.")
+    print("After a certain value they should start moving but not necessarily at the same time.")
 
-    print("Calibrating for 20% power on left motor. Moving at 80% speed")
-    bnr_one_a.move_calibrate(20, 100)
-    move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)
 
-    print("Calibrating for 20% power on right motor. Moving at 80% speed")
-    bnr_one_a.move_calibrate(100, 20)
-    move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)
+def test_move_1m():
+    """
+    Test move one motor
+    """
+    print("=== Testing move one motor ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    left_wheel = 1
+    right_wheel = 2
+    speed = 30
+    delay_s = 2
+    print("Left wheel forward")
+    one.move_1m(left_wheel, speed)
+    time.sleep(delay_s)
+    print("Right wheel forward")
+    one.move_1m(right_wheel, speed)
+    time.sleep(delay_s)
+    print("Left wheel: STOP")
+    one.move_1m(left_wheel, 0)
+    time.sleep(delay_s)
+    print("Right wheel backwards")
+    one.move_1m(right_wheel, -speed)
+    time.sleep(delay_s)
+    print("Left wheel backwards")
+    one.move_1m(left_wheel, -speed)
+    time.sleep(delay_s)
+    print("Right wheel: STOP")
+    one.move_1m(right_wheel, 0)
+    time.sleep(delay_s)
+    print("Left wheel: STOP")
+    one.move_1m(left_wheel, 0)
+
+
+def test_stop():
+    """
+    Test stop
+    """
+    print("=== Testing stop ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    speed = 30
+    delay_s = 2
+    print("Move forward")
+    one.move(speed, speed)
+    time.sleep(delay_s)
+    print("STOP")
+    one.stop()
+    time.sleep(delay_s)
+    print("Move backwards")
+    one.move(-speed, -speed)
+    time.sleep(delay_s)
+    print("STOP")
+    one.stop()
+    time.sleep(delay_s)
+
+
+def test_stop_1m():
+    """
+    Test stop 1 motor
+    """
+    print("=== Testing stop 1 motor ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    left_wheel = 1
+    right_wheel = 2
+    speed = 30
+    delay_s = 2
+    print("Move forward")
+    one.move(speed, speed)
+    time.sleep(delay_s)
+    print("Left wheel: STOP")
+    one.stop_1m(left_wheel)
+    time.sleep(delay_s)
+    print("Right wheel: STOP")
+    one.stop_1m(right_wheel)
+    time.sleep(delay_s)
+    print("Move backwards")
+    one.move(-speed, -speed)
+    time.sleep(delay_s)
+    print("Left wheel: STOP")
+    one.stop_1m(left_wheel)
+    time.sleep(delay_s)
+    print("Right wheel: STOP")
+    one.stop_1m(right_wheel)
+    time.sleep(delay_s)
 
 
 def main():
     """
     Calls functions to test public interface with BotnRoll One A
+    Most of these tests can actually be verified with the robot connected to the raspbery pi
+    and by visual inspection
     """
-    test_scroll_text()
-    test_read_button()
-    test_lcd()
-    test_led()
-    test_read_battery()
+    # test_scroll_text()
+    # test_read_button()
+    # test_lcd()
+    # test_led()
+    # test_read_battery()
 
     # functions to test:
-    test_move()
-    test_move_calibrate()
-    # move_1m(self, motor, speed):
-    # stop(self):
-    # stop_1m(self, motor):
+    # test_move()
+    # test_move_calibrate()
+    # test_move_1m()
+    # test_stop()
+    test_stop_1m()
     # brake(self, left_torque, right_torque):
     # brake_1m(self, motor, torque):
     # brake1m(self, motor):

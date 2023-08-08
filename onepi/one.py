@@ -258,7 +258,7 @@ class BnrOneA:
         :param motor: number of the motor to stop
         """
         msg = [self.__low_byte(motor)]
-        self.__send_data(self._COMMAND_STOP, msg)
+        self.__send_data(self._COMMAND_STOP_1M, msg)
 
     def brake(self, left_torque, right_torque):
         """
