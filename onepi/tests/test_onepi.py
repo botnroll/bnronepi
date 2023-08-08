@@ -1,9 +1,9 @@
 """
-Test functions to verify methods of onepi class
+Test functions to verify methods of BnrOneA class
 """
 
 import time
-from onepi import onepi
+from one import BnrOneA
 
 
 def ms_sleep(milliseconds):
@@ -52,7 +52,7 @@ def test_scroll_text():
     Text should be displayed in lcd line 2
     """
     print("=== Testing LCD scrolling text ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     text = "Hi Raspberry Pi!"
     for text in scroll_text(text, 16):
@@ -68,7 +68,7 @@ def test_read_button():
     Note: User should press the buttons on the robot
     """
     print("=== Testing read button ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     print("Please press a button on the robot")
     ms_sleep(1000)
@@ -83,7 +83,7 @@ def test_lcd():
     User should verify the output by looking at the lcd on the robot
     """
     print("=== Testing writing data to LCD ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     delay_ms = 1600
     bnr_one_a.lcd1("")
@@ -128,7 +128,7 @@ def test_led():
     Main method to test interface with BotnRoll One A
     """
     print("=== Testing led blinking ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     blink(bnr_one_a, 6, 200)
 
 
@@ -137,7 +137,7 @@ def test_read_battery():
     Test voltage battery reading
     """
     print("=== Testing read battery ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Battery voltage = ", bnr_one_a.read_battery())
 
 
@@ -146,7 +146,7 @@ def test_move():
     Test move method
     """
     print("=== Testing move ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     delay_ms = 1000
     bnr_one_a.move(30, 30)
     ms_sleep(delay_ms)
@@ -171,7 +171,7 @@ def test_move_calibrate():
     Test move calibrate method
     """
     print("=== Testing move calibrate ===")
-    bnr_one_a = onepi.BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    bnr_one_a = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     delay_ms = 1000
     print("Moving at 80% speed")
     move_and_stop(bnr_one_a, 80, 80, delay_ms, delay_ms / 4)

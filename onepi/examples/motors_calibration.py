@@ -14,11 +14,11 @@ Motors Calibration.
 """
 
 import time
-import onepi
+from one import BnrOneA
 
 
 def main():
-    one = onepi.BnrOneA(0, 0)  # object to control Bot'n Roll ONE A
+    one = BnrOneA(0, 0)  # object to control Bot'n Roll ONE A
     one.stop()
     # stop motors
     # one.min_battery(9.5)

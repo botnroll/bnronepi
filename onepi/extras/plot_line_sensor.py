@@ -6,7 +6,7 @@ Place the line sensor of the robot on top of the black strip and
 visualise the readings and line output in the chart
 """
 
-from onepi import BnrOneA
+from one import BnrOneA
 from utils.line_detector import LineDetector
 import matplotlib.pyplot as plt
 
