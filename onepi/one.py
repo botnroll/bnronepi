@@ -134,13 +134,13 @@ class BnrOneA:
         """
         returns the high byte of the input word (2 bytes)
         """
-        return (word >> 8) & 0xFF
+        return (int(word) >> 8) & 0xFF
 
     def __low_byte(self, word):
         """
         returns the low byte of the input word (2 bytes)
         """
-        return word & 0xFF
+        return int(word) & 0xFF
 
     def __open_spi(self):
         """
@@ -268,11 +268,10 @@ class BnrOneA:
         :param right_torque: torque to apply to the right motor
         """
         msg = [
-            self._COMMAND_BRAKE,
             self.__low_byte(left_torque),
             self.__low_byte(right_torque),
         ]
-        self.__send_data(self._COMMAND_STOP, msg)
+        self.__send_data(self._COMMAND_BRAKE, msg)
 
     def brake_1m(self, motor, torque=None):
         """
@@ -283,7 +282,7 @@ class BnrOneA:
         """
         if torque is None:
             torque = self._BRAKE_TORQUE
-        msg = [self._COMMAND_BRAKE, self.__low_byte(motor), self.__low_byte(torque)]
+        msg = [self.__low_byte(motor), self.__low_byte(torque)]
         self.__send_data(self._COMMAND_BRAKE_1M, msg)
 
     def reset_left_encoder(self):
@@ -324,7 +323,7 @@ class BnrOneA:
         :param command: command specifying which servo to use
         :param position: desired servo position [0-255]
         """
-        msg = [self.__low_byte(position % 2)]
+        msg = [self.__low_byte(position)]
         self.__send_data(command, msg)
 
     def servo1(self, position):
@@ -370,20 +369,21 @@ class BnrOneA:
         :para batmin: minimum voltage level acceptable for the battery (V)
         """
         msg = self.__float_to_bytes(batmin)
+        print(msg)
         self.__send_data(self._COMMAND_BAT_MIN, msg)
-        self.__ms_sleep(23)
+        self.__ms_sleep(25)
 
-    def save_calibrate(self, bat, left_power, right_power):
+    def save_calibrate(self, battery, left_power, right_power):
         """
         Sets calibration power values for each one of the motors
 
         :param left_power: power for the left wheel (% of max)
         :param right_power: power for the right wheel (% of max)
         """
-        msg = self.__float_to_bytes(bat)
-        msg.append(self.__low_byte(left_power), self.__low_byte(right_power))
+        msg = self.__float_to_bytes(battery)
+        msg.extend([self.__low_byte(left_power), self.__low_byte(right_power)])
         self.__send_data(self._COMMAND_SAVE_CALIBRATE, msg)
-        self.__ms_sleep(33)
+        self.__ms_sleep(35)
 
     def read_button(self):
         """
@@ -418,7 +418,8 @@ class BnrOneA:
 
     def read_left_encoder(self):
         """
-        Reads the value of the left encoder
+        Reads the value of the left encoder since last request
+        Note: Every time we read the encoder it resets itself
 
         :return: counter of the encoder
         :rtype: int
@@ -427,7 +428,8 @@ class BnrOneA:
 
     def read_right_encoder(self):
         """
-        Reads the value of the right encoder
+        Reads the value of the right encoder since last request
+        Note: Every time we read the encoder it resets itself
 
         :return: counter of the encoder
         :rtype: int
@@ -436,18 +438,20 @@ class BnrOneA:
 
     def read_left_encoder_increment(self):
         """
-        Reads the increment of the left encoder since last request
+        Reads the left encoder and keeps incrementing its value
+        It does NOT reset the value after reading it
 
-        :return: increment since last request to encoder
+        :return: encoder reading
         :rtype: int
         """
         return self.__request_word(self._COMMAND_ENCL_INC)
 
     def read_right_encoder_increment(self):
         """
-        Reads the increment of the right encoder since last request
+        Reads the right encoder and keeps incrementing its value
+        It does NOT reset the value after reading it
 
-        :return: increment since last request to encoder
+        :return: encoder reading
         :rtype: int
         """
         return self.__request_word(self._COMMAND_ENCR_INC)
@@ -460,8 +464,13 @@ class BnrOneA:
         :rtype: list of bytes
         """
         self.__send_data(self._COMMAND_FIRMWARE)
-        firmware = self._spi.read_byte(3)
+        self.__open_spi()
+        first_byte = self._spi.readbytes(1)
+        second_byte = self._spi.readbytes(1)
+        third_byte = self._spi.readbytes(1)
+        self.__close_spi()
         self.__us_sleep(20)
+        firmware = first_byte + second_byte + third_byte
         return firmware
 
     def obstacle_sensors(self):
