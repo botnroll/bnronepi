@@ -656,7 +656,7 @@ class BnrOneA:
         command = self.__get_command_dbg(index)
         return self.__request_word(command)
 
-    def text_to_bytes(self, text, length):
+    def __text_to_bytes(self, text, length):
         """
         Converts text to bytes with the predefined length.
         Crops the text if larger than the specified length
@@ -691,19 +691,19 @@ class BnrOneA:
         :rtype: list of chars
         """
         if data2 is None:
-            trimmed_data = self.text_to_bytes(str(data1), self._LCD_CHARS_PER_LINE)
+            trimmed_data = self.__text_to_bytes(str(data1), self._LCD_CHARS_PER_LINE)
         elif data3 is None:
-            trimmed_data = self.text_to_bytes(str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE)
+            trimmed_data = self.__text_to_bytes(str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE)
         elif data4 is None:
-            trimmed_data = self.text_to_bytes(
+            trimmed_data = self.__text_to_bytes(
                 str(data1) + " " + str(data2) + " " + str(data3),
                 self._LCD_CHARS_PER_LINE,
             )
         else:
-            data1 = self.text_to_bytes(str(data1), int(self._LCD_CHARS_PER_LINE / 4))
-            data2 = self.text_to_bytes(str(data2), int(self._LCD_CHARS_PER_LINE / 4))
-            data3 = self.text_to_bytes(str(data3), int(self._LCD_CHARS_PER_LINE / 4))
-            data4 = self.text_to_bytes(str(data4), int(self._LCD_CHARS_PER_LINE / 4))
+            data1 = self.__text_to_bytes(str(data1), int(self._LCD_CHARS_PER_LINE / 4))
+            data2 = self.__text_to_bytes(str(data2), int(self._LCD_CHARS_PER_LINE / 4))
+            data3 = self.__text_to_bytes(str(data3), int(self._LCD_CHARS_PER_LINE / 4))
+            data4 = self.__text_to_bytes(str(data4), int(self._LCD_CHARS_PER_LINE / 4))
             trimmed_data = data1 + data2 + data3 + data4
 
         return trimmed_data

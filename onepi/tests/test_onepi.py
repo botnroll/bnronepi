@@ -1,18 +1,9 @@
 """
 Test functions to verify methods of BnrOneA class
 """
-
+import os
 import time
 from one import BnrOneA
-
-
-def ms_sleep(milliseconds):
-    """
-    wait for the specified time in milliseconds
-
-    :param milliseconds: time in milliseconds
-    """
-    time.sleep(milliseconds / 1000)
 
 
 def scroll_text(text, size_of_line):
@@ -42,54 +33,8 @@ def test_scroll_text():
     for text in scroll_text(text, 16):
         print(text, end="\n")
         one.lcd2(text)
-        ms_sleep(200)
+        time.sleep(0.2)
     print(" ")
-
-
-def test_lcd():
-    """
-    Sends different types of text using both lines of the lcd
-    User should verify the output by looking at the lcd on the robot
-    """
-    print("=== Testing writing data to LCD ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
-
-    delay_ms = 1600
-    one.lcd1("")
-    one.lcd2("Hi Raspberry Pi!")
-    ms_sleep(delay_ms)
-    one.lcd1("Hi Raspberry Pi!")
-    one.lcd2("Day:", 31, "7", 2023)
-    ms_sleep(delay_ms)
-    one.lcd1("Day:", 31, "7", 2023)
-    one.lcd2(17, "h", 15, "min")
-    ms_sleep(delay_ms)
-    one.lcd1(17, "h", 15, "min")
-    one.lcd2("Ver.", 1, "Sub.", 3)
-    ms_sleep(delay_ms)
-    one.lcd1("Ver.", 1, "Sub.", 3)
-    one.lcd2("Test number:", 1)
-    ms_sleep(delay_ms)
-    one.lcd1("Test number:", 1)
-    one.lcd2("System", "test:", 1)
-    ms_sleep(delay_ms)
-    one.lcd1("System", "test:", 1)
-    one.lcd2(1234567890123456)
-    ms_sleep(delay_ms)
-    one.lcd1(1234567890123456)
-    one.lcd2(12345678, 1234567)
-    ms_sleep(delay_ms)
-    one.lcd1(12345678, 1234567)
-    one.lcd2(12345, 12345, 1234)
-    ms_sleep(delay_ms)
-    one.lcd1(12345, 12345, 1234)
-    one.lcd2(1111, 2222, 3333, 4444)
-    ms_sleep(delay_ms)
-    one.lcd1(1111, 2222, 3333, 4444)
-    one.lcd2("      END       ")
-    ms_sleep(delay_ms)
-    one.lcd1("      END       ")
-    one.lcd2("")
 
 
 def test_move():
@@ -98,28 +43,21 @@ def test_move():
     """
     print("=== Testing move ===")
     one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
-    delay_ms = 1000
+    delay_s = 1
     print("Move forward")
     one.move(30, 30)
-    ms_sleep(delay_ms)
+    time.sleep(delay_s)
     print("Rotate right")
     one.move(30, -30)
-    ms_sleep(delay_ms)
+    time.sleep(delay_s)
     print("Rotate left")
     one.move(-30, 30)
-    ms_sleep(delay_ms)
+    time.sleep(delay_s)
     print("Move backwards")
     one.move(-30, -30)
-    ms_sleep(delay_ms)
+    time.sleep(delay_s)
     print("Stop")
     one.move(0, 0)
-
-
-def move_and_stop(one, left_speed, right_speed, delay_ms, extra_delay_ms):
-    one.move(left_speed, right_speed)
-    ms_sleep(delay_ms)
-    one.move(0, 0)
-    ms_sleep(extra_delay_ms)
 
 
 def test_move_calibrate():
@@ -473,8 +411,8 @@ def test_read_button():
     print("Please press a button on the robot")
     time.sleep(2)
     for i in range(30):
-        print("Test", i, "of 30. Button pressed: ", one.read_button())
-        ms_sleep(300)
+        print("Test", i + 1, "of 30. Button pressed: ", one.read_button())
+        time.sleep(0.3)
 
 
 def test_read_battery():
@@ -593,21 +531,196 @@ def test_read_firmware():
 
 
 def test_obstacle_sensors():
-    pass
+    """
+    Test obstacle sensors
+    """
+    print("=== Testing obstacle sensors ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    for i in range(100):
+        print("Test", i + 1, "of 100: Output:", one.obstacle_sensors())
+        time.sleep(0.2)
+
+
+def test_read_IR_sensors():
+    """
+    Test read IR sensors
+    """
+    print("=== Testing read IR sensors ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    for i in range(100):
+        print("Test", i + 1, "of 100: Output:", one.read_ir_sensors())
+        time.sleep(0.2)
+
+
+def test_read_left_range():
+    """
+    Test read left range sensor
+    """
+    print("=== Testing read left range sensor ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    for i in range(100):
+        print("Test", i + 1, "of 100: Output:", one.read_left_range())
+        time.sleep(0.2)
+
+
+def test_read_right_range():
+    """
+    Test read right range sensor
+    """
+    print("=== Testing read right range sensor ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    for i in range(100):
+        print("Test", i + 1, "of 100: Output:", one.read_right_range())
+        time.sleep(0.2)
+
+
+def test_read_adc():
+    """
+    Test read adc
+    """
+    print("=== Testing read adc ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    for i in range(8):
+        print("Read adc", i, ":", one.read_adc(i))
+        time.sleep(0.2)
+
+
+def test_read_adc_0():
+    """
+    Test read adc 0
+    """
+    print("=== Testing read adc 0 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 0:", one.read_adc_0())
+
+
+def test_read_adc_1():
+    """
+    Test read adc 1
+    """
+    print("=== Testing read adc 1 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 1:", one.read_adc_1())
+
+
+def test_read_adc_2():
+    """
+    Test read adc 2
+    """
+    print("=== Testing read adc 2 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 2:", one.read_adc_2())
+
+
+def test_read_adc_3():
+    """
+    Test read adc 3
+    """
+    print("=== Testing read adc 3 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 3:", one.read_adc_3())
+
+
+def test_read_adc_4():
+    """
+    Test read adc 4
+    """
+    print("=== Testing read adc 4 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 4:", one.read_adc_4())
+
+
+def test_read_adc_5():
+    """
+    Test read adc 5
+    """
+    print("=== Testing read adc 5 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 5:", one.read_adc_5())
+
+
+def test_read_adc_6():
+    """
+    Test read adc 6
+    """
+    print("=== Testing read adc 6 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 6:", one.read_adc_6())
+
+
+def test_read_adc_7():
+    """
+    Test read adc 7
+    """
+    print("=== Testing read adc 7 ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    print("Read adc 7:", one.read_adc_7())
+
+
+def test_read_DBG():
+    """
+    Test read DBG
+    """
+    print("=== Testing read DBG ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    for i in range(4):
+        print("Read dbg", i, ":", one.read_dbg(i))
+
+
+def test_lcd():
+    """
+    Sends different types of text using both lines of the lcd
+    User should verify the output by looking at the lcd on the robot
+    """
+    print("=== Testing writing data to LCD ===")
+    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+
+    delay_s = 1.6
+    one.lcd1("")
+    one.lcd2("Hi Raspberry Pi!")
+    time.sleep(delay_s)
+    one.lcd1("Hi Raspberry Pi!")
+    one.lcd2("Day:", 31, "7", 2023)
+    time.sleep(delay_s)
+    one.lcd1("Day:", 31, "7", 2023)
+    one.lcd2(17, "h", 15, "min")
+    time.sleep(delay_s)
+    one.lcd1(17, "h", 15, "min")
+    one.lcd2("Ver.", 1, "Sub.", 3)
+    time.sleep(delay_s)
+    one.lcd1("Ver.", 1, "Sub.", 3)
+    one.lcd2("Test number:", 1)
+    time.sleep(delay_s)
+    one.lcd1("Test number:", 1)
+    one.lcd2("System", "test:", 1)
+    time.sleep(delay_s)
+    one.lcd1("System", "test:", 1)
+    one.lcd2(1234567890123456)
+    time.sleep(delay_s)
+    one.lcd1(1234567890123456)
+    one.lcd2(12345678, 1234567)
+    time.sleep(delay_s)
+    one.lcd1(12345678, 1234567)
+    one.lcd2(12345, 12345, 1234)
+    time.sleep(delay_s)
+    one.lcd1(12345, 12345, 1234)
+    one.lcd2(1111, 2222, 3333, 4444)
+    time.sleep(delay_s)
+    one.lcd1(1111, 2222, 3333, 4444)
+    one.lcd2("      END       ")
+    time.sleep(delay_s)
+    one.lcd1("      END       ")
+    one.lcd2("")
 
 
 def main():
     """
     Calls functions to test public interface with BotnRoll One A
-    Most of these tests can actually be verified with the robot connected to the raspbery pi
-    and by visual inspection
+    Most of these tests should be verified with the robot connected to the raspbery pi
+    and by visually inspecting the robot and/or the terminal
     """
-    # test_scroll_text()
-    # test_read_button()
-    # test_lcd()
-    # test_read_battery()
+    print("Run tests using: pytest", os.path.basename(__file__), "-s")
 
-    # functions to test:
     # test_move()
     # test_move_calibrate()
     # test_move_1m()
@@ -630,26 +743,23 @@ def main():
     # test_read_right_encoder()
     # test_read_left_encoder_increment()
     # test_read_right_encoder_increment()
-
     # test_read_firmware()
-    test_obstacle_sensors()
-    # read_IR_sensors(self):
-    # read_left_range(self):
-    # read_right_range(self):
-    # read_adc(self, channel):
-    # read_adc_0(self):
-    # read_adc_1(self):
-    # read_adc_2(self):
-    # read_adc_3(self):
-    # read_adc_4(self):
-    # read_adc_5(self):
-    # read_adc_6(self):
-    # read_adc_7(self):
-    # read_DBG(self, index):
-    # text_to_bytes(self, text, length):
-    # __lcd(self, lcd_line, text1, text2 = None, text3 = None, text4 = None):
-    # lcd1(self, text1, text2 = None, text3 = None, text4 = None):
-    # lcd2(self, text1, text2 = None, text3 = None, text4 = None):
+    # test_obstacle_sensors()
+    # test_read_IR_sensors()
+    # test_read_left_range()
+    # test_read_right_range()
+    # test_read_adc()
+    # test_read_adc_0()
+    # test_read_adc_1()
+    # test_read_adc_2()
+    # test_read_adc_3()
+    # test_read_adc_4()
+    # test_read_adc_5()
+    # test_read_adc_6()
+    # test_read_adc_7()
+    # test_read_DBG()
+    # test_lcd()
+    # test_scroll_text()
 
 
 if __name__ == "__main__":
