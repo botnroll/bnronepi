@@ -1,6 +1,6 @@
 """
  This code example is in the public domain. 
- http:#www.botnroll.com
+ http://www.botnroll.com
 
  Description: 
  An external IR 40khz source can be detected by the IR sensors. 
@@ -8,7 +8,7 @@
  This function can be used to remote control the robot with IR.
  This function is used in the race challenge to detect the start of the race!
  
- Encoders
+ IR sensors
 """
 
 import time

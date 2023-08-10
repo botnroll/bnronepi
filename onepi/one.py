@@ -171,7 +171,7 @@ class BnrOneA:
         self.__us_sleep(self._delay_TR)
         result = self._spi.readbytes(1)
         self.__close_spi()
-        return result
+        return result[0]
 
     def __request_word(self, command):
         """
