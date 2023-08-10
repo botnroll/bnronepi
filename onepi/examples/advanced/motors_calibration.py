@@ -33,7 +33,7 @@ def main():
     print("Place the robot on a flat surface.")
     print("Use PB1 to increase the power until the robot moves forward.")
     print("Use PB2 to decrease the power if necessary.")
-    print("Use PB3 to store the data in the PIC EEPROM.")
+    print("Use PB3 to store the data in the PIC EEPROM.", end="\n\n")
     time.sleep(5)
     while True:
         if time.time() > end_time:
@@ -43,7 +43,7 @@ def main():
             one.move_calibrate(powerL, powerR)
             one.lcd1("Bat:", str(battery))
             one.lcd2(powerL, powerR)
-            print("Battery:", battery, "\tPowerL:", powerL, "\tPowerR:", powerR)
+            print("Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR, end="\r")
 
         button = one.read_button()
         if button == 1:
@@ -56,7 +56,8 @@ def main():
 
         elif button == 3:
             one.save_calibrate(battery, powerL, powerR)
-            print("Calibration data saved:")
+            print("Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR)
+            print("Calibration data saved:", " " * 20)
             one.lcd1("Calibration data")
             one.lcd2("    Saved!!!    ")
             time.sleep(2 / 1000)
