@@ -20,7 +20,7 @@ from one import BnrOneA
 one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
 
 # constants definition
-min_speed = 30  # if motors have been calibrated change this to 1
+min_speed = 20  # if motors have been calibrated change this to 1
 compass_address = 0x60  # Define address of CMPS11
 
 
@@ -85,29 +85,46 @@ def compassRead():
 
     print("Bearing:", bearing)
     print("   roll:", int(roll))
-    print("   pitch:", int(pitch))
+    print("  pitch:", int(pitch))
 
     one.lcd1("Bearing: ", bearing)
-    text = "Rol:" + str(int(roll)) + "Pit:" + str(int(pitch))
-    one.lcd2(text)
+    one.lcd2("Rol:", str(int(roll)), "Pit:", str(int(pitch)))
+
+
+class static:
+    start_time = time.time()
+    end_time = time.time()
+    option = 0
+
+
+def menu():
+    if time.time() > static.end_time:
+        static.end_time = time.time() + 3
+        static.option = (static.option + 1) % 2
+        if static.option == 0:
+            one.lcd1("   Press PB1    ")
+            one.lcd2("  to calibrate  ")
+        else:
+            one.lcd1("   Press PB2    ")
+            one.lcd2("to display data ")
 
 
 def loop():
-    one.lcd1("   Press PB1   ")
-    one.lcd2(" to calibrate  ")
-    while one.read_button() != 1:
+    while one.read_button() == 0:
         time.sleep(0.05)
+        menu()
 
-    one.lcd1("  Calibrating")
-    one.lcd2("   Compass... ")
-    time.sleep(0.1)
-    calibrateCMPS11()
+    if one.read_button() == 1:
+        one.lcd1("  Calibrating")
+        one.lcd2("   Compass... ")
+        time.sleep(0.1)
+        calibrateCMPS11()
 
-    one.lcd1("  Calibration")
-    one.lcd2("    Finnished")
-    time.sleep(0.1)
+        one.lcd1("  Calibration")
+        one.lcd2("    Finnished")
+        time.sleep(0.1)
 
-    while one.read_button() != 1:
+    while True:
         compassRead()
         time.sleep(0.1)
 
