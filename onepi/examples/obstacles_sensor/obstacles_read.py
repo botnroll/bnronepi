@@ -14,22 +14,22 @@ Note: Valid for TSSP4056 IR sensors shipped with robots from 2023.
 import time
 from one import BnrOneA
 
-BnrOneA one           # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
 
-# constants definition
 
-def setup():    
-    one.stop()                      # stop motors
-    one.obstacleEmitters(ON)        # activate IR emitters
+def setup():
+    on = 1
+    one.stop()                              # stop motors
+    one.obstacle_emitters(on)               # activate IR emitters
+
 
 def loop():
-    rangeL = one.readangeL()        # read left obstacle sensor range 
-    rangeR = one.read_rangeR()      # read right obstacle sensor range
-    one.lcd1("Range Left : ",rangeL)
-    one.lcd2("Range Right: ",rangeR)
-    print("L: ", rangeL, "   R: ", rangeR)
-    time.sleep(0.025) # The robot has new readings every 25ms (40 readings per second)
-
+    left_range = one.read_left_range()      # read left obstacle sensor range 
+    right_range = one.read_right_range()    # read right obstacle sensor range
+    one.lcd1("Range Left : ", left_range)
+    one.lcd2("Range Right: ", right_range)
+    print("L: ", left_range, "   R: ", right_range)
+    time.sleep(0.025)  # The robot has new readings every 25ms (40 readings per second)
 
 
 def main():
