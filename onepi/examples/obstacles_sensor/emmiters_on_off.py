@@ -29,11 +29,11 @@ def setup():
 def loop():
     on = 1
     off = 0
-    one.obstacleEmitters(on)            # activate IR emitter LEDs
+    one.obstacle_emitters(on)            # activate IR emitter LEDs
     print("IR Emitters ON ")            # print data on terminal
     one.lcd2(" IR Emitters ON ")        # print text on LCD line 2
     time.sleep(1)                       # wait 1 second
-    one.obstacleEmitters(off)           # deactivate IR emitter LEDs
+    one.obstacle_emitters(off)           # deactivate IR emitter LEDs
     print("IR Emitters OFF")            # print data on serial monitor.
     one.lcd2(" IR Emitters OFF ")       # print text on LCD line 2
     time.sleep(1)                       # wait 1 second
