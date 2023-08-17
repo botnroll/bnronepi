@@ -27,10 +27,12 @@ V75 = 30
 V87 = 30
 V100 = 35
 
+VEL = 50
+
 def read_line():
     line_value = 0
     sensor_count = 0
-    if one.read_adc(0)  > THRESHOLD:  # Test Sensor1
+    if one.read_adc(0) > THRESHOLD:  # Test Sensor1
         line_value -= 100
         sensor_count += 1
     if one.read_adc(1) > THRESHOLD:  # Test Sensor2
@@ -51,9 +53,10 @@ def read_line():
     if one.read_adc(6) > THRESHOLD:
         line_value += 75
         sensor_count += 1
-    if one.read_adc(7) > THRESHOLD:  #  Test Sensor8
+    if one.read_adc(7) > THRESHOLD:  # Test Sensor8
         line_value += 100
         sensor_count += 1
+
     if sensor_count > 2:
         line_value = -1
     elif sensor_count > 0:
@@ -66,73 +69,39 @@ def setup():
     time.sleep(1)
 
 def loop():
+    line = read_line()
+    print("  Line:", line)
 
-
-  line = read_line()
-  print("  Line:", line)
-
-  switch(line)
-  {
-      case -100:
-        one.move(-1,vel+v100)
-        break
-
-      case -87:
-        one.move(-1,vel+v87)
-        break
-
-      case -75:
-        one.move(vel-v75,vel+v75)
-        break
-
-      case -62:
-        one.move(vel-v62,vel+v62)
-        break
-
-      case -50:
-        one.move(vel-v50,vel+v50)
-        break
-
-      case -37:
-        one.move(vel-v37,vel+v37)
-        break
-
-      case -25:
-        one.move(vel-v25,vel+v25)
-        break
-
-      case 0:
-        one.move(vel,vel)
-        break
-
-      case 25:
-        one.move(vel+v25,vel-v25)
-        break
-
-      case 37:
-        one.move(vel+v37,vel-v37)
-        break
-
-      case 50:
-        one.move(vel+v50,vel-v50)
-        break
-
-      case 62:
-        one.move(vel+v62,vel-v62)
-        break
-
-      case 75:
-        one.move(vel+v75,vel-v75)
-        break
-
-      case 87:
-        one.move(vel+v87,-1)
-        break
-
-      case 100:
-        one.move(vel+v100,-1)
-        break
-
+    if line == -100:
+        one.move(-1, VEL + V100)
+    elif line == -87:
+        one.move(-1, VEL + V87)
+    elif line == -75:
+        one.move(VEL - V75, VEL + V75)
+    elif line == -62:
+        one.move(VEL - V62, VEL + V62)
+    elif line == -50:
+        one.move(VEL - V50, VEL + V50)
+    elif line == -37:
+        one.move(VEL - V37, VEL + V37)
+    elif line == -25:
+        one.move(VEL - V25, VEL + V25)
+    elif line == 0:
+        one.move(VEL, VEL)
+    elif line == 25:
+        one.move(VEL + V25, VEL - V25)
+    elif line == 37:
+        one.move(VEL + V37, VEL - V37)
+    elif line == 50:
+        one.move(VEL + V50, VEL - V50)
+    elif line == 62:
+        one.move(VEL + V62, VEL - V62)
+    elif line == 75:
+        one.move(VEL + V75, VEL - V75)
+    elif line == 87:
+        one.move(VEL + V87, -1)
+    elif line == 100:
+        one.move(VEL + V100, -1)
 
 def main():
     setup()
@@ -142,4 +111,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
