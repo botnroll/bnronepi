@@ -13,27 +13,27 @@ from one import BnrOneA
 
 one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
 
-compass_address = 0x60   # CMPS11 I2C address
+COMPASS_ADDRESS = 0x60   # CMPS11 I2C address
 
 
 def read_bearing():
     i2cbus = SMBus(1)  # Create a new I2C bus
-    i2cbus.write_byte(compass_address, 0x1)  # request bearing data
-    bearing = i2cbus.read_word_data(compass_address, 2)
+    i2cbus.write_byte(COMPASS_ADDRESS, 0x1)  # request bearing data
+    bearing = i2cbus.read_word_data(COMPASS_ADDRESS, 2)
     return bearing
 
 
 def read_pitch():
     i2cbus = SMBus(1)  # Create a new I2C bus
-    i2cbus.write_byte(compass_address, 0x4)  # request pitch data
-    pitch = i2cbus.read_byte(compass_address)
+    i2cbus.write_byte(COMPASS_ADDRESS, 0x4)  # request pitch data
+    pitch = i2cbus.read_byte(COMPASS_ADDRESS)
     return pitch
 
 
 def read_roll():
     i2cbus = SMBus(1)  # Create a new I2C bus
-    i2cbus.write_byte(compass_address, 0x5)  # request roll data
-    roll = i2cbus.read_byte(compass_address)
+    i2cbus.write_byte(COMPASS_ADDRESS, 0x5)  # request roll data
+    roll = i2cbus.read_byte(COMPASS_ADDRESS)
     return roll
 
 
@@ -42,19 +42,18 @@ def setup():
     time.sleep(0.5)
 
 def loop():
+    bearing = read_bearing()
+    roll = read_roll()
+    pitch = read_pitch()
 
-   bearing = read_bearing()
-   roll = read_roll()
-   pitch = read_pitch()
+    print("Bearing:", bearing)
+    print("   roll:", int(roll))
+    print("   pitch:", int(pitch))
 
-   print("Bearing:", bearing)
-   print("   roll:", int(roll))
-   print("   pitch:", int(pitch))
+    one.lcd1("Bearing: ", bearing)
+    one.lcd2("Rol:", int(roll), "Pit:", int(pitch))
 
-   one.lcd1("Bearing: ", bearing)
-   one.lcd2("Rol:", int(roll), "Pit:", int(pitch))
-    
-   time.sleep(0.050)
+    time.sleep(0.050)
 
 
 def main():
