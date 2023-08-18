@@ -20,9 +20,11 @@ Calibration ends after you define THRESHOLD value.
 In order to adjust THRESHOLD, sensor reading values should be analysed in real time and at different places on the track.
 """
 
-
+import json
+import os
 import time
 from one import BnrOneA
+from utils.config import Config
 
 one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
 
@@ -156,21 +158,14 @@ def setup_line():
     # Read EEPROM values
     eepromADD = 100
     println("Setup: Max: ")
-    for i in range(8):
-        sensor_value_max[i]=(int)EEPROM.read(eepromADD)
-        sensor_value_max[i]=sensor_value_max[i]<<8
-        eepromADD += 1
-        sensor_value_max[i] += (int)EEPROM.read(eepromADD)
-        eepromADD += 1
-        print(sensor_value_max[i])
-    print("Min: ")
-    for i in range(8):
-        sensor_value_min[i]=(int)EEPROM.read(eepromADD)
-        sensor_value_min[i]=sensor_value_min[i]<<8
-        eepromADD++
-        sensor_value_min[i]+=(int)EEPROM.read(eepromADD)
-        eepromADD++
-        print(sensor_value_min[i])
+
+    cfg = Config()
+    print(">> Create config file")
+    cfg.sensor_min = [100, 200, 300, 300]
+    cfg.sensor_max = [500, 400, 700, 800]
+    cfg.threshold = 18
+    cfg.print()
+
     THRESHOLD = (int)EEPROM.read(eepromADD)
     THRESHOLD = (THRESHOLD << 8)
     eepromADD += 1
