@@ -19,13 +19,13 @@ class LineDetector:
     _previous_line_value = 0
     _config = Config()
 
-    def __normalise(self, reading, minimum, scale):
+    def _normalise(self, reading, minimum, scale):
         """
         normalise a reading taking the minimum value of the range and a scale factor
         """
         return int((reading - minimum) * scale)
 
-    def normalise_readings(self, sensor_reading):
+    def _normalise_readings(self, sensor_reading):
         """
         Normalize values for each sensor reading
         """
@@ -35,10 +35,10 @@ class LineDetector:
         size = len(sensor_reading)
         sensor_normalised = [0] * size
         for i in range(size):
-            sensor_normalised[i] = self.__normalise(sensor_reading[i], sensor_min[i], scaling_factor[i])
+            sensor_normalised[i] = self._normalise(sensor_reading[i], sensor_min[i], scaling_factor[i])
         return sensor_normalised
 
-    def __calculate_factors(self, ref, min, max):
+    def _calculate_factors(self, ref, min, max):
         """
         Calculates the scaling factor given a reference value\
         and a range defined by min and max values
@@ -49,27 +49,27 @@ class LineDetector:
         factors = [x / y for x, y in zip(factors, divisor)]
         return factors
 
-    def load_if_necessary(self):
+    def _load_if_necessary(self):
         """
         Loads values from config if they weren't loaded before
         """
         if not self._cfg_loaded:
             self._config.load()
-            self._scaling_factor = self.__calculate_factors(
+            self._scaling_factor = self._calculate_factors(
                 self._ref_max, self._config.sensor_min, self._config.sensor_max
             )
 
-    def compute_line_value(self, readings):
+    def _compute_line_value(self, readings):
         """
         Computes a line value in the range [0, ref_max]
         """
         line_value = -1
         max_reading = max(readings)
         if max_reading > self._config.threshold:
-            line_value = self.compute_mean_gaussian(readings)
+            line_value = self._compute_mean_gaussian(readings)
         return line_value
 
-    def cap_value(self, value, lower_limit, upper_limit):
+    def _cap_value(self, value, lower_limit, upper_limit):
         """
         Caps the value to lower and upper limits
         """
@@ -80,7 +80,7 @@ class LineDetector:
         else:
             return value
 
-    def convert_range(self, x_value, x_min, x_max, y_min, y_max):
+    def _convert_range(self, x_value, x_min, x_max, y_min, y_max):
         """
         Converts a value x given in the range [x_min : x_max]
         to a new value in the range [y_min : y_max]
@@ -96,7 +96,7 @@ class LineDetector:
         y = ((x_value - x_min) / x_range) * y_range + y_min
         return y
 
-    def normalise_line_value(self, line_value, size):
+    def _normalise_line_value(self, line_value, size):
         """
         Converts a line value in the range of [0, 8000] to a new range e.g. [-106, 106]
         This method involves two steps:
@@ -118,11 +118,11 @@ class LineDetector:
         x_max = size * self._ref_max  # should be 8000
         y_min = -100 - self._config.correction_factor
         y_max = 100 + self._config.correction_factor
-        line_value = self.convert_range(line_value, x_min, x_max, y_min, y_max)
-        line_value = self.cap_value(line_value, -100, 100)
+        line_value = self._convert_range(line_value, x_min, x_max, y_min, y_max)
+        line_value = self._cap_value(line_value, -100, 100)
         return line_value
 
-    def filter_line_value(self, line_value, ref_value, max_value):
+    def _filter_line_value(self, line_value, ref_value, max_value):
         """
         Filters the line value to handle edge cases
         such as no line detected or reading errors
@@ -146,7 +146,7 @@ class LineDetector:
             self._previous_line_value = line_value
         return line_value
 
-    def compute_mean_gaussian(self, reading):
+    def _compute_mean_gaussian(self, reading):
         """
         Lets assume the line detected gives us a discrete gaussian
         where the probabilities are given by each sensor reading and
@@ -175,7 +175,7 @@ class LineDetector:
             mean = sum_product / sum_probability
         return mean
 
-    def get_max_value_and_index(self, lst):
+    def _get_max_value_and_index(self, lst):
         """
         Returns the max value and its corresponding index from a list
         """
@@ -183,12 +183,12 @@ class LineDetector:
         max_index = lst.index(max_value)
         return max_value, max_index
 
-    def prune(self, readings):
+    def _prune(self, readings):
         """
         Deals with edge cases such when the max readings is on one of the sensors at the extremety
         In such cases it bumps up the value of the sensor to be at the threshold level
         """
-        max_value, max_index = self.get_max_value_and_index(readings)
+        max_value, max_index = self._get_max_value_and_index(readings)
         if max_value < self._config.threshold:
             if max_index == 0 or max_index == (len(readings) - 1):
                 readings[max_index] = self._config.threshold
@@ -202,11 +202,11 @@ class LineDetector:
         """
         max_range = len(readings) * 1000
         mid_range = max_range / 2
-        self.load_if_necessary()
-        normalised = self.normalise_readings(readings)
-        pruned = self.prune(normalised)
-        line_value = self.compute_line_value(pruned)
-        line_value = self.filter_line_value(line_value, mid_range, max_range)
-        line_value = self.normalise_line_value(line_value, len(pruned))
-        line_value = self.cap_value(line_value, -100, 100)
+        self._load_if_necessary()
+        normalised = self._normalise_readings(readings)
+        pruned = self._prune(normalised)
+        line_value = self._compute_line_value(pruned)
+        line_value = self._filter_line_value(line_value, mid_range, max_range)
+        line_value = self._normalise_line_value(line_value, len(pruned))
+        line_value = self._cap_value(line_value, -100, 100)
         return line_value

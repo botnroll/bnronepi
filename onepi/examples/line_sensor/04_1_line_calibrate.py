@@ -31,6 +31,7 @@ one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll 
 
 M1 = 1       # Motor1
 M2 = 2       # Motor2
+VMAX = 1000
 
 sensor_value_min = [1023] * 8
 sensor_value_max = [0] * 8
@@ -38,12 +39,14 @@ sensor_factor = [0] * 8
 
 THRESHOLD = 50  # Line follower limit between white and black
 
+cfg = Config()
+
 def wait_button_press():
-    while(one.readbuttonon() == 0):
+    while one.read_button() == 0:
         time.sleep(0.050)
 
 def wait_button_release():
-    while(one.readbutton() != 0):
+    while one.read_button() != 0:
         time.sleep(0.050)
 
 def calibrate_line():
@@ -60,13 +63,13 @@ def calibrate_line():
     # Calibrate for 4 seconds
     one.move(5, -5)
     start_time = time.time()
-    while(time.time() < start_time + 10):
+    while time.time() < (start_time + 10):
         print("Val: ")
         for i in range(8):
             sensor_value = one.read_adc(i)
-            if(sensor_value > sensor_value_max[i]):
+            if sensor_value > sensor_value_max[i]:
                 sensor_value_max[i] = sensor_value
-            if(sensor_value < sensor_value_min[i]):
+            if sensor_value < sensor_value_min[i]:
                 sensor_value_min[i] = sensor_value
             print(sensor_value)
         print("Max: ")
@@ -74,28 +77,22 @@ def calibrate_line():
             print(sensor_value_max[i])
 
         print("Min: ")
-        THRESHOLD=0
+        THRESHOLD = 0
         for i in range(8):
             print(sensor_value_min[i])
-            if(sensor_value_min[i] > THRESHOLD):
+            if sensor_value_min[i] > THRESHOLD:
                 THRESHOLD = sensor_value_min[i]
         time.sleep(0.050)
 
     print("THRESHOLD:", THRESHOLD)
     one.stop()
 
-    # Write values on EEPROM
-    eepromADD = 100
-    for i in range(8):
-        EEPROM.write(eepromADD, highByte(sensor_value_max[i]))
-        eepromADD += 1
-        EEPROM.write(eepromADD, lowByte(sensor_value_max[i]))
-        eepromADD += 1
-    for i in range (8):
-        EEPROM.write(eepromADD, highByte(sensor_value_min[i]))
-        eepromADD += 1
-        EEPROM.write(eepromADD, lowByte(sensor_value_min[i]))
-        eepromADD += 1
+    # Write values on file
+    cfg.sensor_min = sensor_value_min
+    cfg.sensor_max = sensor_value_max
+    cfg.threshold = THRESHOLD
+    # cfg.correction_factor = 6
+    cfg.save()
 
     print("Calibrate Done! Press a button...")
     one.lcd1(" Calibration done ")
@@ -122,7 +119,7 @@ def calibrate_line():
         wait_button_press()
         wait_button_release()
         wait_button_press()
-        while(one.read_button() == 0):
+        while one.read_button() == 0:
             for i in range(8):
                 sensor_value[i] = one.read_adc(i)
             one.lcd1(sensor_value[0] - sensor_value_min[0], sensor_value[1] - sensor_value_min[1], sensor_value[2] - sensor_value_min[2], sensor_value[3] - sensor_value_min[3])
@@ -132,13 +129,13 @@ def calibrate_line():
         one.lcd2("   THRESHOLD:", THRESHOLD)
         wait_button_release()
         button = 0
-        while(button != 3):
-            button=one.read_button()
-            if(button == 1):
+        while button != 3:
+            button = one.read_button()
+            if button == 1:
                 THRESHOLD += 10
                 one.lcd2("   THRESHOLD:", THRESHOLD)
                 time.sleep(0.100)
-            if(button == 2):
+            if button == 2:
                 THRESHOLD -= 10
                 one.lcd2("   THRESHOLD:", THRESHOLD)
                 time.sleep(0.100)
@@ -155,36 +152,27 @@ def calibrate_line():
 
 
 def setup_line():
-    # Read EEPROM values
-    eepromADD = 100
-    println("Setup: Max: ")
-
-    cfg = Config()
-    print(">> Create config file")
-    cfg.sensor_min = [100, 200, 300, 300]
-    cfg.sensor_max = [500, 400, 700, 800]
-    cfg.threshold = 18
+    global THRESHOLD
+    cfg.load()
     cfg.print()
 
-    THRESHOLD = (int)EEPROM.read(eepromADD)
-    THRESHOLD = (THRESHOLD << 8)
-    eepromADD += 1
-    THRESHOLD += (int)EEPROM.read(eepromADD)
+    THRESHOLD = cfg.threshold
     print("THRESHOLD: ", THRESHOLD)
 
     for i in range(8):
-        sensor_factor[i] = VMAX / (sensor_value_max[i] - sensor_value_min[i]) # Calculate factor for each sensor
+        # Calculate factor for each sensor
+        sensor_factor[i] = VMAX / (sensor_value_max[i] - sensor_value_min[i])
 
 def setup():
-    one.stop()          # stop motors
-    one.minBat(10.5)    # safety voltage for discharging the battery
+    one.stop()                  # stop motors
+    one.min_battery(10.5)       # safety voltage for discharging the battery
     time.sleep(1)
-    calibrate_line()    # calibrate line sensor
-    setup_line()        # read line calibrate values from EEPROM
+    calibrate_line()            # calibrate line sensor
+    setup_line()                # read line calibration values from file
 
 
 def loop():
-    line=one.readLine()         # Read line
+    line = one.read_line()      # Read line
     print(" Line:", line)
     one.lcd1("     Line:")      # Print values on the LCD
     one.lcd2("      ", line)    # Print values on the LCD
