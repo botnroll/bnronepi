@@ -25,6 +25,7 @@ import os
 import time
 from one import BnrOneA
 from utils.config import Config
+from utils.line_detector import LineDetector
 
 one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
 
@@ -33,13 +34,8 @@ M1 = 1       # Motor1
 M2 = 2       # Motor2
 VMAX = 1000
 
-sensor_value_min = [1023] * 8
-sensor_value_max = [0] * 8
-sensor_factor = [0] * 8
+line_detector = LineDetector()
 
-THRESHOLD = 50  # Line follower limit between white and black
-
-cfg = Config()
 
 def wait_button_press():
     while one.read_button() == 0:
@@ -49,126 +45,208 @@ def wait_button_release():
     while one.read_button() != 0:
         time.sleep(0.050)
 
-def calibrate_line():
-    one.lcd1(" Press a buttonon ")
-    one.lcd2("  to calibrate  ")
-    wait_button_press()
-    print("Calibrate Starting!")
-    one.lcd1("  Calibration   ")
-    one.lcd2("   starting     ")
-    time.sleep(1)
+def save_config():
+    cfg = Config()
+    cfg.sensor_min = line_detector._config.sensor_min
+    cfg.sensor_max = line_detector._config.sensor_max
+    cfg.threshold = line_detector._config.threshold
+    cfg.correction_factor = line_detector._config.correction_factor
+    cfg.save()
 
-    wait_button_release()
-
-    # Calibrate for 4 seconds
+def calibrate_min_max():
+    global line_detector
+    print("Computing min and max for sensor readings...")
+    sensor_value_min = [1024] * 8
+    sensor_value_max = [0] * 8
     one.move(5, -5)
     start_time = time.time()
     while time.time() < (start_time + 10):
-        print("Val: ")
+        readings = one.read_line_sensors()
+        print("Readings: ", readings)
         for i in range(8):
-            sensor_value = one.read_adc(i)
-            if sensor_value > sensor_value_max[i]:
-                sensor_value_max[i] = sensor_value
-            if sensor_value < sensor_value_min[i]:
-                sensor_value_min[i] = sensor_value
-            print(sensor_value)
-        print("Max: ")
-        for i in range(8):
-            print(sensor_value_max[i])
-
-        print("Min: ")
-        THRESHOLD = 0
-        for i in range(8):
-            print(sensor_value_min[i])
-            if sensor_value_min[i] > THRESHOLD:
-                THRESHOLD = sensor_value_min[i]
+            if readings[i]  > sensor_value_max[i]:
+                sensor_value_max[i] = readings[i]
+            if readings[i]  < sensor_value_min[i]:
+                sensor_value_min[i] = readings[i]
+        print("Max: ", sensor_value_max)
+        print("Min: ", sensor_value_min)
         time.sleep(0.050)
-
-    print("THRESHOLD:", THRESHOLD)
     one.stop()
+    print ("Done")
 
-    # Write values on file
-    cfg.sensor_min = sensor_value_min
-    cfg.sensor_max = sensor_value_max
-    cfg.threshold = THRESHOLD
-    # cfg.correction_factor = 6
-    cfg.save()
+    line_detector._config = Config()
+    line_detector._config.load() # loads default values
+    line_detector._config.sensor_max = sensor_value_max
+    line_detector._config.sensor_min = sensor_value_min
+    line_detector._cfg_loaded = True
+    line_detector._scaling_factor = line_detector._calculate_factors(line_detector._ref_max,
+                                                                     line_detector._config.sensor_min,
+                                                                     line_detector._config.sensor_max)
 
-    print("Calibrate Done! Press a button...")
+def prepare_calibration():
+    """
+    Initial instructions so that the user places the robot safely
+    on a flat surface ready to rotate on spot
+    """
+    print("Place robot on the floor ready to rotate on the spot")
+    print("Press a button when ready")
+    one.lcd1(" Press a button ")
+    one.lcd2("  to calibrate  ")
+    wait_button_press()
+    one.lcd1(" Release button ")
+    one.lcd2("   to start     ")
+    print("Release the button to start calibration")
+    time.sleep(1)
+    wait_button_release()
+    print("Calibration Started!")
+    one.lcd1("  Calibration   ")
+    one.lcd2("   started!     ")
+
+def update_lcd_info(info, value_1, value_2, value_3, value_4):
+    """
+    Updates lcd info and waits for user to press and release a button
+    """
+    one.lcd1(info)
+    one.lcd2(value_1, value_2, value_3, value_4)
+    print("Press and release button to continue")
+    wait_button_press()
+    wait_button_release()
+
+
+def display_calibration(sensor_value_min, sensor_value_max):
+    """
+    Displays calibration data on the lcd
+    """
+    print("Calibration Done! Press and release a button...")
     one.lcd1(" Calibration done ")
-    one.lcd2(" Press a buttonon ")
-    while(one.read_button() != 3):
-        one.lcd1("Max1  2   3   4 ")
-        one.lcd2(sensor_value_max[0], sensor_value_max[1], sensor_value_max[2], sensor_value_max[3])
-        wait_button_release()
-        wait_button_press()
-        one.lcd1("Max5  6   7   8 ")
-        one.lcd2(sensor_value_max[4], sensor_value_max[5], sensor_value_max[6], sensor_value_max[7])
-        wait_button_release()
-        wait_button_press()
-        one.lcd1("Min1  2   3   4 ")
-        one.lcd2(sensor_value_min[0], sensor_value_min[1], sensor_value_min[2], sensor_value_min[3])
-        wait_button_release()
-        wait_button_press()
-        one.lcd1("Min5  6   7   8 ")
-        one.lcd2(sensor_value_min[4],sensor_value_min[5],sensor_value_min[6],sensor_value_min[7])
-        wait_button_release()
-        wait_button_press()
-        one.lcd1("  Test THRESHOLD   ")
-        one.lcd2(" on white color ")
-        wait_button_press()
-        wait_button_release()
-        wait_button_press()
-        while one.read_button() == 0:
-            for i in range(8):
-                sensor_value[i] = one.read_adc(i)
-            one.lcd1(sensor_value[0] - sensor_value_min[0], sensor_value[1] - sensor_value_min[1], sensor_value[2] - sensor_value_min[2], sensor_value[3] - sensor_value_min[3])
-            one.lcd2(sensor_value[4] - sensor_value_min[4], sensor_value[5] - sensor_value_min[5], sensor_value[6] - sensor_value_min[6], sensor_value[7] - sensor_value_min[7])
+    one.lcd2(" Press a button ")
+    wait_button_press()
+    wait_button_release()
+
+    update_lcd_info("Max1  2   3   4 ",
+                    sensor_value_max[0], sensor_value_max[1],
+                    sensor_value_max[2], sensor_value_max[3])
+
+    update_lcd_info("Max5  6   7   8 ",
+                    sensor_value_max[4], sensor_value_max[5],
+                    sensor_value_max[6], sensor_value_max[7])
+
+    update_lcd_info("Min1  2   3   4 ",
+                    sensor_value_min[0], sensor_value_min[1],
+                    sensor_value_min[2], sensor_value_min[3])
+
+    update_lcd_info("Min5  6   7   8 ",
+                    sensor_value_min[4], sensor_value_min[5],
+                    sensor_value_min[6], sensor_value_min[7])
+
+
+def take_note_of_threshold():
+    """
+    During this stage user should test the robot on white surface and make note of the highest reading.
+    That value will be necessary to adjust the threshold if necessary in the next stage
+    """
+    global line_detector
+    one.lcd1(" Test THRESHOLD ")
+    one.lcd2(" on white color ")
+    print("Test threshold on white color. Make note of the highest value.")
+    print("Press and release a button to continue")
+    wait_button_press()
+    wait_button_release()
+    print("When ready, please press a button to go to next stage.")
+    while one.read_button() == 0:
+        readings = one.read_line_sensors()
+        normalised = line_detector._normalise_readings(readings)
+        one.lcd1(normalised[0],
+                 normalised[1],
+                 normalised[2],
+                 normalised[3])
+        one.lcd2(normalised[4],
+                 normalised[5],
+                 normalised[6],
+                 normalised[7])
+        time.sleep(0.100)
+
+def adjust_threshold():
+    """
+    This step is optional. The threshold is calculated automatically
+    but if you want to make your own adjustment this allows you to do it.
+    """
+    global line_detector
+    print("Use PB1 and PB2 to increase or decrease the threshold.")
+    print("Use PB3 when ready to save result.")
+    threshold = line_detector._config.threshold
+    one.lcd1("  PB1++  PB2-- ")
+    one.lcd2("   threshold:", threshold)
+    wait_button_release()
+    button = 0
+    while button != 3:
+        button = one.read_button()
+        if button == 1:
+            threshold += 10
+            one.lcd2("   threshold:", threshold)
             time.sleep(0.100)
-        one.lcd1("  PB1++  PB2-- ")
-        one.lcd2("   THRESHOLD:", THRESHOLD)
-        wait_button_release()
-        button = 0
-        while button != 3:
-            button = one.read_button()
-            if button == 1:
-                THRESHOLD += 10
-                one.lcd2("   THRESHOLD:", THRESHOLD)
-                time.sleep(0.100)
-            if button == 2:
-                THRESHOLD -= 10
-                one.lcd2("   THRESHOLD:", THRESHOLD)
-                time.sleep(0.100)
-        EEPROM.write(eepromADD, highByte(THRESHOLD))
-        eepromADD += 1
-        EEPROM.write(eepromADD, lowByte(THRESHOLD))
-        eepromADD -= 1
-        one.lcd1("PB1=AdjustTHRESHOLD")
-        one.lcd2("PB3=end")
-        wait_button_release()
-        wait_button_press()
-    one.lcd1("Calibration Done!")
+        if button == 2:
+            threshold -= 10
+            one.lcd2("   threshold:", threshold)
+            time.sleep(0.100)
+
+    line_detector._config.threshold = threshold
+    print("If you wish to start over the threshold calibration press PB1 on the robot.")
+    print("If you wish to go to next stage press PB3.")
+    one.lcd1("PB1=AdjustThreshold")
+    one.lcd2("PB3=end")
+    wait_button_release()
+    wait_button_press()
+
+def calibration_done()
+    one.lcd1("Calibration Done")
+    one.lcd1("                ")
     time.sleep(2)
 
+def calibrate_line(full_calibration = False):
+    global line_detector
+    prepare_calibration()
+    calibrate_min_max()
+    display_calibration(line_detector._config.sensor_min, line_detector._config.sensor_max)
 
-def setup_line():
-    global THRESHOLD
+    if (full_calibration):
+        # full calibration: threshold and correction factor
+        while one.read_button() != 3:
+            take_note_of_threshold()
+            adjust_threshold()
+
+        # ToDo: implement calibration of correction factor
+
+    save_config()
+    calibration_done()
+
+
+def view_calibration():
+    cfg = Config()
     cfg.load()
     cfg.print()
 
-    THRESHOLD = cfg.threshold
-    print("THRESHOLD: ", THRESHOLD)
+def full_calibration():
+    one.lcd1("PB1: Simple")
+    one.lcd2("PB2: Full")
+    wait_button_release()
+    wait_button_press()
+    if one.read_button() == 2:
+        one.lcd1("                ")
+        time.sleep(1)
+        return True
+    one.lcd2("                ")
+    time.sleep(1)
+    return False
 
-    for i in range(8):
-        # Calculate factor for each sensor
-        sensor_factor[i] = VMAX / (sensor_value_max[i] - sensor_value_min[i])
 
 def setup():
-    one.stop()                  # stop motors
-    one.min_battery(10.5)       # safety voltage for discharging the battery
+    one.stop()                          # stop motors
+    one.min_battery(10.5)               # safety voltage for discharging the battery
     time.sleep(1)
-    calibrate_line()            # calibrate line sensor
-    setup_line()                # read line calibration values from file
+    full_calibration = full_calibration()
+    calibrate_line(full_calibration)    # calibrate line sensor
+    view_calibration()                  # read calibration values from file
 
 
 def loop():
