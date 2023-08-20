@@ -45,7 +45,30 @@ def wait_button_release():
     while one.read_button() != 0:
         time.sleep(0.050)
 
+def prepare_calibration():
+    """
+    Initial instructions so that the user places the robot safely
+    on a flat surface ready to rotate on spot
+    """
+    print("Place robot on the floor ready to rotate on the spot")
+    print("Press a button when ready")
+    one.lcd1(" Press a button ")
+    one.lcd2("  to calibrate  ")
+    wait_button_press()
+    one.lcd1(" Release button ")
+    one.lcd2("   to start     ")
+    print("Release the button to start calibration")
+    time.sleep(1)
+    wait_button_release()
+    print("Calibration Started!")
+    one.lcd1("  Calibration   ")
+    one.lcd2("   started!     ")
+
+
 def save_config():
+    """
+    Saves configuration to default file
+    """
     cfg = Config()
     cfg.sensor_min = line_detector._config.sensor_min
     cfg.sensor_max = line_detector._config.sensor_max
@@ -53,7 +76,11 @@ def save_config():
     cfg.correction_factor = line_detector._config.correction_factor
     cfg.save()
 
+
 def calibrate_min_max():
+    """
+    Finds the min and max value for each sensor
+    """
     global line_detector
     print("Computing min and max for sensor readings...")
     sensor_value_min = [1024] * 8
@@ -83,24 +110,6 @@ def calibrate_min_max():
                                                                      line_detector._config.sensor_min,
                                                                      line_detector._config.sensor_max)
 
-def prepare_calibration():
-    """
-    Initial instructions so that the user places the robot safely
-    on a flat surface ready to rotate on spot
-    """
-    print("Place robot on the floor ready to rotate on the spot")
-    print("Press a button when ready")
-    one.lcd1(" Press a button ")
-    one.lcd2("  to calibrate  ")
-    wait_button_press()
-    one.lcd1(" Release button ")
-    one.lcd2("   to start     ")
-    print("Release the button to start calibration")
-    time.sleep(1)
-    wait_button_release()
-    print("Calibration Started!")
-    one.lcd1("  Calibration   ")
-    one.lcd2("   started!     ")
 
 def update_lcd_info(info, value_1, value_2, value_3, value_4):
     """
@@ -198,10 +207,76 @@ def adjust_threshold():
     wait_button_release()
     wait_button_press()
 
-def calibration_done()
+def left_side_correction_factor():
+    one.move(-5, 5)
+    while line_value > -100:
+        readings = one.read_line_sensors()
+        line_value = line_detector.compute_line(readings)
+        print("Line:", line_value)
+    for i in range(100):
+        if line_value > -100:
+            line_detector._config.correction_factor += 1
+            one.stop()
+            return False
+        else:
+            time.sleep(0.2)
+    return True
+
+def right_side_correction_factor():
+    one.move(5, -5)
+    while line_value < 100:
+        readings = one.read_line_sensors()
+        line_value = line_detector.compute_line(readings)
+        print("Line:", line_value)
+    for i in range(100):
+        if line_value < 100:
+            line_detector._config.correction_factor += 1
+            one.stop()
+            return False
+        else:
+            time.sleep(0.2)
+    return True
+
+def calibrate_correction_factor():
+    """
+    The user performs manual calibration of the correction factor
+    The correction factor is the percentage by which we extend the range of the readings
+    followed by cropping them out.
+    This operation decreases the sensitivity region of the sensor but it gets rid of
+    undesirable drops in readings near the extremeties.
+    User should find the right correction factor to use in order to:
+     - get rid of dropping values near the extremities
+     - not to narrow the sensitivity too much
+    The user should test each value by placing the robot on top of a black line
+    and manually drag the robot left and right to test both extremities.
+    Tipical values for the correction factor are between 0 and 10.
+    Start from zero and gradually increase it until you find the ideal conditions.
+    The values at extremities should always remain at maximum values (-100 and 100)
+    Once you get that you should stop increasing the correction factor.
+    """
+    print("Place robot centred on a black line")
+    one.lcd1("  Centre robot  ")
+    one.lcd2("Any key to start")
+    wait_button_press()
+    wait_button_release()
+    one.move(5, -5)
+    line_value = 0
+    line_detector._config.correction_factor = 0
+    right_side_ok = False
+    left_side_ok = False
+    while not left_side_ok or not right_side_ok:
+        left_side_ok = left_side_correction_factor()
+        right_side_ok = right_side_correction_factor()
+    print ("Calibration of correction factor done.")
+    one.lcd1("   Factor OK    ")
+    one.lcd2("                ")
+    time.sleep(1)
+
+def calibration_done():
     one.lcd1("Calibration Done")
     one.lcd1("                ")
     time.sleep(2)
+
 
 def calibrate_line(full_calibration = False):
     """
@@ -223,6 +298,7 @@ def calibrate_line(full_calibration = False):
             adjust_threshold()
 
         # ToDo: implement calibration of correction factor
+        calibrate_correction_factor()
 
     save_config()
     calibration_done()
