@@ -204,6 +204,13 @@ def calibration_done()
     time.sleep(2)
 
 def calibrate_line(full_calibration = False):
+    """
+    Performs the calibration in 1 (simple) or 3 (full) main steps:
+    1. calibrate_min_max to find the minimum and maximum values for each sensor
+    2. adjust_threshold to manually set the value of the threshold to distinguish black and white
+    3. adjust_correction_factor to manually set the value of the correction factor to eliminate
+     problematic readings at extremities of the line sensor
+    """
     global line_detector
     prepare_calibration()
     calibrate_min_max()
@@ -222,11 +229,18 @@ def calibrate_line(full_calibration = False):
 
 
 def view_calibration():
+    """
+    Reads and prints saved config values on the terminal
+    """
     cfg = Config()
     cfg.load()
     cfg.print()
 
+
 def full_calibration():
+    """
+    Asks user to choose between simple or full calibration
+    """
     one.lcd1("PB1: Simple")
     one.lcd2("PB2: Full")
     wait_button_release()
