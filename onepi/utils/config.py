@@ -54,8 +54,8 @@ class Config:
             "correction_factor": self.correction_factor,
         }
 
-        with open(self.cfg_file, "w") as f:
-            json.dump(data, f, indent=4)  # Optional: indent for pretty formatting
+        with open(self.cfg_file, "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4)
 
 
 def main():
