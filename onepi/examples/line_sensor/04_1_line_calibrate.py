@@ -175,6 +175,7 @@ def take_note_of_threshold():
                  normalised[7])
         time.sleep(0.100)
 
+
 def adjust_threshold():
     """
     This step is optional. The threshold is calculated automatically
@@ -207,6 +208,7 @@ def adjust_threshold():
     wait_button_release()
     wait_button_press()
 
+
 def left_side_correction_factor():
     one.move(-5, 5)
     while line_value > -100:
@@ -221,6 +223,7 @@ def left_side_correction_factor():
         else:
             time.sleep(0.2)
     return True
+
 
 def right_side_correction_factor():
     one.move(5, -5)
@@ -237,20 +240,22 @@ def right_side_correction_factor():
             time.sleep(0.2)
     return True
 
+
 def calibrate_correction_factor():
     """
-    The user performs manual calibration of the correction factor
-    The correction factor is the percentage by which we extend the range of the readings
-    followed by cropping them out.
-    This operation decreases the sensitivity region of the sensor but it gets rid of
-    undesirable drops in readings near the extremeties.
+    Automatic calibration of the correction factor.
+    The correction factor is the percentage by which we extend the
+    range of the readings followed by cropping them out.
+    This operation decreases the sensitivity region of the sensor
+    but it gets rid of undesirable drops in readings near the extremeties.
     User should find the right correction factor to use in order to:
      - get rid of dropping values near the extremities
      - not to narrow the sensitivity too much
     The user should test each value by placing the robot on top of a black line
     and manually drag the robot left and right to test both extremities.
     Tipical values for the correction factor are between 0 and 10.
-    Start from zero and gradually increase it until you find the ideal conditions.
+    Start from zero and gradually increase it until you find the ideal
+    conditions.
     The values at extremities should always remain at maximum values (-100 and 100)
     Once you get that you should stop increasing the correction factor.
     """
@@ -260,17 +265,17 @@ def calibrate_correction_factor():
     wait_button_press()
     wait_button_release()
     one.move(5, -5)
-    line_value = 0
     line_detector._config.correction_factor = 0
     right_side_ok = False
     left_side_ok = False
     while not left_side_ok or not right_side_ok:
         left_side_ok = left_side_correction_factor()
         right_side_ok = right_side_correction_factor()
-    print ("Calibration of correction factor done.")
+    print("Calibration of correction factor done.")
     one.lcd1("   Factor OK    ")
     one.lcd2("                ")
     time.sleep(1)
+
 
 def calibration_done():
     one.lcd1("Calibration Done")
@@ -331,12 +336,12 @@ def full_calibration():
 
 
 def setup():
-    one.stop()                          # stop motors
-    one.min_battery(10.5)               # safety voltage for discharging the battery
+    one.stop()                              # stop motors
+    one.min_battery(10.5)                   # safety voltage for discharging the battery
     time.sleep(1)
-    full_calibration = full_calibration()
-    calibrate_line(full_calibration)    # calibrate line sensor
-    view_calibration()                  # read calibration values from file
+    do_full_calibration = full_calibration()
+    calibrate_line(do_full_calibration)     # calibrate line sensor
+    view_calibration()                      # read calibration values from file
 
 
 def loop():
