@@ -25,6 +25,11 @@ gain = 1.10  # Linear gain
 speed_boost = 8    # Curve outside wheel max speed limit
 filename = "config_line_follow.json"
 
+
+class LineConfig:
+
+
+
 def set_max_speed():
     temp_vel = max_linear_speed
     while button != 3:
@@ -73,8 +78,6 @@ def set_linear_gain():
 
 
 def menu():
-    button = 0
-    temp = 0.0
     one.stop()
     one.lcd1("  Menu Config:")
     one.lcd2("PB1+ PB2- PB3ok")
@@ -97,24 +100,29 @@ def load_config():
     Read config values from file.
     max_linear_speed, speed_boost and gain
     """
-    with open(filename) as f:
-        data = json.load(f)
+    try:
+        with open(filename, 'r') as file:
+            data = json.load(file)
+            # Access values from JSON file
+            max_linear_speed = data["max_linear_speed"]
+            speed_boost = data["speed_boost"]
+            gain = data["gain"]
 
-    # Access values from JSON file
-    max_linear_speed = data["max_linear_speed"]
-    speed_boost = data["speed_boost"]
-    gain = data["gain"]
+
+    except FileNotFoundError:
+        # Handle the case when the file doesn't exist
+        print(f"The file '{filename}' doesn't exist. Using default values.")
 
 
-def save_config():
+def save_config(line_config):
     """
     Save config values to file.
     max_linear_speed, speed_boost and gain
     """
     data = {
-        "max_linear_speed": max_linear_speed,
-        "speed_boost": speed_boost,
-        "gain": gain,
+        "max_linear_speed": line_config.max_linear_speed,
+        "speed_boost": line_config.speed_boost,
+        "gain": line_config.gain,
     }
 
     with open(filename, "w", encoding="utf-8") as file:
