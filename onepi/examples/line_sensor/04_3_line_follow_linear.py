@@ -26,58 +26,60 @@ speed_boost = 8    # Curve outside wheel max speed limit
 filename = "config_line_follow.json"
 
 
-class LineConfig:
-
-
-
-def set_max_speed():
-    temp_vel = max_linear_speed
+def set_max_speed(new_max_linear_speed):
+    button = 0
     while button != 3:
-        one.lcd2("   VelMax:", temp_vel)
+        one.lcd2("   VelMax:", new_max_linear_speed)
         button = one.read_button()
         if button == 1:
-            temp_vel += 1
+            new_max_linear_speed += 1
             time.sleep(0.150)
         if button == 2:
-            temp_vel -= 1
+            new_max_linear_speed -= 1
             time.sleep(0.150)
     while button == 3:  # Wait PB3 to be released
         button = one.read_button()
-    max_linear_speed = temp_vel
+    return new_max_linear_speed
 
-def set_speed_boost():
-    temp_boost = speed_boost
+
+def set_speed_boost(new_speed_boost):
+    button = 0
     while button != 3:
-        one.lcd2("  Curve Boost:", temp_boost)
+        one.lcd2("  Curve Boost:", new_speed_boost)
         button = one.read_button()
         if button == 1:
-            temp_boost += 1
+            new_speed_boost += 1
             time.sleep(0.150)
         if button == 2:
-            temp_boost -= 1
+            new_speed_boost -= 1
             time.sleep(0.150)
     while button == 3:  # Wait PB3 to be released
         button = one.read_button()
-    speed_boost = temp_boost
+    return new_speed_boost
 
 
-def set_linear_gain():
-    temp_gain = int(gain * 1000.0)
+def set_linear_gain(new_gain):
+    new_gain = int(new_gain * 1000.0)
+    button = 0
     while button != 3:
-        one.lcd2(" Line Gain:", temp_gain)
+        one.lcd2(" Line Gain:", new_gain)
         button = one.read_button()
         if button == 1:
-            temp_gain += 10
+            new_gain += 10
             time.sleep(0.150)
         if button == 2:
-            temp_gain -= 10
+            new_gain -= 10
             time.sleep(0.150)
     while button == 3:  # Wait PB3 to be released
         button = one.read_button()
-    gain = temp_gain / 1000.0
+    return new_gain / 1000.0
 
 
 def menu():
+    global max_linear_speed
+    global speed_boost
+    global gain
+
     one.stop()
     one.lcd1("  Menu Config:")
     one.lcd2("PB1+ PB2- PB3ok")
@@ -85,10 +87,10 @@ def menu():
     while one.read_button() == 3:  # Wait PB3 to be released
         time.sleep(0.150)
 
-    set_max_speed()     # Maximum speed
-    set_speed_boost()   # Outside wheel speed boost
-    set_linear_gain()   # Linear gain KLine
-    save_config()       # Save values to configuration file
+    max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
+    speed_boost = set_speed_boost(speed_boost)          # Outside wheel speed boost
+    gain = set_linear_gain(gain)                        # Linear gain KLine
+    save_config(max_linear_speed, speed_boost, gain)    # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")
@@ -100,6 +102,9 @@ def load_config():
     Read config values from file.
     max_linear_speed, speed_boost and gain
     """
+    global max_linear_speed
+    global speed_boost
+    global gain
     try:
         with open(filename, 'r') as file:
             data = json.load(file)
@@ -114,15 +119,15 @@ def load_config():
         print(f"The file '{filename}' doesn't exist. Using default values.")
 
 
-def save_config(line_config):
+def save_config(new_max_linear_speed, new_speed_boost, new_gain):
     """
     Save config values to file.
     max_linear_speed, speed_boost and gain
     """
     data = {
-        "max_linear_speed": line_config.max_linear_speed,
-        "speed_boost": line_config.speed_boost,
-        "gain": line_config.gain,
+        "max_linear_speed": new_max_linear_speed,
+        "speed_boost": new_speed_boost,
+        "gain": new_gain,
     }
 
     with open(filename, "w", encoding="utf-8") as file:
