@@ -9,9 +9,14 @@ Use example 04_1_line_calibration first!!!
 Line reading provides a linear value between -100 to 100
 Line follow:
 Motors speed varies according to a linear function.
-Linear Gain must be adjusted.
-You can adjust the speed limit of the wheel that is outside the curve.
 Press push button 3 (PB3) to enter control configuration menu.
+You can adjust the max speed, the speed boost and the gain.
+The speeds of each motor are calculated as follows:
+    vel_m1 = max_linear_speed + line * gain     # Linear function for Motor1
+    vel_m2 = max_linear_speed - line * gain     # Linear function for Motor2
+After this operation the values are capped using the speed_boost value
+    vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
+    vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
 """
 
 import json
@@ -21,8 +26,8 @@ from one import BnrOneA
 one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
 
 max_linear_speed = 60
-gain = 1.10  # Linear gain
-speed_boost = 8    # Curve outside wheel max speed limit
+gain = 1.10                     # Linear gain
+speed_boost = 8                 # Curve outside wheel max speed limit
 filename = "config_line_follow.json"
 
 
@@ -37,7 +42,7 @@ def set_max_speed(new_max_linear_speed):
         if button == 2:
             new_max_linear_speed -= 1
             time.sleep(0.150)
-    while button == 3:  # Wait PB3 to be released
+    while button == 3:          # Wait PB3 to be released
         button = one.read_button()
     return new_max_linear_speed
 
@@ -53,7 +58,7 @@ def set_speed_boost(new_speed_boost):
         if button == 2:
             new_speed_boost -= 1
             time.sleep(0.150)
-    while button == 3:  # Wait PB3 to be released
+    while button == 3:          # Wait PB3 to be released
         button = one.read_button()
     return new_speed_boost
 
@@ -70,7 +75,7 @@ def set_linear_gain(new_gain):
         if button == 2:
             new_gain -= 10
             time.sleep(0.150)
-    while button == 3:  # Wait PB3 to be released
+    while button == 3:          # Wait PB3 to be released
         button = one.read_button()
     return new_gain / 1000.0
 
@@ -162,6 +167,7 @@ def loop():
     line = one.read_line()
     vel_m1 = max_linear_speed + line * gain     # Linear function for Motor1
     vel_m2 = max_linear_speed - line * gain     # Linear function for Motor2
+
 
     # Limit motors maximum and minimum speed
     vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
