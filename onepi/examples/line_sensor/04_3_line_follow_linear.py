@@ -23,11 +23,11 @@ import json
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 max_linear_speed = 60
-gain = 1.10                     # Linear gain
-speed_boost = 8                 # Curve outside wheel max speed limit
+gain = 1.10  # Linear gain
+speed_boost = 8  # Curve outside wheel max speed limit
 filename = "config_line_follow.json"
 
 
@@ -42,7 +42,7 @@ def set_max_speed(new_max_linear_speed):
         if button == 2:
             new_max_linear_speed -= 1
             time.sleep(0.150)
-    while button == 3:          # Wait PB3 to be released
+    while button == 3:  # Wait PB3 to be released
         button = one.read_button()
     return new_max_linear_speed
 
@@ -58,7 +58,7 @@ def set_speed_boost(new_speed_boost):
         if button == 2:
             new_speed_boost -= 1
             time.sleep(0.150)
-    while button == 3:          # Wait PB3 to be released
+    while button == 3:  # Wait PB3 to be released
         button = one.read_button()
     return new_speed_boost
 
@@ -75,7 +75,7 @@ def set_linear_gain(new_gain):
         if button == 2:
             new_gain -= 10
             time.sleep(0.150)
-    while button == 3:          # Wait PB3 to be released
+    while button == 3:  # Wait PB3 to be released
         button = one.read_button()
     return new_gain / 1000.0
 
@@ -93,9 +93,11 @@ def menu():
         time.sleep(0.150)
 
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
-    speed_boost = set_speed_boost(speed_boost)          # Outside wheel speed boost
-    gain = set_linear_gain(gain)                        # Linear gain KLine
-    save_config(max_linear_speed, speed_boost, gain)    # Save values to configuration file
+    speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
+    gain = set_linear_gain(gain)  # Linear gain KLine
+    save_config(
+        max_linear_speed, speed_boost, gain
+    )  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")
@@ -111,13 +113,12 @@ def load_config():
     global speed_boost
     global gain
     try:
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             data = json.load(file)
             # Access values from JSON file
             max_linear_speed = data["max_linear_speed"]
             speed_boost = data["speed_boost"]
             gain = data["gain"]
-
 
     except FileNotFoundError:
         # Handle the case when the file doesn't exist
@@ -152,22 +153,21 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def setup():
-    one.min_battery(10.5)           # safety voltage for discharging the battery
-    one.stop()                      # stop motors
+    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.stop()  # stop motors
     load_config()
     one.lcd1("Line Follow Lin.")
     one.lcd2(" Press a button ")
-    while one.read_button() == 0:   # Wait a button to be pressed
+    while one.read_button() == 0:  # Wait a button to be pressed
         pass
-    while one.read_button() != 0:   # Wait for button release
+    while one.read_button() != 0:  # Wait for button release
         pass
 
 
 def loop():
     line = one.read_line()
-    vel_m1 = max_linear_speed + line * gain     # Linear function for Motor1
-    vel_m2 = max_linear_speed - line * gain     # Linear function for Motor2
-
+    vel_m1 = max_linear_speed + line * gain  # Linear function for Motor1
+    vel_m2 = max_linear_speed - line * gain  # Linear function for Motor2
 
     # Limit motors maximum and minimum speed
     vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)

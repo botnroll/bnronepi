@@ -17,19 +17,20 @@ import json
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 max_linear_speed = 60
-speed_boost = 3                 # Curve outside wheel max speed limit
+speed_boost = 3  # Curve outside wheel max speed limit
 kp = 1.3
 ki = 0.0013
-kd = 0.35       # PID control gains
+kd = 0.35  # PID control gains
 filename = "config_line_follow_pid.json"
 
-integral_error = 0.0                # Integral error
-differential_error = 0.0            # Differential error
-previous_proportional_error = 0     # Previous proportional eror
+integral_error = 0.0  # Integral error
+differential_error = 0.0  # Differential error
+previous_proportional_error = 0  # Previous proportional eror
 MAX_SPEED = 100.0
+
 
 def set_max_speed(new_max_linear_speed):
     button = 0
@@ -42,7 +43,7 @@ def set_max_speed(new_max_linear_speed):
         if button == 2:
             new_max_linear_speed -= 1
             time.sleep(0.150)
-    while button == 3:          # Wait PB3 to be released
+    while button == 3:  # Wait PB3 to be released
         button = one.read_button()
     return new_max_linear_speed
 
@@ -58,9 +59,10 @@ def set_speed_boost(new_speed_boost):
         if button == 2:
             new_speed_boost -= 1
             time.sleep(0.150)
-    while button == 3:          # Wait PB3 to be released
+    while button == 3:  # Wait PB3 to be released
         button = one.read_button()
     return new_speed_boost
+
 
 def set_gain(new_gain, multiplier, increment, text):
     new_gain = int(new_gain * multiplier)
@@ -74,7 +76,7 @@ def set_gain(new_gain, multiplier, increment, text):
         if button == 2:
             new_gain -= increment
             time.sleep(0.150)
-    while button == 3:          # Wait PB3 to be released
+    while button == 3:  # Wait PB3 to be released
         button = one.read_button()
     return new_gain / multiplier
 
@@ -106,11 +108,13 @@ def menu():
         time.sleep(0.150)
 
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
-    speed_boost = set_speed_boost(speed_boost)          # Outside wheel speed boost
-    kp = set_kp_gain(kp)                                # Linear gain KLine
+    speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
+    kp = set_kp_gain(kp)  # Linear gain KLine
     ki = set_ki_gain(ki)
     kd = set_kd_gain(kd)
-    save_config(max_linear_speed, speed_boost, kp, ki, kd)    # Save values to configuration file
+    save_config(
+        max_linear_speed, speed_boost, kp, ki, kd
+    )  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")
@@ -129,7 +133,7 @@ def load_config():
     global kd
 
     try:
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             data = json.load(file)
             # Access values from JSON file
             max_linear_speed = data["max_linear_speed"]
@@ -173,14 +177,14 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def setup():
-    one.min_battery(10.5)           # safety voltage for discharging the battery
-    one.stop()                      # stop motors
+    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.stop()  # stop motors
     load_config()
     one.lcd1("Line Follow PID.")
     one.lcd2(" Press a button ")
-    while one.read_button() == 0:   # Wait a button to be pressed
+    while one.read_button() == 0:  # Wait a button to be pressed
         pass
-    while one.read_button() != 0:   # Wait for button release
+    while one.read_button() != 0:  # Wait for button release
         pass
 
 
@@ -189,25 +193,31 @@ def loop():
     global differential_error
     global previous_proportional_error
 
-    line = one.read_line()   # Read the line sensor value [-100, 100]
-    line_ref = 0             # Reference line value
-    proportional_error = 0   # Proportional error
-    output = 0.0	         # PID control output
+    line = one.read_line()  # Read the line sensor value [-100, 100]
+    line_ref = 0  # Reference line value
+    proportional_error = 0  # Proportional error
+    output = 0.0  # PID control output
 
-    proportional_error = line_ref - line   # Proportional error
-    differential_error = proportional_error - previous_proportional_error  # Differential error
-    output = (kp * proportional_error) + (ki * integral_error) + (kd * differential_error)
+    proportional_error = line_ref - line  # Proportional error
+    differential_error = (
+        proportional_error - previous_proportional_error
+    )  # Differential error
+    output = (
+        (kp * proportional_error) + (ki * integral_error) + (kd * differential_error)
+    )
 
     # Clean integral error if line value is zero or if line signal has changed
     if (proportional_error * previous_proportional_error) <= 0:
         integral_error = 0.0
     output = cap_value(output, -MAX_SPEED, MAX_SPEED)
     if output > MAX_SPEED:
-        output = MAX_SPEED     # Limit the output value
+        output = MAX_SPEED  # Limit the output value
     elif output < -MAX_SPEED:
         output = -MAX_SPEED
     else:
-        integral_error += proportional_error  # Increment integral error if output is within limits
+        integral_error += (
+            proportional_error  # Increment integral error if output is within limits
+        )
 
     previous_proportional_error = proportional_error
 

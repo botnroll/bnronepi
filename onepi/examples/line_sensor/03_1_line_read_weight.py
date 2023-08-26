@@ -15,12 +15,13 @@ The 15 possible results for the line position are:
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-M1 = 1        # Motor1
-M2 = 2        # Motor2
+M1 = 1  # Motor1
+M2 = 2  # Motor2
 
 THRESHOLD = 300  # THRESHOLD value to distinguish between black and white
+
 
 def read_line():
     line_value = 0
@@ -57,17 +58,19 @@ def read_line():
 
 
 def setup():
-    one.stop()                  # stop motors
-    one.min_battery(10.5)       # Battery protection (lower voltage)
+    one.stop()  # stop motors
+    one.min_battery(10.5)  # Battery protection (lower voltage)
     one.lcd1(" Bot'n Roll ONE")
     one.lcd2("  Line Reading")
     time.sleep(1)
 
+
 def loop():
-    line = read_line()          # Read line
-    print("Line:", line)        # Print on Serial Monitor
-    one.lcd2("  Line:", line)   # Print on LCD
-    time.sleep(0.05)            # Remove delay to follow the line
+    line = read_line()  # Read line
+    print("Line:", line)  # Print on Serial Monitor
+    one.lcd2("  Line:", line)  # Print on LCD
+    time.sleep(0.05)  # Remove delay to follow the line
+
 
 def main():
     setup()

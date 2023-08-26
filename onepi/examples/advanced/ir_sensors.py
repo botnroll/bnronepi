@@ -1,20 +1,20 @@
 """
- This code example is in the public domain. 
+ This code example is in the public domain.
  http://www.botnroll.com
 
- Description: 
- An external IR 40khz source can be detected by the IR sensors. 
+ Description:
+ An external IR 40khz source can be detected by the IR sensors.
  Another Bot´n Roll ONE A emitting IR will be detected.
  This function can be used to remote control the robot with IR.
  This function is used in the race challenge to detect the start of the race!
- 
+
  IR sensors
 """
 
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 
 def setup():

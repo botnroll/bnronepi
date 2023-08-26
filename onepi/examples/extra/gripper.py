@@ -12,7 +12,7 @@ Gripper2 values vary between  18 - 120 (closed - open)
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)           # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 import RPi.GPIO as GPIO
 import time
@@ -32,25 +32,29 @@ pos_servo_1 = 140
 pos_servo_2 = 120
 servo = 1
 
+
 def setup():
-    one.stop()                      #  stop motors
+    one.stop()  #  stop motors
     one.lcd1("Bot'n Roll ONE A")
     one.lcd2("www.botnroll.com")
     time.sleep(1)
 
-    gripper1.start(0)               # Initialization
+    gripper1.start(0)  # Initialization
     gripper2.start(0)
 
+
 def set_angle(servo, angle):
-    duty_cycle = 2 + (angle / 18)   # Map angle to duty cycle
+    duty_cycle = 2 + (angle / 18)  # Map angle to duty cycle
     servo.ChangeDutyCycle(duty_cycle)
 
 
 def gripper_open():
     set_angle(gripper2, 120)
 
+
 def gripper_close():
     set_angle(gripper2, 18)
+
 
 def loop():
     button = one.read_button()
@@ -96,6 +100,7 @@ def main():
         gripper1.stop()
         gripper2.stop()
         GPIO.cleanup()
+
 
 if __name__ == "__main__":
     main()

@@ -1,8 +1,8 @@
 """
- This code example is in the public domain. 
+ This code example is in the public domain.
  http://www.botnroll.com
 
- Description: 
+ Description:
  Performs compass calibration according to manufacturer's instructions.
  Connect the compas to a slot i2c. Make sure the compass is tighly attached to the robot.
  Place the robot on a flat surface free of obstacles so that it can rotate on spot without collisions.
@@ -17,7 +17,7 @@ from smbus import (
 
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 # constants definition
 min_speed = 20  # if motors have been calibrated change this to 1
@@ -52,17 +52,25 @@ def setup():
 
 
 def calibrateCMPS11():
-    one.move(-min_speed, min_speed)  # Slowly rotate the compass on the horizontal plane in all directions
+    one.move(
+        -min_speed, min_speed
+    )  # Slowly rotate the compass on the horizontal plane in all directions
     i2cbus = SMBus(1)  # Create a new I2C bus
-    i2cbus.write_byte(compass_address, 0)  # Send the register we wish to start reading from
+    i2cbus.write_byte(
+        compass_address, 0
+    )  # Send the register we wish to start reading from
     i2cbus.write_byte(compass_address, 0xF0)  # Calibration sequence byte 1
     time.sleep(0.03)
 
-    i2cbus.write_byte(compass_address, 0)  # Send the register we wish to start reading from
+    i2cbus.write_byte(
+        compass_address, 0
+    )  # Send the register we wish to start reading from
     i2cbus.write_byte(compass_address, 0xF5)  # Calibration sequence byte 2
     time.sleep(0.03)
 
-    i2cbus.write_byte(compass_address, 0)  # Send the register we wish to start reading from
+    i2cbus.write_byte(
+        compass_address, 0
+    )  # Send the register we wish to start reading from
     i2cbus.write_byte(compass_address, 0xF7)  # Calibration sequence byte 3
     time.sleep(0.03)
 
@@ -70,7 +78,9 @@ def calibrateCMPS11():
     # Slowly rotate the compass on the horizontal plane in all directions
     time.sleep(15)
 
-    i2cbus.write_byte(compass_address, 0)  # Send the register we wish to start reading from
+    i2cbus.write_byte(
+        compass_address, 0
+    )  # Send the register we wish to start reading from
     i2cbus.write_byte(compass_address, 0xF8)  # Exit calibration mode
     time.sleep(0.03)
 

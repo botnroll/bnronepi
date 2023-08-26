@@ -19,11 +19,12 @@ two sensors. Maximum and highest neighbour.
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+
 
 def setup():
-    one.stop()              # stop motors
-    one.min_battery(10.5)   # safety voltage for discharging the battery
+    one.stop()  # stop motors
+    one.min_battery(10.5)  # safety voltage for discharging the battery
 
 
 def loop():

@@ -1,5 +1,5 @@
 """
-This code example is in the public domain. 
+This code example is in the public domain.
  http://www.botnroll.com
 
 Description:
@@ -14,7 +14,7 @@ Note: Valid for TSSP4056 sensors shipped with robots from 2023.
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)             # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)             # object variable to control the Bot'n Roll ONE A
 
 left_motor = 0
 right_motor = 0
@@ -32,7 +32,7 @@ def setup():
 
 
 def loop():
-    left_range = one.read_left_range()      # read left obstacle sensor range 
+    left_range = one.read_left_range()      # read left obstacle sensor range
     right_range = one.read_right_range()    # read right obstacle sensor range
     one.lcd1("Range Left : ",left_range)
     one.lcd2("Range Right: ",right_range)
@@ -40,15 +40,15 @@ def loop():
     if(left_range>right_range):
         right_motor=(vel-(left_range*kL))
         left_motor=vel
-    
+
     elif(left_range < right_range):
         right_motor=vel
-        left_motor=(vel-(right_range * kL))      
-    
+        left_motor=(vel-(right_range * kL))
+
     elif(left_range==right_range):
         right_motor=vel
         left_motor=vel
-    
+
     one.move(left_motor, right_motor)
     time.sleep(0.025) # The robot has new readings every 25ms (40 readings per second)
 

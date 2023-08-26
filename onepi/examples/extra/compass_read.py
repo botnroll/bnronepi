@@ -1,5 +1,5 @@
 """
- This code example is in the public domain. 
+ This code example is in the public domain.
  http://www.botnroll.com
 """
 
@@ -11,9 +11,9 @@ from smbus import (
 
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-COMPASS_ADDRESS = 0x60   # CMPS11 I2C address
+COMPASS_ADDRESS = 0x60  # CMPS11 I2C address
 
 
 def read_bearing():
@@ -38,8 +38,9 @@ def read_roll():
 
 
 def setup():
-    one.stop()      # stop motors
+    one.stop()  # stop motors
     time.sleep(0.5)
+
 
 def loop():
     bearing = read_bearing()

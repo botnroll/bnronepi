@@ -1,5 +1,5 @@
 """
-This code example is in the public domain. 
+This code example is in the public domain.
  http://www.botnroll.com
 
 Description:
@@ -9,23 +9,23 @@ Range varies from 0 to 25:
  -> 25 means obstacle is very close to the sensor
 The robot has new readings every 25ms (40 readings per second)
 Note: Valid for TSSP4056 IR sensors shipped with robots from 2023.
-""" 
+"""
 
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 
 def setup():
     on = 1
-    one.stop()                              # stop motors
-    one.obstacle_emitters(on)               # activate IR emitters
+    one.stop()  # stop motors
+    one.obstacle_emitters(on)  # activate IR emitters
 
 
 def loop():
-    left_range = one.read_left_range()      # read left obstacle sensor range 
-    right_range = one.read_right_range()    # read right obstacle sensor range
+    left_range = one.read_left_range()  # read left obstacle sensor range
+    right_range = one.read_right_range()  # read right obstacle sensor range
     one.lcd1("Range Left : ", left_range)
     one.lcd2("Range Right: ", right_range)
     print("L: ", left_range, "   R: ", right_range)

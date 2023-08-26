@@ -1,17 +1,18 @@
 """
- This code example is in the public domain. 
+ This code example is in the public domain.
  http://www.botnroll.com
 
- Description:  
+ Description:
  This program detects automatic start and does the automatic end on the RoboParty Fun Challenge.
 
 """
+
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)           # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)           # object variable to control the Bot'n Roll ONE A
 
-counter = 0 
+counter = 0
 challenge_time = 90   # challenge time
 
 def setup():
@@ -24,9 +25,9 @@ def setup():
     one.obstacleEmitters(off)       # deactivate obstacles IR emitters
     time.sleep(4)                   # time to stabilize IR sensors (DO NOT REMOVE!!!)
     start = 0
-    while(not start):        
+    while(not start):
         start = automatic_start()
-        
+
     # enable timer compare interrupt
     TIMSK1 |= (1 << OCIE1A)
     one.obstacleEmitters(on) # deactivate obstacles IR emitters
@@ -52,12 +53,12 @@ def initialize_timer():
 
 
 def ISR(TIMER1_COMPA_vect): # timer1 interrupt 1Hz
-  
+
     if (counter >= challenge_time):
         one.lcd2("END OF CHALLENGE")     # print on LCD line 2
         while(1)              # does not allow anything else to be done after the challenge ends
             one.brake(100, 100)  # Stop motors with torque
-            # place code here, to stop any additional actuators... 
+            # place code here, to stop any additional actuators...
     else:
         one.lcd2(counter)    # print the challenge time on LCD line 2
         counter += 1

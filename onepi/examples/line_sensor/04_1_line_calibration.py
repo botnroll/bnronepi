@@ -27,11 +27,11 @@ from one import BnrOneA
 from utils.config import Config
 from utils.line_detector import LineDetector
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 
-M1 = 1       # Motor1
-M2 = 2       # Motor2
+M1 = 1  # Motor1
+M2 = 2  # Motor2
 VMAX = 1000
 
 line_detector = LineDetector()
@@ -41,9 +41,11 @@ def wait_button_press():
     while one.read_button() == 0:
         time.sleep(0.050)
 
+
 def wait_button_release():
     while one.read_button() != 0:
         time.sleep(0.050)
+
 
 def prepare_calibration():
     """
@@ -91,24 +93,26 @@ def calibrate_min_max():
         readings = one.read_line_sensors()
         print("Readings: ", readings)
         for i in range(8):
-            if readings[i]  > sensor_value_max[i]:
+            if readings[i] > sensor_value_max[i]:
                 sensor_value_max[i] = readings[i]
-            if readings[i]  < sensor_value_min[i]:
+            if readings[i] < sensor_value_min[i]:
                 sensor_value_min[i] = readings[i]
         print("Max: ", sensor_value_max)
         print("Min: ", sensor_value_min)
         time.sleep(0.050)
     one.stop()
-    print ("Done")
+    print("Done")
 
     line_detector._config = Config()
-    line_detector._config.load() # loads default values
+    line_detector._config.load()  # loads default values
     line_detector._config.sensor_max = sensor_value_max
     line_detector._config.sensor_min = sensor_value_min
     line_detector._cfg_loaded = True
-    line_detector._scaling_factor = line_detector._calculate_factors(line_detector._ref_max,
-                                                                     line_detector._config.sensor_min,
-                                                                     line_detector._config.sensor_max)
+    line_detector._scaling_factor = line_detector._calculate_factors(
+        line_detector._ref_max,
+        line_detector._config.sensor_min,
+        line_detector._config.sensor_max,
+    )
 
 
 def update_lcd_info(info, value_1, value_2, value_3, value_4):
@@ -132,21 +136,37 @@ def display_calibration(sensor_value_min, sensor_value_max):
     wait_button_press()
     wait_button_release()
 
-    update_lcd_info("Max1  2   3   4 ",
-                    sensor_value_max[0], sensor_value_max[1],
-                    sensor_value_max[2], sensor_value_max[3])
+    update_lcd_info(
+        "Max1  2   3   4 ",
+        sensor_value_max[0],
+        sensor_value_max[1],
+        sensor_value_max[2],
+        sensor_value_max[3],
+    )
 
-    update_lcd_info("Max5  6   7   8 ",
-                    sensor_value_max[4], sensor_value_max[5],
-                    sensor_value_max[6], sensor_value_max[7])
+    update_lcd_info(
+        "Max5  6   7   8 ",
+        sensor_value_max[4],
+        sensor_value_max[5],
+        sensor_value_max[6],
+        sensor_value_max[7],
+    )
 
-    update_lcd_info("Min1  2   3   4 ",
-                    sensor_value_min[0], sensor_value_min[1],
-                    sensor_value_min[2], sensor_value_min[3])
+    update_lcd_info(
+        "Min1  2   3   4 ",
+        sensor_value_min[0],
+        sensor_value_min[1],
+        sensor_value_min[2],
+        sensor_value_min[3],
+    )
 
-    update_lcd_info("Min5  6   7   8 ",
-                    sensor_value_min[4], sensor_value_min[5],
-                    sensor_value_min[6], sensor_value_min[7])
+    update_lcd_info(
+        "Min5  6   7   8 ",
+        sensor_value_min[4],
+        sensor_value_min[5],
+        sensor_value_min[6],
+        sensor_value_min[7],
+    )
 
 
 def take_note_of_threshold():
@@ -165,14 +185,8 @@ def take_note_of_threshold():
     while one.read_button() == 0:
         readings = one.read_line_sensors()
         normalised = line_detector._normalise_readings(readings)
-        one.lcd1(normalised[0],
-                 normalised[1],
-                 normalised[2],
-                 normalised[3])
-        one.lcd2(normalised[4],
-                 normalised[5],
-                 normalised[6],
-                 normalised[7])
+        one.lcd1(normalised[0], normalised[1], normalised[2], normalised[3])
+        one.lcd2(normalised[4], normalised[5], normalised[6], normalised[7])
         time.sleep(0.100)
 
 
@@ -210,6 +224,7 @@ def adjust_threshold():
 
 
 def left_side_correction_factor():
+    line_value = 0
     one.move(-5, 5)
     while line_value > -100:
         readings = one.read_line_sensors()
@@ -226,6 +241,7 @@ def left_side_correction_factor():
 
 
 def right_side_correction_factor():
+    line_value = 0
     one.move(5, -5)
     while line_value < 100:
         readings = one.read_line_sensors()
@@ -283,7 +299,7 @@ def calibration_done():
     time.sleep(2)
 
 
-def calibrate_line(full_calibration = False):
+def calibrate_line(full_calibration=False):
     """
     Performs the calibration in 1 (simple) or 3 (full) main steps:
     1. calibrate_min_max to find the minimum and maximum values for each sensor
@@ -294,9 +310,11 @@ def calibrate_line(full_calibration = False):
     global line_detector
     prepare_calibration()
     calibrate_min_max()
-    display_calibration(line_detector._config.sensor_min, line_detector._config.sensor_max)
+    display_calibration(
+        line_detector._config.sensor_min, line_detector._config.sensor_max
+    )
 
-    if (full_calibration):
+    if full_calibration:
         # full calibration: threshold and correction factor
         while one.read_button() != 3:
             take_note_of_threshold()
@@ -336,19 +354,19 @@ def full_calibration():
 
 
 def setup():
-    one.stop()                              # stop motors
-    one.min_battery(10.5)                   # safety voltage for discharging the battery
+    one.stop()  # stop motors
+    one.min_battery(10.5)  # safety voltage for discharging the battery
     time.sleep(1)
     do_full_calibration = full_calibration()
-    calibrate_line(do_full_calibration)     # calibrate line sensor
-    view_calibration()                      # read calibration values from file
+    calibrate_line(do_full_calibration)  # calibrate line sensor
+    view_calibration()  # read calibration values from file
 
 
 def loop():
-    line = one.read_line()      # Read line
+    line = one.read_line()  # Read line
     print(" Line:", line)
-    one.lcd1("     Line:")      # Print values on the LCD
-    one.lcd2("      ", line)    # Print values on the LCD
+    one.lcd1("     Line:")  # Print values on the LCD
+    one.lcd2("      ", line)  # Print values on the LCD
     time.sleep(0.05)
 
 

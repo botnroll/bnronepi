@@ -13,8 +13,8 @@ from one import BnrOneA
 
 one = BnrOneA(0, 0)  # object to control the Bot'n Roll ONE A
 
-M1 = 1        # Motor1
-M2 = 2        # Motor2
+M1 = 1  # Motor1
+M2 = 2  # Motor2
 
 THRESHOLD = 300  # THRESHOLD value to distinguish between black and white
 
@@ -27,6 +27,7 @@ V87 = 30
 V100 = 35
 
 VEL = 40
+
 
 def read_line():
     line_value = 0
@@ -64,8 +65,8 @@ def read_line():
 
 
 def setup():
-    one.stop()              # stop motors
-    one.min_battery(10.5)   # Battery protection (lower voltage)
+    one.stop()  # stop motors
+    one.min_battery(10.5)  # Battery protection (lower voltage)
     time.sleep(1)
 
 

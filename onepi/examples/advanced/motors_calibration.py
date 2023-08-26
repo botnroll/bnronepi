@@ -1,9 +1,9 @@
 """
- This code example is in the public domain. 
+ This code example is in the public domain.
  http://www.botnroll.com
 
-Description: 
- Configure the necessary power (duty cycle) in order to move the motors for the lowest possible speed. 
+Description:
+ Configure the necessary power (duty cycle) in order to move the motors for the lowest possible speed.
  Use a fully charged battery for the configuration.
  Information is printed on the LCD of the robot and on the terminal.
  Place the robot on a flat surface.
@@ -43,7 +43,15 @@ def main():
             one.move_calibrate(powerL, powerR)
             one.lcd1("Bat:", str(battery))
             one.lcd2(powerL, powerR)
-            print("Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR, end="\r")
+            print(
+                "Battery:",
+                battery,
+                "\tPower left:",
+                powerL,
+                "\tPower right:",
+                powerR,
+                end="\r",
+            )
 
         button = one.read_button()
         if button == 1:
@@ -56,7 +64,9 @@ def main():
 
         elif button == 3:
             one.save_calibrate(battery, powerL, powerR)
-            print("Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR)
+            print(
+                "Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR
+            )
             print("Calibration data saved:", " " * 20)
             one.lcd1("Calibration data")
             one.lcd2("    Saved!!!    ")

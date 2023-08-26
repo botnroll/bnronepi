@@ -1,17 +1,17 @@
 """
- This code example is in the public domain. 
+ This code example is in the public domain.
  http://www.botnroll.com
 
- Description:  
+ Description:
  This program detects automatic start and does the automatic end on the RoboParty Fun Challenge.
 
 """
 
 import time
-import BnrOneA
+from one import BnrOneA
 
-one = BnrOneA(0, 0) # declaration of object variable to control the Bot'n Roll ONE A
-counter = 0 
+one = BnrOneA(0, 0) # object variable to control the Bot'n Roll ONE A
+counter = 0
 challenge_time = 90
 
 

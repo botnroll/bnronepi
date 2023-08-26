@@ -16,7 +16,7 @@ from one import BnrOneA
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 echoPin = 6    # Echo Pin
 trigPin = 7    # Trigger Pin

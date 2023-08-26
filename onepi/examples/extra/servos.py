@@ -13,7 +13,7 @@ Avoid using the servos on the limit values.
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 Pos_Servo1 = 90
 Pos_Servo2 = 90

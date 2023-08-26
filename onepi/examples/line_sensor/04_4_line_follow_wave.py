@@ -18,13 +18,14 @@ import json
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)  # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 max_linear_speed = 55
 # function gain -> Lower Gain, higher output
 gain = 40.0  #  function gain
-speed_boost = 4   # Curve outside wheel max speed limit
+speed_boost = 4  # Curve outside wheel max speed limit
 filename = "config_line_follow_cosine.json"
+
 
 def load_config():
     """
@@ -35,7 +36,7 @@ def load_config():
     global speed_boost
     global gain
     try:
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             data = json.load(file)
             # Access values from JSON file
             max_linear_speed = data["max_linear_speed"]
@@ -75,15 +76,16 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def setup():
-    one.min_battery(10.5)           # safety voltage for discharging the battery
-    one.stop()                      # stop motors
-    load_config()                   # read control values from file
+    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.stop()  # stop motors
+    load_config()  # read control values from file
     one.lcd1("Line Follow Wave")
     one.lcd2(" Press a button ")
-    while one.read_button() == 0:   # Wait a button to be pressed
+    while one.read_button() == 0:  # Wait a button to be pressed
         pass
-    while one.read_button() != 0:   # Wait for button release
+    while one.read_button() != 0:  # Wait for button release
         pass
+
 
 def loop():
     vel_m1 = 0
@@ -91,10 +93,10 @@ def loop():
     line = one.read_line()
     print(" Line:", line)
     if line <= 0:
-        vel_m1 = max_linear_speed * math.cos(line / gain)       # function for motor 1
+        vel_m1 = max_linear_speed * math.cos(line / gain)  # function for motor 1
         vel_m2 = max_linear_speed + max_linear_speed - vel_m1
     else:
-        vel_m2 = max_linear_speed * math.cos(line / gain)       # function for motor 2
+        vel_m2 = max_linear_speed * math.cos(line / gain)  # function for motor 2
         vel_m1 = max_linear_speed + max_linear_speed - vel_m2
 
     # Limit motors maximum and minimum speed
@@ -171,9 +173,11 @@ def menu():
         time.sleep(0.150)
 
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
-    speed_boost = set_speed_boost(speed_boost)          # Outside wheel speed boost
-    gain = set_linear_gain(gain)                        # Linear gain KLine
-    save_config(max_linear_speed, speed_boost, gain)    # Save values to configuration file
+    speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
+    gain = set_linear_gain(gain)  # Linear gain KLine
+    save_config(
+        max_linear_speed, speed_boost, gain
+    )  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")

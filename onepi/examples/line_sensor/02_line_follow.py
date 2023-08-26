@@ -1,4 +1,3 @@
-
 """
  This code example is in the public domain.
  http://www.botnroll.com
@@ -11,21 +10,21 @@
 import time
 from one import BnrOneA
 
-one = BnrOneA(0, 0)   # declaration of object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-M1 = 1        # Motor1
-M2 = 2        # Motor2
+M1 = 1  # Motor1
+M2 = 2  # Motor2
 
 THRESHOLD = 300  # THRESHOLD value to distinguish between black and white
 
 
 def setup():
-    one.stop()   # stop motors
+    one.stop()  # stop motors
     # Battery protection (lower voltage)
     bat_min = 10.5
     one.min_battery(bat_min)
     one.lcd1(" Bot'n Roll ONE")
-     # Wait for a button to be pressed to move motors
+    # Wait for a button to be pressed to move motors
     while one.read_button() == 0:
         one.lcd2("Press a button!")
         time.sleep(0.050)
@@ -33,8 +32,9 @@ def setup():
     one.move(40, 40)
     one.lcd2("Line Following!")
 
+
 def loop():
-     # Read the 8 sensors
+    # Read the 8 sensors
     sensor0 = one.read_adc(0)
     sensor1 = one.read_adc(1)
     sensor2 = one.read_adc(2)
@@ -45,7 +45,7 @@ def loop():
     sensor7 = one.read_adc(7)
 
     # From left to centre
-    if sensor0 > THRESHOLD:   # 10000000
+    if sensor0 > THRESHOLD:  # 10000000
         one.move(-1, 40)
     elif sensor1 > THRESHOLD:  # 01000000
         one.move(5, 40)
