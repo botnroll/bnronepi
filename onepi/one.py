@@ -369,7 +369,6 @@ class BnrOneA:
         :para batmin: minimum voltage level acceptable for the battery (V)
         """
         msg = self.__float_to_bytes(batmin)
-        print(msg)
         self.__send_data(self._COMMAND_BAT_MIN, msg)
         self.__ms_sleep(25)
 

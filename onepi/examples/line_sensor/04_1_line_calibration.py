@@ -71,12 +71,14 @@ def save_config():
     """
     Saves configuration to default file
     """
+    global line_detector
     cfg = Config()
     cfg.sensor_min = line_detector._config.sensor_min
     cfg.sensor_max = line_detector._config.sensor_max
     cfg.threshold = line_detector._config.threshold
     cfg.correction_factor = line_detector._config.correction_factor
     cfg.save()
+    cfg.print()
 
 
 def calibrate_min_max():
@@ -89,7 +91,7 @@ def calibrate_min_max():
     sensor_value_max = [0] * 8
     one.move(5, -5)
     start_time = time.time()
-    while time.time() < (start_time + 10):
+    while time.time() < (start_time + 3):
         readings = one.read_line_sensors()
         print("Readings: ", readings)
         for i in range(8):
@@ -130,8 +132,7 @@ def display_calibration(sensor_value_min, sensor_value_max):
     """
     Displays calibration data on the lcd
     """
-    print("Calibration Done! Press and release a button...")
-    one.lcd1(" Calibration done ")
+    one.lcd1("                ")
     one.lcd2(" Press a button ")
     wait_button_press()
     wait_button_release()
@@ -200,60 +201,62 @@ def adjust_threshold():
     print("Use PB3 when ready to save result.")
     threshold = line_detector._config.threshold
     one.lcd1("  PB1++  PB2-- ")
-    one.lcd2("   threshold:", threshold)
+    one.lcd2("threshold:", threshold)
     wait_button_release()
     button = 0
     while button != 3:
         button = one.read_button()
         if button == 1:
             threshold += 10
-            one.lcd2("   threshold:", threshold)
+            one.lcd2("threshold:", threshold)
             time.sleep(0.100)
         if button == 2:
             threshold -= 10
-            one.lcd2("   threshold:", threshold)
+            one.lcd2("threshold:", threshold)
             time.sleep(0.100)
 
     line_detector._config.threshold = threshold
-    print("If you wish to start over the threshold calibration press PB1 on the robot.")
-    print("If you wish to go to next stage press PB3.")
-    one.lcd1("PB1=AdjustThreshold")
-    one.lcd2("PB3=end")
+    print("line_detector._config.threshold = ", line_detector._config.threshold)
     wait_button_release()
-    wait_button_press()
 
 
 def left_side_correction_factor():
+    global line_detector
     line_value = 0
-    one.move(-5, 5)
+    one.move(5, -5)
     while line_value > -100:
         readings = one.read_line_sensors()
         line_value = line_detector.compute_line(readings)
         print("Line:", line_value)
-    for i in range(100):
+    for i in range(10):
+        line_value = line_detector.compute_line(readings)
         if line_value > -100:
             line_detector._config.correction_factor += 1
             one.stop()
             return False
         else:
             time.sleep(0.2)
+    one.stop()
     return True
 
 
 def right_side_correction_factor():
+    global line_detector
     line_value = 0
-    one.move(5, -5)
+    one.move(-5, 5)
     while line_value < 100:
         readings = one.read_line_sensors()
         line_value = line_detector.compute_line(readings)
         print("Line:", line_value)
-    for i in range(100):
+    for i in range(10):
+        line_value = line_detector.compute_line(readings)
         if line_value < 100:
             line_detector._config.correction_factor += 1
             one.stop()
             return False
         else:
             time.sleep(0.2)
+    one.stop()
     return True
 
 
@@ -275,9 +278,11 @@ def calibrate_correction_factor():
     The values at extremities should always remain at maximum values (-100 and 100)
     Once you get that you should stop increasing the correction factor.
     """
+    global line_detector
     print("Place robot centred on a black line")
     one.lcd1("  Centre robot  ")
     one.lcd2("Any key to start")
+    wait_button_release()
     wait_button_press()
     wait_button_release()
     one.move(5, -5)
@@ -287,6 +292,7 @@ def calibrate_correction_factor():
     while not left_side_ok or not right_side_ok:
         left_side_ok = left_side_correction_factor()
         right_side_ok = right_side_correction_factor()
+    one.stop()
     print("Calibration of correction factor done.")
     one.lcd1("   Factor OK    ")
     one.lcd2("                ")
@@ -294,9 +300,18 @@ def calibrate_correction_factor():
 
 
 def calibration_done():
+    print("Calibration Done!")
     one.lcd1("Calibration Done")
-    one.lcd1("                ")
+    one.lcd2("                ")
     time.sleep(2)
+
+
+def display_menu():
+    print("If you wish to repeat press PB1 or PB2 on the robot.")
+    print("If you wish to continue press PB3.")
+    one.lcd1("Repeat: PB1,PB2")
+    one.lcd2("Continue: PB3   ")
+    wait_button_press()
 
 
 def calibrate_line(full_calibration=False):
@@ -309,19 +324,24 @@ def calibrate_line(full_calibration=False):
     """
     global line_detector
     prepare_calibration()
-    calibrate_min_max()
-    display_calibration(
-        line_detector._config.sensor_min, line_detector._config.sensor_max
-    )
+    while one.read_button() != 3:
+        calibrate_min_max()
+        display_calibration(line_detector._config.sensor_min, line_detector._config.sensor_max)
+        display_menu()
 
     if full_calibration:
         # full calibration: threshold and correction factor
+        wait_button_release()
         while one.read_button() != 3:
             take_note_of_threshold()
             adjust_threshold()
+            display_menu()
 
-        # ToDo: implement calibration of correction factor
-        calibrate_correction_factor()
+        # calibration of correction factor
+        wait_button_release()
+        while one.read_button() != 3:
+            calibrate_correction_factor()
+            display_menu()
 
     save_config()
     calibration_done()
@@ -363,8 +383,7 @@ def setup():
 
 
 def loop():
-    line = one.read_line()  # Read line
-    print(" Line:", line)
+    line = int(one.read_line())  # Read line
     one.lcd1("     Line:")  # Print values on the LCD
     one.lcd2("      ", line)  # Print values on the LCD
     time.sleep(0.05)
