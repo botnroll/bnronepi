@@ -2,8 +2,8 @@
  This code example is in the public domain.
  http://www.botnroll.com
 
-Line sensor calibrate
-The calibrate routine is called in Setup()
+Calibration of Line sensor
+The calibration routine is called in Setup()
 Reads and stores the maximum and minimum value for every sensor on vectors sensor_value_max[8] and sensor_value_min[8].
 Low values for white and high values for black.
 The transition value from white to black (THRESHOLD) is defined by the user:
@@ -320,7 +320,6 @@ def calibrate_line(full_calibration=False):
             take_note_of_threshold()
             adjust_threshold()
 
-        # ToDo: implement calibration of correction factor
         calibrate_correction_factor()
 
     save_config()
