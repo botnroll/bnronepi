@@ -1,23 +1,41 @@
 """
+ Latest update: 30-08-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
 Calibration of Line sensor
 The calibration routine is called in Setup()
-Reads and stores the maximum and minimum value for every sensor on vectors sensor_value_max[8] and sensor_value_min[8].
+Reads and stores the maximum and minimum value for every sensor on vectors
+sensor_value_max[8] and sensor_value_min[8].
 Low values for white and high values for black.
+The user is presented with the options:
+- simple calibration
+- full calibration
+The simple calibration only updates the maximum and minimum values for each sensor.
+The full calibration also updates the threshold (THRESHOLD) and correction factor.
 The transition value from white to black (THRESHOLD) is defined by the user:
-  THRESHOLD is the lowest value above white colour that can be considered black.
+  THRESHOLD is the lowest value above which a colour is considered black.
   By default is suggested the highest of the lower values.
-  THRESHOLD should be as low as possible as long as it assures a safe transition from white to black.
-Stores the values on EEPROM so they can be used in your programs after robot restart.
+  THRESHOLD should be as low as possible as long as it assures a safe
+  transition from white to black.
 
 To calibrate place the robot over the line with the line at the centre of the sensor.
-The robot rotates during 4 seconds acquiring the 8 sensor max and min values.
+The robot rotates for a few seconds acquiring the 8 sensor max and min values.
 
-The registered values are displayed on the LCD. Use the push buttonons to see more values.
-Calibration ends after you define THRESHOLD value.
-In order to adjust THRESHOLD, sensor reading values should be analysed in real time and at different places on the track.
+The registered values are displayed on the LCD.
+Use the push buttons to see more values.
+
+If you have chosen the full calibration then you can define the
+THRESHOLD value. To do that you are asked to check the sensor values on a
+white background at different places on the track..
+Take note of the highest value and give it some margin.
+Set the THRESHOLD by pressing PB1 and PB2 on the robot.
+Once finish, proceed to calibrate the correction factor.
+Place the robot centred on top of the black line and press a button to start.
+The robot rotates left and right until it finds the right value.
+After that the robot stops. You can repeat the calibration otherwise if you
+chose to finish the calibration is automatically saved to the config file.
 """
 
 import json
