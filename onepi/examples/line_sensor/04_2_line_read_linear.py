@@ -2,9 +2,6 @@
  This code example is in the public domain.
  http://www.botnroll.com
 
- This code example is in the public domain.
- http://www.botnroll.com
-
 IMPORTANT!!!!
 Before you use this example you MUST calibrate the line sensor.
 Use example 04_1_line_calibration first!!!
