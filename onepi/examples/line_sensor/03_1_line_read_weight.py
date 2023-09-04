@@ -1,4 +1,6 @@
 """
+ Latest update: 04-09-2023
+  
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -50,10 +52,12 @@ def read_line():
     if one.read_adc(7) > THRESHOLD:  # Test Sensor8
         line_value += 100
         sensor_count += 1
+
     if sensor_count > 2:
         line_value = -1
     elif sensor_count > 0:
         line_value = line_value / sensor_count
+
     return line_value
 
 
