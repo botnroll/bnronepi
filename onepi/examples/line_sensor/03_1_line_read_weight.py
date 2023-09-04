@@ -71,7 +71,7 @@ def setup():
 
 def loop():
     line = read_line()  # Read line
-    print("Line:", line)  # Print on Serial Monitor
+    print("Line:", line, end="     \r")  # Print on terminal
     one.lcd2("  Line:", line)  # Print on LCD
     time.sleep(0.05)  # Remove delay to follow the line
 

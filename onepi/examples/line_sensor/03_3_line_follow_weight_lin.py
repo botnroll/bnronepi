@@ -1,4 +1,6 @@
 """
+ Latest update: 04-09-2023
+  
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -72,6 +74,7 @@ def setup():
 
 def loop():
     line = read_line()
+    print("Line", line, end="     \r")
     k = 0.45  # Linear gain to control motor speed
 
     vel_M1 = VEL + (line * k)
