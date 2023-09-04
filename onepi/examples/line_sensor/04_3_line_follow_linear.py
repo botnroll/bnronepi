@@ -1,4 +1,6 @@
 """
+ Latest update: 04-09-2023
+ 
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -19,8 +21,10 @@ After this operation the values are capped using the speed_boost value
     vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
 """
 
+import os
 import json
 import time
+
 from one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -28,7 +32,8 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 max_linear_speed = 60
 gain = 1.10  # Linear gain
 speed_boost = 8  # Curve outside wheel max speed limit
-filename = "config_line_follow.json"
+file_name = "config_line_follow.json"
+filename = os.path.join(os.path.dirname(__file__), file_name)
 
 
 def set_max_speed(new_max_linear_speed):
@@ -95,9 +100,7 @@ def menu():
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
     speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
     gain = set_linear_gain(gain)  # Linear gain KLine
-    save_config(
-        max_linear_speed, speed_boost, gain
-    )  # Save values to configuration file
+    save_config(max_linear_speed, speed_boost, gain)  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")

@@ -13,6 +13,7 @@ You can adjust the speed limit of the wheel that is outside the curve.
 Press push button 3 (PB3) to enter control configuration menu.
 """
 
+import os
 import math
 import json
 import time
@@ -24,7 +25,8 @@ max_linear_speed = 55
 # function gain -> Lower Gain, higher output
 gain = 40.0  #  function gain
 speed_boost = 4  # Curve outside wheel max speed limit
-filename = "config_line_follow_cosine.json"
+file_name = "config_line_follow_cosine.json"
+filename = os.path.join(os.path.dirname(__file__), file_name)
 
 
 def load_config():
@@ -175,9 +177,7 @@ def menu():
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
     speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
     gain = set_linear_gain(gain)  # Linear gain KLine
-    save_config(
-        max_linear_speed, speed_boost, gain
-    )  # Save values to configuration file
+    save_config(max_linear_speed, speed_boost, gain)  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")
