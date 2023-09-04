@@ -73,7 +73,7 @@ def setup():
 
 def loop():
     line = read_line()
-    print("  Line:", line, end="     \r"))
+    print("  Line:", line, end="     \r")
 
     if line == -100:
         one.move(-1, VEL + V100)
