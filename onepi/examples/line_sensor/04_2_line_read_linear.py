@@ -22,10 +22,13 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 def setup():
     one.stop()  # stop motors
     one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.lcd1("  == Line read ==    ")
+
+    time.sleep(2)
 
 
 def loop():
-    line = one.read_line()  # read line value [-100, 100]
+    line = int(one.read_line())  # read line value [-100, 100]
     print("Line: ", line)
     one.lcd2("   Line: ", line)
     time.sleep(0.050)
