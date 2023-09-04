@@ -29,7 +29,7 @@ def setup():
 
 def loop():
     line = int(one.read_line())  # read line value [-100, 100]
-    print("Line: ", line)
+    print("Line: ", line, end="    \r")
     one.lcd2("   Line: ", line)
     time.sleep(0.050)
 

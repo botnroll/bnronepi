@@ -1,4 +1,6 @@
 """
+ Latest update: 04-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -93,7 +95,6 @@ def loop():
     vel_m1 = 0
     vel_m2 = 0
     line = one.read_line()
-    print(" Line:", line)
     if line <= 0:
         vel_m1 = max_linear_speed * math.cos(line / gain)  # function for motor 1
         vel_m2 = max_linear_speed + max_linear_speed - vel_m1
@@ -105,7 +106,7 @@ def loop():
     vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
     vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
 
-    print("   M1:", vel_m1, "   M2:", vel_m2)
+    print(" Line:", int(line), "   M1:", int(vel_m1), "   M2:", int(vel_m2), end="       \r")
     one.move(vel_m1, vel_m2)
 
     # Configuration menu

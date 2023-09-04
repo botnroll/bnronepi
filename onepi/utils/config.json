@@ -19,6 +19,6 @@
         40,
         41
     ],
-    "threshold": 20,
-    "correction_factor": 0
+    "threshold": 70,
+    "correction_factor": 6
 }

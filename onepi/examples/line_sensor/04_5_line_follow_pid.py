@@ -205,7 +205,7 @@ def loop():
     # Clean integral error if line value is zero or if line signal has changed
     if (proportional_error * previous_proportional_error) <= 0:
         integral_error = 0.0
-    output = cap_value(output, -MAX_SPEED, MAX_SPEED)
+
     if output > MAX_SPEED:
         output = MAX_SPEED  # Limit the output value
     elif output < -MAX_SPEED:
@@ -221,6 +221,7 @@ def loop():
     vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
     vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
 
+    print(" Line:", int(line), "   M1:", int(vel_m1), "   M2:", int(vel_m2), end="       \r")
     one.move(vel_m1, vel_m2)
 
     # Configuration menu
