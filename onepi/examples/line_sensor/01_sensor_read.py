@@ -1,6 +1,10 @@
 """
+ Latest update: 04-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
+
+ This example reads and prints the raw values for each of the eight sensors of the line sensor.
 """
 
 import time
