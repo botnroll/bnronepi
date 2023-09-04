@@ -1,11 +1,12 @@
 """
+ Latest update: 04-09-2023
+  
  This code example is in the public domain.
  http://www.botnroll.com
 
 Line Following:
 15 possible values for line position:-100 -87 -75 -62 -50 -37 -25 0 +25 +37 +50 +62 +75 +87 +100
-The speed of the motors is set for every possible case.
-The RGB LED allows identifying the line position in every moment.
+The speed of the motors is set differently for each case.
 """
 
 import time
