@@ -1,10 +1,12 @@
 """
+ Latest update: 04-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
  Line Following:
  Test which sensor detects the line by comparing sensor values.
- The motors speed is set for each sensor detecting the line.
+ The motors speed is set depending on which sensor is detecting the line.
 """
 
 import time
