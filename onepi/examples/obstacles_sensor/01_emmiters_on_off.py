@@ -1,6 +1,8 @@
 """
-This code example is in the public domain.
-http://www.botnroll.com
+ Latest update: 04-09-2023
+
+ This code example is in the public domain.
+ http://www.botnroll.com
 
 Description:
 Infra-Red obstacle detection LEDs (IRE1 and IRE2) are switched ON and OFF
