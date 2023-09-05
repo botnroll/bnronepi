@@ -1,5 +1,7 @@
 """
-This code example is in the public domain.
+ Latest update: 05-09-2023
+
+ This code example is in the public domain.
  http://www.botnroll.com
 
 Description:
@@ -28,7 +30,7 @@ def loop():
     right_range = one.read_right_range()  # read right obstacle sensor range
     one.lcd1("Range Left : ", left_range)
     one.lcd2("Range Right: ", right_range)
-    print("L: ", left_range, "   R: ", right_range)
+    print("L: ", left_range, "   R: ", right_range, end="      \r")
     time.sleep(0.025)  # The robot has new readings every 25ms (40 readings per second)
 
 
