@@ -1,6 +1,13 @@
 """
+ Latest update: 05-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
+
+ Reads and displays values for bearing, roll and pitch from the CMPS11 device if connected to the robot.
+ - bearing range [0-65535]
+ - roll range [0-255]
+ - pitch range [0-255]
 """
 
 
@@ -47,9 +54,9 @@ def loop():
     roll = read_roll()
     pitch = read_pitch()
 
-    print("Bearing:", bearing)
+    print("Bearing:", int(bearing))
     print("   roll:", int(roll))
-    print("   pitch:", int(pitch))
+    print("  pitch:", int(pitch))
 
     one.lcd1("Bearing: ", bearing)
     one.lcd2("Rol:", int(roll), "Pit:", int(pitch))
