@@ -7,8 +7,8 @@
 Description:
 Infra-Red obstacle detection LEDs (IRE1 and IRE2) are switched ON and OFF
 every second in this example code.
-For Race of Champinons start, IR LED´s must be OFF.
-Messages are printed on the LCD and Serial Monitor accordingly.
+For Race of Champions start, IR LEDs must be OFF.
+Messages are printed on the LCD and terminal accordingly.
 WARNING!!!
 Infra-Red light can damage your eyes if you look to emitting IR LED's.
 You will not be able to see the LED's emitting light because human eyes

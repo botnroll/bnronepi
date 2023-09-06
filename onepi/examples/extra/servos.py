@@ -15,9 +15,9 @@ from one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-Pos_Servo1 = 90
-Pos_Servo2 = 90
-Servo = 1
+pos_servo_1 = 90
+pos_servo_2 = 90
+servo = 1
 
 
 def setup():
@@ -42,35 +42,35 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def loop():
-    global Pos_Servo1
-    global Pos_Servo2
-    global Servo
+    global pos_servo_1
+    global pos_servo_2
+    global servo
 
     button = one.read_button()
     if button == 1:  # Pan
-        if Servo == 1:
-            Pos_Servo1 += 10
+        if servo == 1:
+            pos_servo_1 += 10
         else:
-            Pos_Servo2 += 10
+            pos_servo_2 += 10
     elif button == 2:  # Tilt
-        if Servo == 1:
-            Pos_Servo1 -= 5
+        if servo == 1:
+            pos_servo_1 -= 5
         else:
-            Pos_Servo2 -= 5
+            pos_servo_2 -= 5
     elif button == 3:
-        Servo += 1
-        if Servo > 2:
-            Servo = 1
+        servo += 1
+        if servo > 2:
+            servo = 1
 
-    Pos_Servo1 = cap_value(Pos_Servo1, 0, 200)
-    Pos_Servo2 = cap_value(Pos_Servo2, 0, 200)
+    pos_servo_1 = cap_value(pos_servo_1, 0, 200)
+    pos_servo_2 = cap_value(pos_servo_2, 0, 200)
 
-    one.lcd1("Position 1: ", Pos_Servo1)
-    one.lcd2("Position 2: ", Pos_Servo2)
-    if Servo == 1:
-        one.servo1(Pos_Servo1)
-    elif Servo == 2:
-        one.servo2(Pos_Servo2)
+    one.lcd1("Position 1: ", pos_servo_1)
+    one.lcd2("Position 2: ", pos_servo_2)
+    if servo == 1:
+        one.servo1(pos_servo_1)
+    elif servo == 2:
+        one.servo2(pos_servo_2)
     time.sleep(0.1)
 
 
