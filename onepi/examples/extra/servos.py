@@ -1,4 +1,6 @@
 """
+ Latest update: 05-09-2023
+ 
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -61,6 +63,9 @@ def loop():
         servo += 1
         if servo > 2:
             servo = 1
+        one.lcd1("   Servo = " + str(servo))
+        one.lcd2("")
+        time.sleep(1)
 
     pos_servo_1 = cap_value(pos_servo_1, 0, 200)
     pos_servo_2 = cap_value(pos_servo_2, 0, 200)
@@ -71,6 +76,7 @@ def loop():
         one.servo1(pos_servo_1)
     elif servo == 2:
         one.servo2(pos_servo_2)
+    print("Position 1: ", pos_servo_1, "  Position 2: ", pos_servo_2, "  Servo = ", servo, end="     \r")
     time.sleep(0.1)
 
 

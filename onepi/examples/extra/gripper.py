@@ -71,6 +71,13 @@ def cap_value(value, lower_limit, upper_limit):
     return value
 
 
+def change_angle():
+    if servo == 1:
+        set_angle(gripper1, pos_servo_1)
+    elif servo == 2:
+        set_angle(gripper2, pos_servo_2)
+
+
 def loop():
     global pos_servo_1
     global pos_servo_2
@@ -81,11 +88,13 @@ def loop():
             pos_servo_1 += 5
         else:
             pos_servo_2 += 5
+        change_angle()
     elif button == 2:
         if servo == 1:
             pos_servo_1 -= 5
         else:
             pos_servo_2 -= 5
+        change_angle()
     elif button == 3:
         servo += 1
         if servo > 2:
@@ -99,10 +108,6 @@ def loop():
 
     one.lcd1("Gripper 1: ", pos_servo_1)
     one.lcd2("Gripper 2: ", pos_servo_2)
-    if servo == 1:
-        set_angle(gripper1, pos_servo_1)
-    elif servo == 2:
-        set_angle(gripper2, pos_servo_2)
     msg = "Gripper 1: " + str(pos_servo_1) + "    Gripper 2: " + str(pos_servo_2) + "    Servo = " + str(servo)
     print(msg, end="     \r")
     time.sleep(0.2)

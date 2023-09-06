@@ -147,7 +147,7 @@ class BnrOneA:
         Opens a spi connection and specifies the speed and mode
         """
         self._spi.open(self.bus, self.device)
-        self._spi.max_speed_hz = 500000
+        self._spi.max_speed_hz = 488000  # see https://www.takaitra.com/spi-device-raspberry-pi/
         self._spi.mode = 1
 
     def __close_spi(self):
