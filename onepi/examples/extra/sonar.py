@@ -18,14 +18,14 @@ GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-echoPin = 6    # Echo Pin
-trigPin = 7    # Trigger Pin
+echoPin = 5    # 6 on robot side - Echo Pin
+trigPin = 6    # 7 on robot side - Trigger Pin
 
 GPIO.setup(echoPin, GPIO.IN)
 GPIO.setup(trigPin, GPIO.OUT)
 
-maximumRange = 200      # Maximum range (200cm)
-minimumRange = 0        # Minimum range
+maximum_range = 200      # Maximum range (200cm)
+minimum_range = 0        # Minimum range
 
 
 def pulseIn(pin, state, timeout_us=1000000):
@@ -70,7 +70,7 @@ def Sonar():
 
     # Calculate the distance (in cm) based on the speed of sound
     distance_cm = int(duration / 58.2)
-    if (distance_cm >= maximumRange or distance_cm <= minimumRange)
+    if (distance_cm >= maximum_range or distance_cm <= minimum_range)
         distance_cm = -1
     return distance_cm
 
