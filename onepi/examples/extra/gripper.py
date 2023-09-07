@@ -1,5 +1,5 @@
 """
- Latest update: 05-09-2023
+ Latest update: 07-09-2023
 
  This code example is in the public domain.
  http://www.botnroll.com
@@ -19,23 +19,18 @@ Press PB3 to change selection of servo.
 import time
 from one import BnrOneA
 import RPi.GPIO as GPIO
-import time
+from gpiozero import Servo
+
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)  # Use GPIO numbering
 
-servo_pin_1 = 17  # Use the GPIO pin you've connected to
-servo_pin_2 = 18  # Use the GPIO pin you've connected to
+gripper1 = Servo(12, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000)
+gripper2 = Servo(13, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000)
 
-GPIO.setup(servo_pin_1, GPIO.OUT)
-GPIO.setup(servo_pin_2, GPIO.OUT)
-
-gripper1 = GPIO.PWM(servo_pin_1, 50)  # 50 Hz frequency
-gripper2 = GPIO.PWM(servo_pin_2, 50)  # 50 Hz frequency
-
-pos_servo_1 = 140
-pos_servo_2 = 120
+pos_servo_1 = 100
+pos_servo_2 = 100
 servo = 1
 
 
@@ -43,23 +38,15 @@ def setup():
     one.stop()  # stop motors
     one.lcd1("Bot'n Roll ONE A")
     one.lcd2("www.botnroll.com")
+    gripper1.min()
+    gripper2.min()
     time.sleep(1)
-
-    gripper1.start(0)  # Initialization
-    gripper2.start(0)
-
-
-def set_angle(servo_motor, angle):
-    duty_cycle = 2 + (angle / 18)  # Map angle to duty cycle
-    servo_motor.ChangeDutyCycle(duty_cycle)
-
-
-def gripper_open():
-    set_angle(gripper2, 120)
-
-
-def gripper_close():
-    set_angle(gripper2, 18)
+    gripper1.max()
+    gripper2.max()
+    time.sleep(1)
+    gripper1.mid()
+    gripper2.mid()
+    time.sleep(1)
 
 
 def cap_value(value, lower_limit, upper_limit):
@@ -72,10 +59,14 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def change_angle():
+    global pos_servo_1
+    global pos_servo_2
     if servo == 1:
-        set_angle(gripper1, pos_servo_1)
+        pos_servo_1 = cap_value(pos_servo_1, 0, 200)
+        gripper1.value = (pos_servo_1 / 100) - 1
     elif servo == 2:
-        set_angle(gripper2, pos_servo_2)
+        pos_servo_2 = cap_value(pos_servo_2, 0, 200)
+        gripper2.value = (pos_servo_2 / 100) - 1
 
 
 def loop():
@@ -119,8 +110,6 @@ def main():
         while True:
             loop()
     except KeyboardInterrupt:
-        gripper1.stop()
-        gripper2.stop()
         GPIO.cleanup()
 
 
