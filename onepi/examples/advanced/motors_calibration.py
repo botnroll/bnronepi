@@ -1,4 +1,6 @@
 """
+ Latest update: 08-09-2023
+ 
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -64,9 +66,7 @@ def main():
 
         elif button == 3:
             one.save_calibrate(battery, powerL, powerR)
-            print(
-                "Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR
-            )
+            print("Battery:", battery, "\tPower left:", powerL, "\tPower right:", powerR)
             print("Calibration data saved:", " " * 20)
             one.lcd1("Calibration data")
             one.lcd2("    Saved!!!    ")
