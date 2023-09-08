@@ -1,6 +1,11 @@
 """
+ Latest update: 08-09-2023
+
+ This code example is in the public domain.
+ http://www.botnroll.com
+ 
 Description:
-Read the battery voltage and print its value on the LCD and Serial Monitor.
+Reads the battery voltage and prints its value on the LCD and Serial Monitor.
 Also configures the minimum battery voltage that causes the robot to
 stop if voltage is below the defined value.
 It is VERY important that you define this minimum voltage correctly
@@ -19,7 +24,7 @@ def setup():
 
 
 def loop():
-    battery = one.read_battery()  # read battery voltage
+    battery = round(one.read_battery(), 2)  # read battery voltage
     one.lcd2("Battery V: ", battery)  # print data on LCD line 2
     print("Battery V: ", battery)
     time.sleep(0.2)  # wait 200 milliseconds
