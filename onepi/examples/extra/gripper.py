@@ -10,10 +10,13 @@ NOTE:
 Gripper1 values vary between  80 - 160 (upwards - downwards) - (130 corresponds to Horizontal)
 Gripper2 values vary between  18 - 120 (closed - open)
 
-On the Raspberry Pi side the output pins are GPIO17 and GPIO18 (corresponding to pins 11 and 12).
+On the Raspberry Pi side the output pins are GPIO12 and GPIO13.
 On the Bot'n Roll side the gripper should be connected to pins 2 and 3.
 Press PB1 to increase the angle and PB2 to decrease it.
 Press PB3 to change selection of servo.
+To reduce jittering this example uses pigpio. You might need to run:
+ $ sudo pigpiod
+ $ export PIGPIO_ADDR=soft, export PIGPIO_PORT=8888
 """
 
 import time
