@@ -1,4 +1,6 @@
 """
+ Latest update: 08-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -27,6 +29,7 @@ def loop():
     ir_sensors = one.read_ir_sensors()  # read actual IR sensors state
     print("IR Sensors ", ir_sensors, " " * 10, end="\r")  # print data on terminal.
     one.lcd2("IR Sensors:", ir_sensors)  # print text on LCD line 2
+    time.sleep(0.2)
 
 
 def main():
