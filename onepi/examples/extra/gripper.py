@@ -1,5 +1,5 @@
 """
- Latest update: 07-09-2023
+ Latest update: 08-09-2023
 
  This code example is in the public domain.
  http://www.botnroll.com
@@ -20,14 +20,15 @@ import time
 from one import BnrOneA
 import RPi.GPIO as GPIO
 from gpiozero import Servo
+from gpiozero.pins.pigpio import PiGPIOFactory
 
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 GPIO.setmode(GPIO.BCM)  # Use GPIO numbering
 
-gripper1 = Servo(12, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000)
-gripper2 = Servo(13, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000)
+gripper1 = Servo(12, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000, pin_factory=PiGPIOFactory())
+gripper2 = Servo(13, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000, pin_factory=PiGPIOFactory())
 
 pos_servo_1 = 100
 pos_servo_2 = 100
