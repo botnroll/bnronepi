@@ -1,4 +1,6 @@
 """
+ Latest update: 08-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -40,6 +42,7 @@ def setup():
         start = automatic_start()
     one.move(50, 50)  # the robot moves forward
     one.lcd2("GO")  # remove when racing for best performance!
+    print("Race started!")
 
 
 def loop():
