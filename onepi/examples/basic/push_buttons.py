@@ -1,4 +1,6 @@
 """
+ Latest update: 08-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -20,8 +22,7 @@ def setup():
 def loop():
     pbutton = one.read_button()  # read the Push Button value
     one.lcd2(" Push Button: ", pbutton)  # print data on LCD line 2
-    print(" Push Button: ")  # print data on serial monitor.
-    print(pbutton)  # print data on serial monitor.
+    print(" Push Button: ", pbutton, end="   \r")  # print data on terminal.
     time.sleep(0.1)  # wait 100 milliseconds
 
 
