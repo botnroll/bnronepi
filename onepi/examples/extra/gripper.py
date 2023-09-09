@@ -109,8 +109,8 @@ def loop():
 
 
 def main():
-    setup()
     try:
+        setup()
         while True:
             loop()
     except KeyboardInterrupt:
