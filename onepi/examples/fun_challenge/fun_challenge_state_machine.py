@@ -9,8 +9,8 @@ This example implements a finite state machine (FSM)
 Each state corresponds to a different task the robot has to execute
 If statements are used to evaluate condition that can trigger transitions
 between states, meaning changing the task it has to perform.
-e.g. if the robot is moving forward and detects an obstacle it then
-changes the state to start moving backwards
+e.g. if the robot is attacking (moving forward) and detects an obstacle it then
+changes the state to retreat (start moving backwards)
 """
 
 import time
