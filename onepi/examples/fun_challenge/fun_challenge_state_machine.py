@@ -85,7 +85,7 @@ def setup():
     while not start:
         start = automatic_start()
     timer_thread.start()  # start timer
-    # one.obstacle_emitters(on)  # activate obstacles IR emitters
+    one.obstacle_emitters(on)  # activate obstacles IR emitters
 
 
 def get_average_reading():
