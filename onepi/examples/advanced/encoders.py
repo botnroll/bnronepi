@@ -1,4 +1,6 @@
 """
+ Latest update: 10-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -32,9 +34,7 @@ def setup():
     print("It reads the encoders and displays the readings in the lcd and terminal.")
     print("Use PB1 to increase the speed and PB2 to decrease the speed of the motors.")
     print("Motors will automatically stop after left encoder count gets over 495.")
-    print(
-        "To reset press PB3 and change the motor speeed with PB1 and PB2.", end="\n\n"
-    )
+    print("To reset press PB3 and change the motor speeed with PB1 and PB2.", end="\n\n")
 
     time.sleep(3)
     one.read_left_encoder()
