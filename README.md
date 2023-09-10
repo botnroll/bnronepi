@@ -143,7 +143,7 @@ You can test the line sensor and visualise the raw readings from the sensors in 
 In the title you can see the value of the line that gets output from the line_detector.
 
 <p align="left">
-<img src="https://github.com/ninopereira/bnronepi/blob/main/onepi/diagnostics/line_detection.png?raw=true&auto=format&fit=crop&w=2772&q=80" width="100" height="100" border="10"/>
+<img src="https://github.com/ninopereira/bnronepi/blob/main/onepi/diagnostics/line_detection.png?raw=true&auto=format&fit=crop&w=2772&q=80" width="300" height="250" border="10"/>
 </p>
 
 ### 7.2 simulate_gaussian
