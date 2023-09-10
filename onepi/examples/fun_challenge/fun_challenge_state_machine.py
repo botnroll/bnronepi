@@ -1,120 +1,159 @@
 """
+ Latest update: 09-09-2023
+
  This code example is in the public domain.
  http://www.botnroll.com
 
- Description:
- This program detects automatic start and does the automatic end on the RoboParty Fun Challenge.
-
+Description:
+This example implements a finite state machine (FSM)
+Each state corresponds to a different task the robot has to execute
+If statements are used to evaluate condition that can trigger transitions
+between states, meaning changing the task it has to perform.
+e.g. if the robot is moving forward and detects an obstacle it then
+changes the state to start moving backwards
 """
 
 import time
+import threading
 from one import BnrOneA
+from enum import Enum, auto
 
-one = BnrOneA(0, 0)    # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+
+TIMER_INTERVAL = 1  # Set the timer interval in seconds
 
 counter = 0
-challenge_time = 90   # challenge time
+challenge_time = 90  # challenge time (s)
+stop_flag = False  # Flag to indicate if the timer thread should stop
 
-estado = 0
-media = 0.0
-sensor = [0] * 8
 
-def setup():
-    on = 1
-    off = 0
-    one.stop()                      # stop motors
-    initialize_timer()              # configures the interrupt timer for the end of the challenge
-    one.lcd1("FUN CHALLENGE")       # print on LCD line 1
-    one.lcd2("READY TO START..")    # print on LCD line 2
-    one.obstacle_emitters(off)      # deactivate obstacles IR emitters
-    time.sleep(4)                   # time to stabilize IR sensors (DO NOT REMOVE!!!)
-    start = 0
-    while(not start):
-        start = automatic_start()
+# Define possible states
+class State(Enum):
+    ATTACK = auto()
+    RETREAT = auto()
+    WAIT_PICK_UP = auto()
+    WAIT_PUT_DOWN = auto()
 
-    TIMSK1 |= (1 << OCIE1A)         # enable timer compare interrupt
-    one.obstacle_emmitters(on)      # deactivate obstacles IR emitters
+
+# initial state
+state = State.ATTACK
+
+
+def start_timer(interval):
+    global stop_flag
+    while not stop_flag:
+        time.sleep(interval)
+        check_timeout()
+
+
+# Create a thread for the timer
+timer_thread = threading.Thread(target=start_timer, args=(TIMER_INTERVAL,))
+timer_thread.daemon = True
+
+
+def check_timeout():
+    global counter, stop_flag
+    if counter >= challenge_time:
+        stop_flag = True
+    else:
+        counter += 1
+
 
 def automatic_start():
-    active = one.read_ir_sensors()          # read IR sensors
+    active = one.read_ir_sensors()  # read IR sensors
     result = False
-    if not active:                          # If not active
-        tempo_A = time.time()               # read time
-        while not active:                   # while not active
+    if not active:  # If not active
+        start_time = time.time()  # read time
+        while not active:  # while not active
             active = one.read_ir_sensors()  # read actual IR sensors state
-            elapsed_time = time.time() - tempo_A
-            if elapsed_time > 0.050:        # if not active for more than 50ms
-                result = True               # start Race
+            elapsed_time = time.time() - start_time
+            if elapsed_time > 0.050:  # if not active for more than 50ms
+                result = True  # start Race
                 break
     return result
 
 
-def initialize_timer():
-    #set timer1 interrupt at 1Hz
+def setup():
+    on = 1
+    off = 0
+    one.stop()  # stop motors
+    one.lcd1("FUN CHALLENGE")  # print on LCD line 1
+    one.lcd2("READY TO START..")  # print on LCD line 2
+    one.obstacle_emitters(off)  # deactivate obstacles IR emitters
+    time.sleep(4)  # time to stabilize IR sensors (DO NOT REMOVE!!!)
+    start = 0
+    while not start:
+        start = automatic_start()
+    timer_thread.start()  # start timer
+    # one.obstacle_emitters(on)  # activate obstacles IR emitters
 
 
-def ISR(TIMER1_COMPA_vect):                 # timer1 interrupt 1Hz
+def get_average_reading():
+    """
+    sensor[0] is the value of sensor 0
+    sensor[1] is the value of sensor 1
+    ...
+    average stores the average value of the 8 line sensors
+    """
+    average = 0
+    sensor = [0] * 8
+    # read line sensors
+    for i in range(8):
+        sensor[i] = one.read_adc(i)
+        average += sensor[i] / 8
 
-    if (counter >= challenge_time):
-        one.lcd2("END OF CHALLENGE")        # print on LCD line 2
-        while(True)                         # does not allow anything else to be done after the challenge ends
-            one.brake(100, 100)             # Stop motors with torque
+    return int(average)
+
+
+def check_end():
+    one.lcd2(counter)  # print the challenge time on LCD line 2
+    if stop_flag:
+        one.lcd2("END OF CHALLENGE")  # print on LCD line 2
+        print("\nEND OF CHALLENGE")
+        while True:  # does not allow anything else to be done after the challenge ends
+            one.brake(100, 100)  # Stop motors with torque
             # place code here, to stop any additional actuators...
-    else:
-        one.lcd2(counter)                   # print the challenge time on LCD line 2
-        counter += 1
 
 
 def loop():
-    media = 0
-    #para ler os sensores de linha
-    for i in range(8)
-        sensor[i] = one.readAdc(i)
-        media += (sensor[i] / 8)
+    global state
+    check_end()
 
-    # sensor[0] é o valor do sensor 0
-    # sensor[1] é o valor do sensor 1
-    # ...
-    # media é o valor médio dos 8 sensores de linha
+    average = get_average_reading()
+    speed = 80
+    if state == State.ATTACK:  # moves forward until it detects the midfield line or obstacles
+        one.move(speed, speed)
+        # upon detection of an obstacle it changes it's task to retreat
+        if one.obstacle_sensors() > 0:
+            state = State.RETREAT
 
-    # Este exemplo é baseado numa máquina de estados.
-    # Cada estado simboliza uma tarefa diferente que o robô tem que fazer,
-    # seja andar para a frente ou andar para trás.
-    # Os 'if' no fim de cada estado simbolizam as condições
-    # que fazem com que o robô altere a tarefa que está a fazer.
-    # Por exemplo se o robô estiver na tarefa de ir em frente e se detectar um obstáculo,
-    # altera o seu estado/tarefa para andar para trás
+        # if it detects an average above 900 (all sensors detecting black) it changes
+        # task to retreat
+        if average > 900:
+            state = State.RETREAT
 
-    if(estado == 0): #anda para a frente até detetar linha de meio campo ou sensores obstaculos
-        one.move(80, 80)
-        # se detetar algum obstáculo, altera a tarefa para andar para trás
-        if(one.obstacleSensors() > 0):
-            estado = 1
+    elif state == State.RETREAT:  # moves backwards until sensors detect white
+        one.move(-speed, -speed)
+        # if the average is below 100 (all sensors detecting white),
+        # move backwards for the user to pick it up
+        if average < 100:
+            state = State.WAIT_PICK_UP
 
-        # se detetar uma media dos sensores acima de 900 (todos os sensores a preto), altera a tarefa para andar para trás
-        if(media > 900):
-            estado = 1
+    elif state == State.WAIT_PICK_UP:  # moves backwards until gets picked up
+        one.move(-speed, -speed)
+        # if the average is above 900 (all sensors detecting black),
+        # means the robot has been picked up and it changes its task to move forward
+        if average > 900:
+            state = State.WAIT_PUT_DOWN
 
-    elif(estado == 1): # anda para tras até os sensores estarem na parte branca
-        one.move(-80, -80)
-        # se detetar uma media dos sensores abaixo de 100 (todos os sensores a branca),
-        # altera a tarefa para andar para trás mas fica à espera que o robô seja levantado
-        if(media < 100):
-            estado = 2
-
-    elif(estado == 2): #anda para trás até ser levantado
-        one.move(-80, -80)
-        # se detetar uma media dos sensores acima de 900 (todos os sensores a preto), altera a tarefa para andar para a frente
-        # o que significa que o robô foi levantado
-        if(media > 900):
-            estado = 3
-
-    elif(estado == 3): # anda para a frente até os sensores estarem na parte branca (robô ser pousado na pista)
-        one.move(80, 80)
-        # se detetar uma media dos sensores abaixo de 100 (todos os sensores a branca),
-        # altera a tarefa para andar para a frente mas fica à espera que o robô detete um obstáculo ou a linha de meio campo
-        if(media < 100):
-            estado = 0
+    elif state == State.WAIT_PUT_DOWN:
+        # moves forward untill all sensors detect white (robot placed back on the arena)
+        one.move(speed, speed)
+        # if the average drops below 100 (all sensors detecting white),
+        # changes the task to attack
+        if average < 100:
+            state = State.ATTACK
+    print("average reading = ", average, " state = ", state, end="          \r")
 
 
 def main():

@@ -34,19 +34,12 @@ timer_thread = threading.Thread(target=start_timer, args=(TIMER_INTERVAL,))
 timer_thread.daemon = True
 
 
-def check_timeout():  # timer1 interrupt 1Hz
+def check_timeout():
     global counter
     global stop_flag
     if counter >= challenge_time:
-        one.lcd2("END OF CHALLENGE")  # print on LCD line 2
-        print("END OF CHALLENGE")
         stop_flag = True
-        while True:  # does not allow anything else to be done after the challenge ends
-            one.brake(100, 100)  # Stop motors with torque
-            # place code here, to stop any additional actuators...
     else:
-        one.lcd2(counter)  # print the challenge time on LCD line 2
-        print("Counter:", counter, end="  \r")
         counter += 1
 
 
@@ -54,10 +47,10 @@ def automatic_start():
     active = one.read_ir_sensors()  # read IR sensors
     result = False
     if not active:  # If not active
-        tempo_A = time.time()  # read time
+        start_time = time.time()  # read time
         while not active:  # while not active
             active = one.read_ir_sensors()  # read actual IR sensors state
-            elapsed_time = time.time() - tempo_A
+            elapsed_time = time.time() - start_time
             if elapsed_time > 0.050:  # if not active for more than 50ms
                 result = True  # start Race
                 break
@@ -80,7 +73,20 @@ def setup():
     one.obstacle_emitters(on)  # activate obstacles IR emitters
 
 
+def check_end():
+    one.lcd2(counter)  # print the challenge time on LCD line 2
+    print("Counter:", counter, end="  \r")
+    if stop_flag:
+        one.lcd2("END OF CHALLENGE")  # print on LCD line 2
+        print("END OF CHALLENGE")
+        while True:  # does not allow anything else to be done after the challenge ends
+            one.brake(100, 100)  # Stop motors with torque
+            # place code here, to stop any additional actuators...
+
+
 def loop():
+    check_end()
+
     one.move(80, 80)
     time.sleep(1.5)
     one.move(-80, -80)

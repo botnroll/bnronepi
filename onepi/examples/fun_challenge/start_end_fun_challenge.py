@@ -19,10 +19,10 @@ def automatic_start():
     active = one.read_ir_sensors()          # read IR sensors
     result = False
     if not active:                          # If not active
-        tempo_A = time.time()               # read time
+        start_time = time.time()               # read time
         while not active:                   # while not active
             active = one.read_ir_sensors()  # read actual IR sensors state
-            elapsed_time = time.time() - tempo_A
+            elapsed_time = time.time() - start_time
             if elapsed_time > 0.050:        # if not active for more than 50ms
                 result = True               # start Race
                 break
