@@ -7,15 +7,19 @@ from utils.config import Config
 
 class LineDetector:
     """
-    Facilitates converting line sensor readings into a relative line position on the sensor.
+    Converts line sensor readings into a relative line position on the sensor.
     It assumes that the array of sensors of a sensor peripheral are arranged in a straight line and equally spaced.
     It provides methods to compute the location of the line relative to the device.
     It outputs values in a range [-100, 100] where 0 (zero) corresponds to the centre of the sensor peripheral.
     """
 
     _ref_max = 1000
-    _cfg_loaded = False  # flag to signal whether or not the config values have been read already
-    _scaling_factor = [0] * 8  # array of 8 elements with correction factor for each line sensor
+    _cfg_loaded = (
+        False  # flag to signal whether or not the config values have been read already
+    )
+    _scaling_factor = [
+        0
+    ] * 8  # array of 8 elements with correction factor for each line sensor
     _previous_line_value = 0
     _config = Config()
 
@@ -31,11 +35,15 @@ class LineDetector:
         """
         # creating 'aliases' for config values to make code more readable
         sensor_min = self._config.sensor_min
-        scaling_factor = self._scaling_factor  # this is a true alias as the object is mutable
+        scaling_factor = (
+            self._scaling_factor
+        )  # this is a true alias as the object is mutable
         size = len(sensor_reading)
         sensor_normalised = [0] * size
         for i in range(size):
-            sensor_normalised[i] = self._normalise(sensor_reading[i], sensor_min[i], scaling_factor[i])
+            sensor_normalised[i] = self._normalise(
+                sensor_reading[i], sensor_min[i], scaling_factor[i]
+            )
         return sensor_normalised
 
     def _calculate_factors(self, ref, min, max):
