@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from setuptools import setup, find_packages
 
 name = "onepi"
-version = "0.1.0"
+version = "1.0.0"
 description = "Python library to interface with BotnRoll One A"
 url = "https://github.com/ninopereira/bnronepi/tree/main/onepi"
 author = "Nino Pereira"
@@ -9,7 +11,7 @@ author_email = "ninopereira.pt@gmail.com"
 license = "MIT"
 packages = ["onepi"]
 classifiers = [
-    "Development Status :: - Alpoha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",

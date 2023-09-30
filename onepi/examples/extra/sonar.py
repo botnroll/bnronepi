@@ -19,8 +19,8 @@ GPIO.setmode(GPIO.BCM)  # Use GPIO numbering
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-echo_pin = 5  # 6 on robot side - Echo Pin
-trigger_pin = 6  # 7 on robot side - Trigger Pin
+echo_pin = 5  # 6 on robot side - Echo Pin  (GPIO.BOARD = 29)
+trigger_pin = 6  # 7 on robot side - Trigger Pin (GPIO.BOARD = 31)
 
 GPIO.setup(echo_pin, GPIO.IN)
 GPIO.setup(trigger_pin, GPIO.OUT)

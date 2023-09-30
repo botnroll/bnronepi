@@ -4,7 +4,7 @@
  This code example is in the public domain.
  http://www.botnroll.com
 
-This example works better by using a software pwm instead of using 
+This example works better by using a software pwm instead of using
 the hardware pwm pins on the Raspberry Pi.
 Note that the connection to the Bot'n Roll should be on pin 9 (where the buzzer is attached to).
 """
@@ -19,7 +19,7 @@ melody = [note_C4, note_G3, note_G3, note_A3, note_G3, 0, note_B3, note_C4]
 note_durations = [4, 8, 8, 4, 4, 4, 4, 4]
 
 # Set up GPIO
-BUZZER_PIN = 26
+BUZZER_PIN = 26 # GPIO.BOARD = 37
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
