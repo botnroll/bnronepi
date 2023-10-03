@@ -11,7 +11,7 @@
 
 import time
 import threading
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

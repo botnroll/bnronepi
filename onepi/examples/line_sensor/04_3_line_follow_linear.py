@@ -1,6 +1,6 @@
 """
  Latest update: 04-09-2023
- 
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -25,7 +25,7 @@ import os
 import json
 import time
 
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -100,7 +100,9 @@ def menu():
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
     speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
     gain = set_linear_gain(gain)  # Linear gain KLine
-    save_config(max_linear_speed, speed_boost, gain)  # Save values to configuration file
+    save_config(
+        max_linear_speed, speed_boost, gain
+    )  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")

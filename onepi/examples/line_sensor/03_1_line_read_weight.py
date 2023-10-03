@@ -1,6 +1,6 @@
 """
  Latest update: 04-09-2023
-  
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -15,7 +15,7 @@ The 15 possible results for the line position are:
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

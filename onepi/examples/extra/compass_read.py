@@ -16,7 +16,7 @@ from smbus import (
     SMBus,
 )  # for I2C communication (https://www.abelectronics.co.uk/kb/article/1094/i2c-part-4---programming-i-c-with-python)
 
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

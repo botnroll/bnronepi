@@ -2,7 +2,7 @@
 Line detector class
 """
 
-from utils.config import Config
+from onepi.utils.config import Config
 
 
 class LineDetector:

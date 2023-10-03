@@ -15,7 +15,7 @@ changes the state to retreat (start moving backwards)
 
 import time
 import threading
-from one import BnrOneA
+from onepi.one import BnrOneA
 from enum import Enum, auto
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -121,7 +121,9 @@ def loop():
 
     average = get_average_reading()
     speed = 80
-    if state == State.ATTACK:  # moves forward until it detects the midfield line or obstacles
+    if (
+        state == State.ATTACK
+    ):  # moves forward until it detects the midfield line or obstacles
         one.move(speed, speed)
         # upon detection of an obstacle it changes it's task to retreat
         if one.obstacle_sensors() > 0:

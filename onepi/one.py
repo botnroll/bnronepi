@@ -2,7 +2,7 @@
 
 import time
 import spidev
-from utils.line_detector import LineDetector
+from onepi.utils.line_detector import LineDetector
 
 
 class BnrOneA:
@@ -147,7 +147,9 @@ class BnrOneA:
         Opens a spi connection and specifies the speed and mode
         """
         self._spi.open(self.bus, self.device)
-        self._spi.max_speed_hz = 488000  # see https://www.takaitra.com/spi-device-raspberry-pi/
+        self._spi.max_speed_hz = (
+            488000  # see https://www.takaitra.com/spi-device-raspberry-pi/
+        )
         self._spi.mode = 1
 
     def __close_spi(self):
@@ -692,7 +694,9 @@ class BnrOneA:
         if data2 is None:
             trimmed_data = self.__text_to_bytes(str(data1), self._LCD_CHARS_PER_LINE)
         elif data3 is None:
-            trimmed_data = self.__text_to_bytes(str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE)
+            trimmed_data = self.__text_to_bytes(
+                str(data1) + " " + str(data2), self._LCD_CHARS_PER_LINE
+            )
         elif data4 is None:
             trimmed_data = self.__text_to_bytes(
                 str(data1) + " " + str(data2) + " " + str(data3),

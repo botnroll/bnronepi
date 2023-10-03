@@ -15,7 +15,7 @@ Line reading returns a value between -100 to 100 where:
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

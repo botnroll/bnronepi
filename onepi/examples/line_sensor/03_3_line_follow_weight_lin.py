@@ -1,6 +1,6 @@
 """
  Latest update: 04-09-2023
-  
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -11,7 +11,7 @@ The speed of the motors is adjusted using a linear approach and gain (k)
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object to control the Bot'n Roll ONE A
 

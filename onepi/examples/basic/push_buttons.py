@@ -10,7 +10,7 @@ Press PB1, PB2 or PB3 to interact with Bot'n Roll ONE A
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

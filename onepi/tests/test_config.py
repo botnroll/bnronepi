@@ -1,4 +1,3 @@
-
 import sys
 import os
 
@@ -7,7 +6,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(project_root)
 
-from utils.config import Config
+from onepi.utils.config import Config
 
 
 def test_config():
@@ -46,6 +45,7 @@ def test_config():
 
 def main():
     print("Run tests using: pytest", os.path.basename(__file__), "-s")
+
 
 if __name__ == "__main__":
     main()

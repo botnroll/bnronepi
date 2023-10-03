@@ -19,7 +19,7 @@ import os
 import math
 import json
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -106,7 +106,15 @@ def loop():
     vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
     vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
 
-    print(" Line:", int(line), "   M1:", int(vel_m1), "   M2:", int(vel_m2), end="       \r")
+    print(
+        " Line:",
+        int(line),
+        "   M1:",
+        int(vel_m1),
+        "   M2:",
+        int(vel_m2),
+        end="       \r",
+    )
     one.move(vel_m1, vel_m2)
 
     # Configuration menu
@@ -178,7 +186,9 @@ def menu():
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
     speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
     gain = set_linear_gain(gain)  # Linear gain KLine
-    save_config(max_linear_speed, speed_boost, gain)  # Save values to configuration file
+    save_config(
+        max_linear_speed, speed_boost, gain
+    )  # Save values to configuration file
 
     one.lcd1("Line  Following!")
     one.lcd2("www.botnroll.com")

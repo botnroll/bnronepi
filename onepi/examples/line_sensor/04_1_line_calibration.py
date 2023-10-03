@@ -41,9 +41,9 @@ chose to finish the calibration is automatically saved to the config file.
 import json
 import os
 import time
-from one import BnrOneA
-from utils.config import Config
-from utils.line_detector import LineDetector
+from onepi.one import BnrOneA
+from onepi.utils.config import Config
+from onepi.utils.line_detector import LineDetector
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -344,7 +344,9 @@ def calibrate_line(full_calibration=False):
     prepare_calibration()
     while one.read_button() != 3:
         calibrate_min_max()
-        display_calibration(line_detector._config.sensor_min, line_detector._config.sensor_max)
+        display_calibration(
+            line_detector._config.sensor_min, line_detector._config.sensor_max
+        )
         display_menu()
 
     if full_calibration:

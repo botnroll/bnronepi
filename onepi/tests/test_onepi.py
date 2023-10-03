@@ -3,7 +3,7 @@ Test functions to verify methods of BnrOneA class
 """
 import os
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 
 def scroll_text(text, size_of_line):
@@ -74,7 +74,9 @@ def test_move_calibrate():
     print("Stopping both motors")
     one.move_calibrate(0, 0)
     print("At the start motors are not supposed to move.")
-    print("After a certain value they should start moving but not necessarily at the same time.")
+    print(
+        "After a certain value they should start moving but not necessarily at the same time."
+    )
 
 
 def test_move_1m():
@@ -369,7 +371,9 @@ def test_save_calibrate_1():
     Test save calibrate - 1st test
     """
     print("=== Testing save calibrate - 1st test===")
-    print("!!! You will need to re-calibrate the motors after this test as calibration is lost !!!")
+    print(
+        "!!! You will need to re-calibrate the motors after this test as calibration is lost !!!"
+    )
     one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("1st time running this test the wheels are expected to move.")
     print("2nd time running this test the wheels should NOT move.")
@@ -386,7 +390,9 @@ def test_save_calibrate_2():
     Test save calibrate - 2nd test
     """
     print("=== Testing save calibrate - 2nd test ===")
-    print("!!! You will need to re-calibrate the motors after this test as calibration is lost !!!")
+    print(
+        "!!! You will need to re-calibrate the motors after this test as calibration is lost !!!"
+    )
     one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print(
         "1st time running this test: if test_save_calibrate_1 was run before this one the wheels should not move otherwise they will."
@@ -450,7 +456,14 @@ def read_encoder(side):
         time.sleep(delay_s * 0.9)
         third_reading = int(one.read_right_encoder())
     one.stop_1m(motor)
-    print("first_reading:", first_reading, "\tsecond_reading:", second_reading, "\tthird_reading:", third_reading)
+    print(
+        "first_reading:",
+        first_reading,
+        "\tsecond_reading:",
+        second_reading,
+        "\tthird_reading:",
+        third_reading,
+    )
     assert third_reading < first_reading < second_reading
 
 
@@ -498,7 +511,14 @@ def read_encoder_increment(side):
         time.sleep(delay_s * 0.9)
         third_reading = int(one.read_right_encoder_increment())
     one.stop_1m(motor)
-    print("first_reading:", first_reading, "\tsecond_reading:", second_reading, "\tthird_reading:", third_reading)
+    print(
+        "first_reading:",
+        first_reading,
+        "\tsecond_reading:",
+        second_reading,
+        "\tthird_reading:",
+        third_reading,
+    )
     assert first_reading < second_reading < third_reading
 
 

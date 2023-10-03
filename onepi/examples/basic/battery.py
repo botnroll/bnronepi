@@ -3,7 +3,7 @@
 
  This code example is in the public domain.
  http://www.botnroll.com
- 
+
 Description:
 Reads the battery voltage and prints its value on the LCD and Serial Monitor.
 Also configures the minimum battery voltage that causes the robot to
@@ -13,14 +13,16 @@ to preserve your robot's battery life.
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 
 def setup():
     one.stop()  # stop motors
-    one.min_battery(10.5)  # define de minimum battery voltage. Robot stops if voltage is below the specified value!
+    one.min_battery(
+        10.5
+    )  # define de minimum battery voltage. Robot stops if voltage is below the specified value!
 
 
 def loop():

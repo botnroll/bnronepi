@@ -1,6 +1,6 @@
 """
  Latest update: 05-09-2023
- 
+
  This code example is in the public domain.
  http://www.botnroll.com
 
@@ -13,7 +13,7 @@ Avoid using the servos on the limit values.
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -76,7 +76,15 @@ def loop():
         one.servo1(pos_servo_1)
     elif servo == 2:
         one.servo2(pos_servo_2)
-    print("Position 1: ", pos_servo_1, "  Position 2: ", pos_servo_2, "  Servo = ", servo, end="     \r")
+    print(
+        "Position 1: ",
+        pos_servo_1,
+        "  Position 2: ",
+        pos_servo_2,
+        "  Servo = ",
+        servo,
+        end="     \r",
+    )
     time.sleep(0.1)
 
 

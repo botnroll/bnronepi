@@ -7,12 +7,12 @@
 Description:
 Robot moves avoiding obstacles. Wheel speeds are set depending on the sensor readings.
 e.g. If the left sensor reports a value higher than the right sensor, then the speed of
-the oposite wheel (right wheel in this case) will be reduced by an amount proportional 
+the oposite wheel (right wheel in this case) will be reduced by an amount proportional
 to that sensor reading (multiplied by a constant gain kL)
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

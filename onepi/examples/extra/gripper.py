@@ -20,7 +20,7 @@ To reduce jittering this example uses pigpio. You might need to run:
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 import RPi.GPIO as GPIO
 from gpiozero import Servo
 from gpiozero.pins.pigpio import PiGPIOFactory
@@ -30,8 +30,18 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 GPIO.setmode(GPIO.BCM)  # Use GPIO numbering
 
-gripper1 = Servo(12, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000, pin_factory=PiGPIOFactory())
-gripper2 = Servo(13, min_pulse_width=0.5 / 1000, max_pulse_width=2.5 / 1000, pin_factory=PiGPIOFactory())
+gripper1 = Servo(
+    12,
+    min_pulse_width=0.5 / 1000,
+    max_pulse_width=2.5 / 1000,
+    pin_factory=PiGPIOFactory(),
+)
+gripper2 = Servo(
+    13,
+    min_pulse_width=0.5 / 1000,
+    max_pulse_width=2.5 / 1000,
+    pin_factory=PiGPIOFactory(),
+)
 
 pos_servo_1 = 100
 pos_servo_2 = 100
@@ -103,7 +113,14 @@ def loop():
 
     one.lcd1("Gripper 1: ", pos_servo_1)
     one.lcd2("Gripper 2: ", pos_servo_2)
-    msg = "Gripper 1: " + str(pos_servo_1) + "    Gripper 2: " + str(pos_servo_2) + "    Servo = " + str(servo)
+    msg = (
+        "Gripper 1: "
+        + str(pos_servo_1)
+        + "    Gripper 2: "
+        + str(pos_servo_2)
+        + "    Servo = "
+        + str(servo)
+    )
     print(msg, end="     \r")
     time.sleep(0.2)
 

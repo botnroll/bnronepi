@@ -16,7 +16,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(project_root)
 
-from utils.line_detector import LineDetector
+from onepi.utils.line_detector import LineDetector
 
 plt.ion()
 
@@ -35,6 +35,7 @@ def test_normalise():
     normalised_reading = line_detector._normalise(20, 20, 1.5)
     expected = 0
     assert normalised_reading == expected
+
 
 def test_normalise_readings():
     print("test_normalise_readings")

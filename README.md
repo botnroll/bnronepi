@@ -17,7 +17,7 @@ Simple example:
 Displays a message "Hello Pi!" on the robot lcd.
 
 ```python
-from one import BnrOneA
+from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 one.stop()  # stop motors

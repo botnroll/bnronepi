@@ -12,7 +12,7 @@
 """
 
 import time
-from one import BnrOneA
+from onepi.one import BnrOneA
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)  # Use GPIO numbering

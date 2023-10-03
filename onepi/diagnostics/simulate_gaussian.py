@@ -2,7 +2,7 @@
 Test line detector
 """
 
-from utils.line_detector import LineDetector
+from onepi.utils.line_detector import LineDetector
 import matplotlib.pyplot as plt
 import numpy as np
 import time
