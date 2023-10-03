@@ -3,11 +3,13 @@
 *Python library to interface with Bot'n Roll One A.*
 
 ## 1. Installation:
-Download the package from github repo and install it using pip.
+Download the package from github repo or install it using pip.
 
 ```python
 git clone https://github.com/ninopereira/bnronepi.git
-cd bnronepi
+```
+or
+```python
 pip3 install onepi
 ```
 
