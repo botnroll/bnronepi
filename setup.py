@@ -11,24 +11,6 @@ author_email = "ninopereira.pt@gmail.com"
 license = "MIT"
 packages = find_packages()
 py_modules = ["onepi.one"]
-data_files = [
-    ("config", ["onepi/utils/config.json"]),
-    ("requirements", ["onepi/requirements.txt"]),
-    ("test_cfg", ["onepi/tests/test_cfg.json"]),
-    ("config_line_follow", ["onepi/examples/line_sensor/config_line_follow.json"]),
-    (
-        "config_line_follow_pid",
-        ["onepi/examples/line_sensor/config_line_follow_pid.json"],
-    ),
-    (
-        "config_line_follow_cosine",
-        ["onepi/examples/line_sensor/config_line_follow_cosine.json"],
-    ),
-    (
-        "line_detecion",
-        ["onepi/diagnostics/line_detection.png"],
-    ),
-]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
