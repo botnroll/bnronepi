@@ -1,0 +1,6 @@
+include onepi/utils/config.json
+include onepi/tests/test_cfg.json
+include onepi/examples/line_sensor/config_line_follow.json
+include onepi/examples/line_sensor/config_line_follow_pid.json
+include onepi/examples/line_sensor/config_line_follow_cosine.json
+include onepi/diagnostics/line_detection.png
