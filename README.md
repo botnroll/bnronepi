@@ -5,7 +5,21 @@
 ## 1. Installation:
 
 ### 1.1. Setup Raspberry Pi:
-If you already have a Raspberry Pi setup with SPI and I2C enabled please skip to step 1.2
+If you already have a Raspberry Pi setup with SPI and I2C enabled please skip to step 1.2.
+
+1. Download Raspberry Pi Imager  https://www.raspberrypi.com/software/
+2. Using the Imager install Raspberry PI OS (32 bit) in a micro sd card (64Gb)
+3. Put the micro sd card into the Raspberry Pi socket
+4. Boot up the Raspberry Pi
+5. Follow the on screen instructions to setup your desktop
+6. Enable SPI and I2C interface
+* Open a terminal (CTR+ALT+T) and run “sudo raspi-config”
+* Use the down arrow to select “Interfacing Options”
+* Arrow down to SPI.
+* Select yes when it asks you to enable SPI,
+* Repeat the process to enable I2C
+* Reboot the Raspberry Pi
+
 
 ### 1.2. Install onepi library:
 You can chose to install the onepi library by following one of the two options listed below.
@@ -16,10 +30,14 @@ pip3 install onepi
 ```
 
 #### 1.2.1 Install form github (option 2):
+
+1. Open a terminal (CTRL + ALT + T)
+2. Create a directory to clone the repo: “mkdir src; cd src”
+3. Download the zip file (https://github.com/ninopereira/bnronepi/archive/refs/heads/release.zip) and extract it into the src directory.
+4. Navigate to directory “cd bnronepi-release/
+5. Run:
 ```python
-mkdir ~/src; cd ~/src
-git clone https://github.com/ninopereira/bnronepi.git # or download and extract zip file
-cd bnronepi-main
+cd bnronepi-release
 python setup.py sdist
 pip install .
 ```
@@ -30,6 +48,21 @@ If you find an error when installing matplotlitb you might need to install the O
 ```python
 sudo apt-get install libopenblas-dev
 ```
+
+### 1.4. Verify the installation:
+
+1. Create a file “nano test.py”
+2. Copy and paste the following code:
+```python
+from onepi.one import BnrOneA
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one.stop()  # stop motors
+one.lcd1(" Hello Pi! ")  # print data on LCD line 1
+```
+3. Save (CTRL + O) and exit (CTRL + X)
+4. Connect the Raspberry PI to BotnRoll ONE.
+5. Run the example: “python3 test.py”
+6. The robot lcd should display “Hello Pi!” In the first row.
 
 ## 2. Usage:
 
