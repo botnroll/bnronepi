@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 name = "onepi"
-version = "1.0.5"
+version = "1.0.6"
 description = "Python library to interface with BotnRoll One A"
 url = "https://github.com/ninopereira/bnronepi/tree/main/onepi"
 author = "Nino Pereira"
