@@ -3,14 +3,32 @@
 *Python library to interface with Bot'n Roll One A.*
 
 ## 1. Installation:
-Download the package from github repo or install it using pip.
 
-```python
-git clone https://github.com/ninopereira/bnronepi.git
-```
-or
+### 1.1. Setup Raspberry Pi:
+If you already have a Raspberry Pi setup with SPI and I2C enabled please skip to step 1.2
+
+### 1.2. Install onepi library:
+You can chose to install the onepi library by following one of the two options listed below.
+
+#### 1.2.1 Install using pip (option 1):
 ```python
 pip3 install onepi
+```
+
+#### 1.2.1 Install form github (option 2):
+```python
+mkdir ~/src; cd ~/src
+git clone https://github.com/ninopereira/bnronepi.git # or download and extract zip file
+cd bnronepi-main
+python setup.py sdist
+pip install .
+```
+
+### 1.3. Troubleshooting
+If you find an error when installing matplotlitb you might need to install the Open Blas library:
+
+```python
+sudo apt-get install libopenblas-dev
 ```
 
 ## 2. Usage:
