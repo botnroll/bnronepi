@@ -24,6 +24,10 @@ data_files = [
         "config_line_follow_cosine",
         ["onepi/examples/line_sensor/config_line_follow_cosine.json"],
     ),
+    (
+        "line_detecion",
+        ["onepi/diagnostics/line_detection.png"],
+    ),
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -35,9 +39,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
-
-# Package dependencies
-install_requires = ["spidev"]
+install_requires = ["spidev", "matplotlib"]  # Package dependencies
 
 setup(
     name=name,
@@ -51,5 +53,6 @@ setup(
     license=license,
     classifiers=classifiers,
     packages=find_packages(),
+    include_package_data=True,
     install_requires=install_requires,
 )
