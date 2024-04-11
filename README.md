@@ -203,3 +203,19 @@ In the title you can see the value of the line that gets output from the line_de
 The simulate_gaussian program simulates a discretised gaussian reading which emulates the expected raw readings from the sensors.
 The emulated readings change from the lowest range all the way up to the top range of expected values.
 It then passes them through the line_detector. We can visualise both the generated sensor readings and the computed line by the line detector in the charted plot.
+
+## 8. Run at startup
+You can run python script at startup. There are several ways to achieve this.
+Here's one of them:
+
+### 8.1 Create a folder, copy and rename your python script (e.g. welcome.py)
+cd ~
+mkdir RunAtStartup
+copy ~/src/onepi_v1.0.6/examples/basic/welcome.py ~/RunAtStartup/run_at_startup.py
+
+### 8.2 Add command to ~/.bashrc 
+nano ~/.bashrc
+At the end of the file add:
+python ~/RunAtStartup/run_at_startup.py
+Save and exit.
+Reboot and check the execution of the script.
