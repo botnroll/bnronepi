@@ -31,7 +31,7 @@ axis_width = 165  # (mm)
 y_tolerance = 0  # (mm) tolerance to move at full speed
 MAX_SPEED = 50.0
 
-    
+
 def pure_pursuit(axis_width_in, v_max, local_target, y_tolerance_in):
     v_left = v_max
     v_right = v_max
@@ -43,11 +43,11 @@ def pure_pursuit(axis_width_in, v_max, local_target, y_tolerance_in):
         y = local_target.y
         d = ((x * x) - (y * y)) / (2 * y)
         r = y + d
-        ratio = (((2 * r) - l) / ((2 * r) + l))
-        print("Ratio: ", float(int(ratio*100))/100)
-        if (abs(ratio) > 1.0):
+        ratio = ((2 * r) - l) / ((2 * r) + l)
+        print("Ratio: ", float(int(ratio * 100)) / 100)
+        if abs(ratio) > 1.0:
             ratio = 1 / ratio
-            print("WARNING: INVERTING RATIO: ", float(int(ratio*100))/100)
+            print("WARNING: INVERTING RATIO: ", float(int(ratio * 100)) / 100)
         if y > 0:
             v_right = v_max
             v_left = ratio * v_max
@@ -137,11 +137,11 @@ def loop():
     print("pure_pursuit: ", int(v_left), ", ", int(v_right))
     left_cmd = convert_to_percentage(v_left)
     right_cmd = convert_to_percentage(v_right)
-    print("(left_cmd, right_cmd) = ", int(left_cmd),",", int(right_cmd))
+    print("(left_cmd, right_cmd) = ", int(left_cmd), ",", int(right_cmd))
     one.lcd1("line: ", int(line))
     one.lcd2("  l:", int(left_cmd), "  r:", int(right_cmd))
     one.move(left_cmd, right_cmd)
-    #time.sleep(0.5)
+    # time.sleep(0.5)
 
 
 def main():
