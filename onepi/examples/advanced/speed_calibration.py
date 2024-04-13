@@ -17,7 +17,7 @@ from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-max_linear_speed = 60  # (mm/s)
+max_linear_speed = 600  # (mm/s)
 speed_conversion_factor = 1  # conversion factor from real speeds to percentage
 file_name = "config_speed_factor.json"
 filename = os.path.join(os.path.dirname(__file__), file_name)

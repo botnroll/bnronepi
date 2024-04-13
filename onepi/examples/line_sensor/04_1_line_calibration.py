@@ -280,21 +280,7 @@ def right_side_correction_factor():
 
 def calibrate_correction_factor():
     """
-    Automatic calibration of the correction factor.
-    The correction factor is the percentage by which we extend the
-    range of the readings followed by cropping them out.
-    This operation decreases the sensitivity region of the sensor
-    but it gets rid of undesirable drops in readings near the extremeties.
-    User should find the right correction factor to use in order to:
-     - get rid of dropping values near the extremities
-     - not to narrow the sensitivity too much
-    The user should test each value by placing the robot on top of a black line
-    and manually drag the robot left and right to test both extremities.
-    Tipical values for the correction factor are between 0 and 10.
-    Start from zero and gradually increase it until you find the ideal
-    conditions.
-    The values at extremities should always remain at maximum values (-100 and 100)
-    Once you get that you should stop increasing the correction factor.
+    
     """
     global line_detector
     print("Place robot centred on a black line")

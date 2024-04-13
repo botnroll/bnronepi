@@ -12,12 +12,13 @@ Line reading provides a linear value between -100 to 100
 import json
 import math
 import os
+import time
 from collections import namedtuple
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-max_linear_speed = 600  # (mm/s)
+max_linear_speed = 400  # (mm/s)
 speed_conversion_factor = 17.2  # conversion factor from percentage to real speeds
 config_pure_pursuit = "config_pure_pursuit.json"
 config_speed_factor = "config_speed_factor.json"
@@ -27,32 +28,32 @@ line_sensor_width = 75  # (mm)
 Point = namedtuple("Point", ["x", "y"])
 target = Point(line_sensor_pos_x, 0)
 axis_width = 165  # (mm)
-y_tolerance = 5  # (mm) tolerance to move at full speed
+y_tolerance = 0  # (mm) tolerance to move at full speed
 MAX_SPEED = 50.0
 
-
+    
 def pure_pursuit(axis_width_in, v_max, local_target, y_tolerance_in):
     v_left = v_max
     v_right = v_max
-    if abs(local_target.y) < y_tolerance_in:
+    l = axis_width_in
+    if abs(local_target.y) <= y_tolerance_in:
         return (v_left, v_right)
     else:
-
-        distance = math.dist(Point(0, 0), local_target)
-        rho = (distance * distance) / (2.0 * (local_target.y))
-        calc1 = rho - (axis_width_in / 2.0)
-        calc2 = rho + (axis_width_in / 2.0)
-        if rho > 0:
-            v_left = calc1 / calc2 * v_max
+        x = local_target.x
+        y = local_target.y
+        d = ((x * x) - (y * y)) / (2 * y)
+        r = y + d
+        ratio = (((2 * r) - l) / ((2 * r) + l))
+        print("Ratio: ", float(int(ratio*100))/100)
+        if (abs(ratio) > 1.0):
+            ratio = 1 / ratio
+            print("WARNING: INVERTING RATIO: ", float(int(ratio*100))/100)
+        if y > 0:
             v_right = v_max
+            v_left = ratio * v_max
         else:
             v_left = v_max
-            v_right = calc2 / calc1 * v_max
-    if local_target.x < 0:
-        temp = -v_left
-        v_left = -v_right
-        v_right = temp
-
+            v_right = ratio * v_max
     return (v_left, v_right)
 
 
@@ -125,19 +126,22 @@ def setup():
 
 
 def loop():
-    global target, line_sensor_width, axis_width, y_tolerance
+    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance
     line = one.read_line()
-    print(int(line))
-    y_value = (line * line_sensor_width) / 100.0
+    print("\n\n")
+    print("line: ", int(line))
+    y_value = (line * (line_sensor_width / 2.0)) / 100.0
     target = target._replace(y=y_value)
-    print(target)
+    print("target: ", int(target.x), ", ", int(target.y))
     (v_left, v_right) = pure_pursuit(axis_width, max_linear_speed, target, y_tolerance)
+    print("pure_pursuit: ", int(v_left), ", ", int(v_right))
     left_cmd = convert_to_percentage(v_left)
     right_cmd = convert_to_percentage(v_right)
-    print("(left_cmd, right_cmd) = ", left_cmd, right_cmd)
+    print("(left_cmd, right_cmd) = ", int(left_cmd),",", int(right_cmd))
     one.lcd1("line: ", int(line))
     one.lcd2("  l:", int(left_cmd), "  r:", int(right_cmd))
-    # one.move(left_cmd, right_cmd)
+    one.move(left_cmd, right_cmd)
+    #time.sleep(0.5)
 
 
 def main():
