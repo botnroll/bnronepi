@@ -58,7 +58,7 @@ def save_config(speed_conversion_factor_in):
 
 def determine_speed(speed_in, wheel_diameter, ticks_per_rev, motion_duration_s=1):
     one.stop()
-    one.move(10,10)
+    one.move(10, 10)
     time.sleep(0.1)
     one.move(speed_in, speed_in)
     time.sleep(0.5)  # allow enough time for wheels to reach max speed
@@ -69,7 +69,7 @@ def determine_speed(speed_in, wheel_diameter, ticks_per_rev, motion_duration_s=1
     right_count = one.read_right_encoder()
     one.stop()
     average_count = (left_count + right_count) / 2.0
-    print ("average_count: ", average_count)
+    print("average_count: ", average_count)
     revolutions = average_count / ticks_per_rev
     wheel_perimeter = wheel_diameter * math.pi
     distance = wheel_perimeter * revolutions
@@ -81,6 +81,7 @@ def determine_speed(speed_in, wheel_diameter, ticks_per_rev, motion_duration_s=1
     time.sleep(2)
     return speed_mmps
 
+
 def calibrate_speed_factor():
     global speed_conversion_factor, max_speed_mmps
     global MAX_SPEED, WHEEL_DIAMETER_MM, TICKS_PER_REV
@@ -88,20 +89,23 @@ def calibrate_speed_factor():
     speed_conversion_factor = max_speed_mmps / MAX_SPEED
     save_config(speed_conversion_factor)
 
+
 def convert_to_percentage(real_speed):
     global speed_conversion_factor
     return real_speed * speed_conversion_factor
 
+
 def within_tolerance(value_in, value_ref, tolerance):
-    if ((value_ref - tolerance) <= value_in <= (value_ref + tolerance)):
+    if (value_ref - tolerance) <= value_in <= (value_ref + tolerance):
         return True
     return False
+
 
 def verify_calibration():
     global speed_conversion_factor, max_speed_mmps
     global MAX_SPEED, WHEEL_DIAMETER_MM, TICKS_PER_REV
 
-    tolerance = 2 # tolerance percentage
+    tolerance = 2  # tolerance percentage
     half_max_speed_mmps = max_speed_mmps / 2.0
     # verify linearity of the speed conversion
     speed_mmps = determine_speed(MAX_SPEED / 2.0, WHEEL_DIAMETER_MM, TICKS_PER_REV)
@@ -110,30 +114,34 @@ def verify_calibration():
     error = speed_mmps - half_max_speed_mmps
     print("error: ", error)
     one.lcd2("error = ", error)
-    if (within_tolerance(speed_mmps, half_max_speed_mmps, real_speed_tolerance)):
+    if within_tolerance(speed_mmps, half_max_speed_mmps, real_speed_tolerance):
         one.lcd1("Calibration OK")
     else:
         one.lcd1("Calibration Failed")
+
 
 def wait_user_input():
     while one.read_button() == 0:  # Wait a button to be pressed
         pass
     while one.read_button() != 0:  # Wait for button release
         pass
-    
+
+
 def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     one.lcd1("Speed calibration")
     one.lcd2(" Press a button ")
-    #wait_user_input()
+    wait_user_input()
     calibrate_speed_factor()
     wait_user_input()
     verify_calibration()
 
+
 def loop():
     one.stop()
     time.sleep(1)
+
 
 def main():
     setup()
