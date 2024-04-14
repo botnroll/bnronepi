@@ -58,13 +58,13 @@ class PIDParams:
         """
         returns kp value
         """
-        return self.__kp
+        return self._kp
 
     def ki(self):
         """
         returns ki value
         """
-        return self.__ki
+        return self._ki
 
     def kd(self):
         """
@@ -118,7 +118,7 @@ class PIDController:
             input_value = 0
             self._change_sign = False
         # Calculate error
-        error = self._setpoint - input
+        error = self._setpoint - input_value
 
         # Proportional term
         proportional = self._pid.kp() * error * error * error
@@ -144,7 +144,7 @@ class PIDController:
 
         # Map the output to control the motor
         mapped_output = convert_range(self._output, -255.0, 255.0, -100.0, 100.0)
-        self._last_input = input
+        self._last_input = input_value
         return mapped_output
 
     def reset_controller(self):

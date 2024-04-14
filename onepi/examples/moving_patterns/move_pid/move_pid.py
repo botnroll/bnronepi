@@ -192,3 +192,13 @@ def loop():
     one.stop()
     while True:
         pass
+
+
+def main():
+    setup()
+    while True:
+        loop()
+
+
+if __name__ == "__main__":
+    main()
