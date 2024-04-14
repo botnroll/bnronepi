@@ -9,7 +9,7 @@ Note if you change the update period you need to tune the PID params.
 
 from pid_controller import PIDController
 from control_utils import ControlUtils
-from onepi import BnrOneA
+from onepi.one import BnrOneA
 import time
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -27,8 +27,8 @@ TICKS_PER_REV = 80
 MIN_SPEED_MMPS = 0
 MAX_SPEED_MMPS = 850
 
-left_pid = PIDController()
-right_pid = PIDController()
+left_pid = PIDController(1.5, 0.5, 0)
+right_pid = PIDController(1.5, 0.5, 0)
 cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, TICKS_PER_REV)
 
 
@@ -148,7 +148,8 @@ def convert_to_mmps(desired_speed):
 
     if desired_speed > 0:
         return cut.convert_range(desired_speed, 0, 100, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
-
+    
+    return 0
 
 def setup():
     """

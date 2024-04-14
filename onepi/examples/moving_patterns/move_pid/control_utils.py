@@ -47,12 +47,14 @@ class ControlUtils:
            computes the expected number of pulses given the number of revolutions of the wheel
         */
         """
+        global TICKS_PER_REV
         return float(pulses) / TICKS_PER_REV
 
     def compute_distance_from_rev(self, revolutions):
         """
         computes distance given the number of revolutions
         """
+        global WHEEL_DIAMETER_MM, PI
         distance_mm = PI * float(WHEEL_DIAMETER_MM) * revolutions
         return distance_mm
 
@@ -82,6 +84,7 @@ class ControlUtils:
         """
         computes the number of revolutions expected for the wheel for a given distance
         """
+        global PI, WHEEL_DIAMETER_MM
         perimeter_of_circle = PI * float(WHEEL_DIAMETER_MM)
         revolutions = distance_mm / perimeter_of_circle
         return revolutions
@@ -90,6 +93,7 @@ class ControlUtils:
         """
         Computes the arc length given the angle and radius of curvature
         """
+        global AXIS_LENGTH_MM, SPOT_ROTATION_DELTA
         arc_length_mm = 0.0
         if radius_of_curvature_mm != 0.0:
             arc_length_mm = angle_rad * radius_of_curvature_mm
@@ -103,12 +107,14 @@ class ControlUtils:
         """
         computes number of ticks from number of revolutions
         """
+        global TICKS_PER_REV
         return revolutions * TICKS_PER_REV
 
     def compute_pulses_from_rev(self, revolutions):
         """
         computes the expected number of ticks given the number of revolutions of the wheel
         """
+        global TICKS_PER_REV
         return round(TICKS_PER_REV * revolutions)
 
     def compute_ticks_from_speed(self, speed_mmps, time_ms):
@@ -134,6 +140,7 @@ class ControlUtils:
         """
         convert speed percentage to real speed in mmps
         """
+        global MAX_SPEED, MIN_SPEED
         capped_speed = cap_to_limits(desired_speed_percentage, -100, 100)
         if capped_speed < 0:
             return convert_range(capped_speed, -100, 0, -MAX_SPEED, -MIN_SPEED)
@@ -145,6 +152,7 @@ class ControlUtils:
         """
         convert real speed to speed percentage
         """
+        global MAX_SPEED, MIN_SPEED
         cappedSpeed = cap_to_limits(desired_speed_mmps, -MAX_SPEED, MAX_SPEED)
         if cappedSpeed <= -MIN_SPEED:
             return map(cappedSpeed, -MAX_SPEED, -MIN_SPEED, -100, 0)

@@ -73,7 +73,7 @@ class PIDParams:
         return self._kd
 
 
-class PidController:
+class PIDController:
     """
     Construct a new PID controller object
     kp proportional gain
