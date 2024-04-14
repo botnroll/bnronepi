@@ -18,12 +18,12 @@ from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-max_linear_speed = 400  # (mm/s)
+max_linear_speed = 100  # (mm/s)
 speed_conversion_factor = 17.2  # conversion factor from percentage to real speeds
 config_pure_pursuit = "config_pure_pursuit.json"
 config_speed_factor = "config_speed_factor.json"
 filename = os.path.join(os.path.dirname(__file__), config_pure_pursuit)
-line_sensor_pos_x = 36  # (mm) distance from the wheel axis
+line_sensor_pos_x = 35  #50  #65 #36  # (mm) distance from the wheel axis
 line_sensor_width = 75  # (mm)
 Point = namedtuple("Point", ["x", "y"])
 target = Point(line_sensor_pos_x, 0)
@@ -127,7 +127,7 @@ def setup():
 
 def loop():
     global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance
-    line = one.read_line()
+    line = -one.read_line()
     print("\n\n")
     print("line: ", int(line))
     y_value = (line * (line_sensor_width / 2.0)) / 100.0
