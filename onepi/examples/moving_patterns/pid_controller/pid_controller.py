@@ -9,7 +9,7 @@ def cap_to_limits(value, min_value, max_value):
     return value
 
 
-def convert_range(self, x_value, x_min, x_max, y_min, y_max):
+def convert_range(x_value, x_min, x_max, y_min, y_max):
     """
     Converts a value x given in the range [x_min : x_max]
     to a new value in the range [y_min : y_max]
