@@ -274,10 +274,10 @@ def calibrate_correction_factor():
 
     exit = False
     while not exit:
-        button = one.readButton()
+        button = one.read_button()
 
         if button == 1:
-            if factor < 20:
+            if factor < 50:
                 factor = factor + 1
                 line_detector._config.correction_factor = factor
             wait_button_release()
@@ -292,7 +292,7 @@ def calibrate_correction_factor():
 
         reading = one.read_line_sensors()
         line_value = line_detector.compute_line(reading)
-        one.lcd1("   Line: ", line_value)
+        one.lcd1("   Line: ", int(line_value))
         one.lcd2(" Factor: ", factor)
 
 
@@ -323,7 +323,7 @@ def calibrate_line(full_calibration=False):
     1. calibrate_min_max to find the minimum and maximum values for each sensor
     2. adjust_threshold to manually set the value of the threshold to distinguish black and white
     3. adjust_correction_factor to manually set the value of the correction factor to eliminate
-     problematic readings at extremities of the line sensor
+     problematic readings at extremeties of the line sensor
     """
     global line_detector
     prepare_calibration()
@@ -397,7 +397,7 @@ def loop():
     line = int(one.read_line())  # Read line
     one.lcd1("     Line:")  # Print values on the LCD
     one.lcd2("      ", line)  # Print values on the LCD
-    time.sleep(0.05)
+    time.sleep(0.1)
 
 
 def main():

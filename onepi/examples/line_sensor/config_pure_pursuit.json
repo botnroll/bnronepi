@@ -1,4 +1,4 @@
 {
-    "max_linear_speed": 200,
-    "line_sensor_pos_x": 36
+    "max_linear_speed": 100,
+    "line_sensor_pos_x": 35
 }
