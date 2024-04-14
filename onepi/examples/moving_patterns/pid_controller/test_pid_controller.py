@@ -69,3 +69,13 @@ def loop():
         # print_pair("right_encoder, right_power: ", right_encoder, int(right_power))
     one.stop()
     time.sleep(1)
+
+
+def main():
+    setup()
+    while True:
+        loop()
+
+
+if __name__ == "__main__":
+    main()
