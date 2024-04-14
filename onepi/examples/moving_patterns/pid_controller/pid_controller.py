@@ -3,10 +3,10 @@ PID controller
 """
 
 
-def cap_to_limits(input, min, max):
-    input = max(input, min)
-    input = min(max, input)
-    return input
+def cap_to_limits(value, min_value, max_value):
+    value = max(value, min_value)
+    value = min(max_value, value)
+    return value
 
 
 def convert_range(self, x_value, x_min, x_max, y_min, y_max):
