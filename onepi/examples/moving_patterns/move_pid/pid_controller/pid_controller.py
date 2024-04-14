@@ -4,6 +4,9 @@ PID controller
 
 
 def cap_to_limits(value, min_value, max_value):
+    """
+    cap value to given limits (min and max)
+    """
     value = max(value, min_value)
     value = min(max_value, value)
     return value
@@ -26,7 +29,51 @@ def convert_range(x_value, x_min, x_max, y_min, y_max):
     return y
 
 
-class pid_controller:
+class PIDParams:
+    """
+    PID params, kp, ki and kd
+    """
+
+    _kp = 2.5
+    _ki = 3.5
+    _kd = 0.5
+
+    def __init__(self, kp, ki, kd):
+        """
+        constructor
+        """
+        self._kp = kp
+        self._ki = ki
+        self._kd = kd
+
+    def set_params(self, kp, ki, kd):
+        """
+        sets pid params
+        """
+        self._kp = kp
+        self._ki = ki
+        self._kd = kd
+
+    def kp(self):
+        """
+        returns kp value
+        """
+        return self.__kp
+
+    def ki(self):
+        """
+        returns ki value
+        """
+        return self.__ki
+
+    def kd(self):
+        """
+        returns kd value
+        """
+        return self._kd
+
+
+class PidController:
     """
     Construct a new PID controller object
     kp proportional gain
@@ -34,12 +81,10 @@ class pid_controller:
     kd derivative gain
     """
 
-    _kp = 2.5
-    _ki = 3.5
-    _kd = 0.5
+    _pid = PIDParams(0, 0, 0)
     _setpoint = 0
-    _changeSign = False
-    _lastInput = 0
+    _change_sign = False
+    _last_input = 0
     _output = 0
     _integral = 0
 
@@ -47,11 +92,9 @@ class pid_controller:
         """
         construtor
         """
-        self._kp = kp / 1000.0
-        self._ki = ki
-        self._kd = kd
+        self._pid.set_params(kp / 1000.0, ki, kd)
         self._setpoint = 0
-        self._lastInput = 0
+        self._last_input = 0
         self._output = 0
         self._integral = 0
 
@@ -62,34 +105,34 @@ class pid_controller:
         setpoint: reference value
         """
         if (self._setpoint * setpoint) < 0:
-            self._changeSign = True
+            self._change_sign = True
         self._setpoint = setpoint
 
-    def compute_output(self, input):
+    def compute_output(self, input_value):
         """
         Computes the output command by applying the PID control algorithm
-        input: current input value
+        input_value: current input value
         return: float output command value
         """
-        if self._changeSign:
-            input = 0
-            self._changeSign = False
+        if self._change_sign:
+            input_value = 0
+            self._change_sign = False
         # Calculate error
         error = self._setpoint - input
 
         # Proportional term
-        proportional = self._kp * error * error * error
+        proportional = self._pid.kp() * error * error * error
         proportional = cap_to_limits(proportional, -255, 255)
         # print_value("proportional: ", proportional)
 
         # Integral term
-        self._integral += self._ki * error
+        self._integral += self._pid.ki() * error
 
         # print_value("self._integral: ", self._integral)
         self._integral = cap_to_limits(self._integral, -255, 255)
 
         # Derivative term
-        derivative = self._kd * (input - self._lastInput)
+        derivative = self._pid.kd() * (input_value - self._last_input)
         # print_value("derivative: ", derivative)
 
         # Compute output
@@ -100,16 +143,16 @@ class pid_controller:
         self._output = cap_to_limits(self._output, -255, 255)
 
         # Map the output to control the motor
-        mappedOutput = convert_range(self._output, -255.0, 255.0, -100.0, 100.0)
-        self._lastInput = input
-        return mappedOutput
+        mapped_output = convert_range(self._output, -255.0, 255.0, -100.0, 100.0)
+        self._last_input = input
+        return mapped_output
 
     def reset_controller(self):
         """
         resets the gains
         """
         self._setpoint = 0
-        self._changeSign = False
-        self._lastInput = 0
+        self._change_sign = False
+        self._last_input = 0
         self._output = 0
         self._integral = 0

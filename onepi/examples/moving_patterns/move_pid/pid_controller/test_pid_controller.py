@@ -1,6 +1,6 @@
 import time
 from onepi.one import BnrOneA
-from pid_controller import pid_controller
+from onepi.examples.moving_patterns.move_pid.pid_controller import pid_controller
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -29,7 +29,7 @@ def maybe_change_sign(absValue, refValue):
     if refValue < 0:
         return -absValue
     return absValue
-    
+
 
 def test_pid():
     global right_pid_controller
@@ -40,7 +40,7 @@ def test_pid():
     while count < 200:
         count = count + 1
         left_encoder = one.read_left_encoder()
-        #left_encoder = maybe_change_sign(left_encoder, left_power)
+        # left_encoder = maybe_change_sign(left_encoder, left_power)
         left_power = left_pid_controller.compute_output(left_encoder)
 
         right_encoder = one.read_right_encoder()
@@ -51,9 +51,10 @@ def test_pid():
         one.move(0, right_power)
         time.sleep(0.1)  # ms
 
-        #print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
+        # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
         print_pair("right_encoder, right_power: ", right_speed, int(right_power))
-        
+
+
 def setup():
     global right_pid_controller
     global left_pid_controller
@@ -71,7 +72,7 @@ def setup():
     left_pid_controller.change_set_point(ref_speed)
     test_pid()
 
-        
+
 def loop():
     one.stop()
     time.sleep(1)
