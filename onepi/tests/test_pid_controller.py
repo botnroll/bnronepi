@@ -1,14 +1,14 @@
 import time
 from onepi.one import BnrOneA
-from onepi.examples.moving_patterns.move_pid.pid_controller import pid_controller
+from onepi.utils.pid_controller import PIDController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 kp = 2.5  # 2.5. error^3 -> 0.65
 ki = 1.4  # 1.4   3.5
 kd = 0  # 0.5
-right_pid_controller = pid_controller(kp, ki, kd)
-left_pid_controller = pid_controller(kp, ki, kd)
+right_pid_controller = PIDController(kp, ki, kd)
+left_pid_controller = PIDController(kp, ki, kd)
 
 
 def print_value(text, value):

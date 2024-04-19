@@ -7,9 +7,11 @@ This example uses the default values and an update period of 200ms.
 Note if you change the update period you need to tune the PID params.
 """
 
-from pid_controller import PIDController
-from control_utils import ControlUtils
+from onepi.utils.pid_controller import PIDController
+from onepi.utils.control_utils import ControlUtils
+from onepi.utils.simple_timer import SimpleTimer
 from onepi.one import BnrOneA
+
 import time
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
