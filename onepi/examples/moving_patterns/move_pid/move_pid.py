@@ -25,12 +25,12 @@ milliseconds_update = 200
 
 AXIS_LENGHTH_MM = 163.0
 WHEEL_DIAMETER_MM = 65.0
-TICKS_PER_REV = 80
+TICKS_PER_REV = 1490
 MIN_SPEED_MMPS = 0
 MAX_SPEED_MMPS = 850
 
-left_pid = PIDController(1.5, 0.5, 0)
-right_pid = PIDController(1.5, 0.5, 0)
+left_pid = PIDController(0.5, 0, 0)
+right_pid = PIDController(0.5, 0, 0)
 cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, TICKS_PER_REV)
 
 
@@ -46,45 +46,6 @@ def print_value(text, value):
     prints value
     """
     print(text, value)
-
-
-class Timer:
-    """
-    class to track time
-    """
-
-    def start(self, timer_interval_ms=200):
-        """
-        sets the timer with a specific time interval
-        """
-        self._interval = timer_interval_ms
-
-    def update(self):
-        """
-        updates time using the time interval
-        """
-        self._time += self._interval
-
-    def now(self):
-        """
-        returns current time
-        """
-        return self._time
-
-    _time = 0
-    _interval = 200
-
-
-timer = Timer()
-
-
-def update():
-    """
-    update speeds from time to time
-    """
-    timer.update()
-    update_speeds()
-
 
 def maybe_set_to_zero(current, previous):
     """
@@ -107,6 +68,7 @@ def compute_left_speed():
     previous_left_speed = left_speed
     left_speed = left_pid.compute_output(left_encoder)
     left_speed = maybe_set_to_zero(left_speed, previous_left_speed)
+    print("left_speed = ", left_speed)
     return left_speed
 
 
@@ -153,6 +115,21 @@ def convert_to_mmps(desired_speed):
     
     return 0
 
+def test_move():
+    print("wait 2s")
+    time.sleep(2)
+    # after 2s change the setpoint speed
+    print("==== change setpoint ====")
+    desired_speed = 2
+    desired_speed_mmps = convert_to_mmps(desired_speed)
+    print ("desired_speed_mmps= ", desired_speed_mmps)
+    ref_ticks = cut.compute_ticks_from_speed(desired_speed_mmps, milliseconds_update)
+    left_pid.change_set_point(ref_ticks)
+    right_pid.change_set_point(ref_ticks)
+    print_value("ref_ticks: ", ref_ticks)
+    time.sleep(3)
+    print("==== done ====")
+    
 def setup():
     """
     setup method
@@ -164,6 +141,7 @@ def setup():
 
     desired_speed = 20
     desired_speed_mmps = convert_to_mmps(desired_speed)
+    print("desired_speed_mmps= ", desired_speed_mmps)
     ref_ticks = cut.compute_ticks_from_speed(desired_speed_mmps, milliseconds_update)
     left_pid.change_set_point(ref_ticks)
     right_pid.change_set_point(ref_ticks)
@@ -172,28 +150,17 @@ def setup():
     time.sleep(0.5)
     one.reset_left_encoder()
     one.reset_right_encoder()
-    timer.start(milliseconds_update)
+    my_timer = SimpleTimer(increment=milliseconds_update/1000.0, function=update_speeds)
+    my_timer.start()
+    test_move()
+    my_timer.stop()
 
 
 def loop():
     """
     loop method
     """
-    time.sleep(2)
-    # after 2s change the setpoint speed
-    desired_speed = 1
-    desired_speed_mmps = convert_to_mmps(desired_speed)
-    ref_ticks = cut.compute_ticks_from_speed(desired_speed_mmps, milliseconds_update)
-    left_pid.change_set_point(ref_ticks)
-    right_pid.change_set_point(ref_ticks)
-    print_value("ref_ticks: ", ref_ticks)
-    time.sleep(3)
-
-    # Disable Timer1 interrupt
-    # TODO
     one.stop()
-    while True:
-        pass
 
 
 def main():
