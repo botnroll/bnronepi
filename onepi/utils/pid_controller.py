@@ -73,30 +73,32 @@ class PIDParams:
         return self._kd
 
 
-class PIDController:
+class PIDController():
     """
     Construct a new PID controller object
     kp proportional gain
     ki integral gain
     kd derivative gain
     """
-
+    _min_value = -100
+    _max_value = 100
     _pid = PIDParams(0, 0, 0)
     _setpoint = 0
     _change_sign = False
-    _last_input = 0
+    _last_error = 0
     _output = 0
     _integral = 0
 
-    def __init__(self, kp, ki, kd):
+    def __init__(self, kp, ki, kd, min_value=-100, max_value=100):
         """
         construtor
         """
-        self._pid.set_params(kp / 1000.0, ki, kd)
+        self._pid.set_params(kp, ki, kd)
         self._setpoint = 0
-        self._last_input = 0
         self._output = 0
         self._integral = 0
+        self._min_value = min_value
+        self._max_value = max_value
 
     def change_set_point(self, setpoint):
         """
@@ -121,30 +123,26 @@ class PIDController:
         error = self._setpoint - input_value
 
         # Proportional term
-        proportional = self._pid.kp() * error * error * error
-        proportional = cap_to_limits(proportional, -255, 255)
-        # print_value("proportional: ", proportional)
+        proportional = self._pid.kp() * error
+        #proportional = cap_to_limits(proportional, self._min_value, self._max_value)
 
         # Integral term
         self._integral += self._pid.ki() * error
-
-        # print_value("self._integral: ", self._integral)
-        self._integral = cap_to_limits(self._integral, -255, 255)
+        self._integral = cap_to_limits(self._integral, self._min_value, self._max_value)
 
         # Derivative term
-        derivative = self._pid.kd() * (input_value - self._last_input)
-        # print_value("derivative: ", derivative)
+        derivative = self._pid.kd() * (error - self._last_error)
 
         # Compute output
-        if abs(self._setpoint) >= 1:
-            self._output = proportional + self._integral + derivative
-        else:
-            self._output = (proportional * 0.1) + (self._integral * 0.1)
-        self._output = cap_to_limits(self._output, -255, 255)
+        #if abs(self._setpoint) >= 1:
+        self._output = proportional + self._integral + derivative
+        #else:
+        #    self._output = (proportional * 0.1) + (self._integral * 0.1)
+        self._output = cap_to_limits(self._output, self._min_value, self._max_value)
 
         # Map the output to control the motor
-        mapped_output = convert_range(self._output, -255.0, 255.0, -100.0, 100.0)
-        self._last_input = input_value
+        mapped_output = convert_range(self._output, self._min_value, self._max_value, -100, 100)
+        self._last_error = error
         return mapped_output
 
     def reset_controller(self):
@@ -153,6 +151,6 @@ class PIDController:
         """
         self._setpoint = 0
         self._change_sign = False
-        self._last_input = 0
+        self._last_error = 0
         self._output = 0
         self._integral = 0

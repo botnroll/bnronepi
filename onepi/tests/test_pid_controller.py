@@ -4,11 +4,11 @@ from onepi.utils.pid_controller import PIDController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 2.5  # 2.5. error^3 -> 0.65
-ki = 1.4  # 1.4   3.5
+kp = 12  # 2.5. error^3 -> 0.65
+ki = 8  # 1.4   3.5
 kd = 0  # 0.5
-right_pid_controller = PIDController(kp, ki, kd)
-left_pid_controller = PIDController(kp, ki, kd)
+right_pid_controller = PIDController(kp, ki, kd, -800, 800)
+left_pid_controller = PIDController(kp, ki, kd, -800, 800)
 
 
 def print_value(text, value):
@@ -45,7 +45,7 @@ def test_pid():
 
         right_encoder = one.read_right_encoder()
         right_encoder = maybe_change_sign(right_encoder, right_power)
-        right_speed = right_encoder / 50
+        right_speed = right_encoder/50
         right_power = right_pid_controller.compute_output(right_speed)
 
         one.move(0, right_power)
