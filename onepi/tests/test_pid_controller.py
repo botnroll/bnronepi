@@ -4,9 +4,9 @@ from onepi.utils.pid_controller import PIDController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 12  # 2.5. error^3 -> 0.65
-ki = 8  # 1.4   3.5
-kd = 0  # 0.5
+kp = 0.02
+ki = 0.7
+kd = 0.03
 right_pid_controller = PIDController(kp, ki, kd, -800, 800)
 left_pid_controller = PIDController(kp, ki, kd, -800, 800)
 
@@ -37,22 +37,21 @@ def test_pid():
     left_power = 0
     right_power = 0
     count = 0
-    while count < 200:
+    while count < 50:
         count = count + 1
-        left_encoder = one.read_left_encoder()
-        # left_encoder = maybe_change_sign(left_encoder, left_power)
-        left_power = left_pid_controller.compute_output(left_encoder)
+        #left_encoder = one.read_left_encoder()
+        #left_encoder = maybe_change_sign(left_encoder, left_power)
+        #left_power = left_pid_controller.compute_output(left_encoder)
 
         right_encoder = one.read_right_encoder()
-        right_encoder = maybe_change_sign(right_encoder, right_power)
-        right_speed = right_encoder/50
-        right_power = right_pid_controller.compute_output(right_speed)
+        #right_encoder = maybe_change_sign(right_encoder, right_power)
+        right_power = right_pid_controller.compute_output(right_encoder)
 
         one.move(0, right_power)
         time.sleep(0.1)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
-        print_pair("right_encoder, right_power: ", right_speed, int(right_power))
+        print_pair("right_encoder, right_power: ", right_encoder, int(right_power))
 
 
 def setup():
@@ -67,10 +66,13 @@ def setup():
     one.reset_left_encoder()
     one.reset_right_encoder()
 
-    ref_speed = 10
-    right_pid_controller.change_set_point(ref_speed)  # min 10, max 70
-    left_pid_controller.change_set_point(ref_speed)
+    set_speed = 30
+    setpoint = set_speed * 10 # emulate conversion from speed to encoder readings
+    print("setpoint:", setpoint)
+    left_pid_controller.change_set_point(setpoint)
+    right_pid_controller.change_set_point(setpoint)
     test_pid()
+    one.stop()
 
 
 def loop():
@@ -80,8 +82,8 @@ def loop():
 
 def main():
     setup()
-    while True:
-        loop()
+    #while True:
+    #    loop()
 
 
 if __name__ == "__main__":

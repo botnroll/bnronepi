@@ -231,19 +231,19 @@ def plot_pid():
     set_desired_speed(speed_ref)
     time.sleep(3)
     # 600
-    speed_ref = 600
+    speed_ref = 300
     set_desired_speed(speed_ref)
-    time.sleep(3)
+    time.sleep(5)
     # 0
-    speed_ref = 700
+    speed_ref = 200
     set_desired_speed(speed_ref)
-    time.sleep(3)
+    time.sleep(5)
     # -600
-    speed_ref = 800
+    speed_ref = 100
     set_desired_speed(speed_ref)
-    time.sleep(2)
+    time.sleep(5)
     # 0
-    speed_ref = 900
+    speed_ref = 50
     set_desired_speed(speed_ref)
     time.sleep(5)
     
