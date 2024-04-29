@@ -44,18 +44,16 @@ MIN_SPEED_MMPS = 0
 MAX_SPEED_MMPS = 850
 
 left_pid = PIDController(0.0, 0.0, 0.0, 0.0, 100)
-kp = 0.02 #0.079305 #0.01
-ki = 0.70  #0.7930548 #0.7
-kd = 0.03 #0 #0.04
+kp = 0.02
+ki = 0.70
+kd = 0.03
 
 right_pid = PIDController(kp, ki, kd, -850, 850)
 cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, TICKS_PER_REV)
 
 speed_ref = 300 #mmps
 elapsed_time = []
-#elapsed_time.append(milliseconds_update)
 right_speed_plot = []
-#right_speed_plot.append(100)
 ref_speed_plot = []
 
 print(elapsed_time)
@@ -127,16 +125,11 @@ def compute_right_speed():
     direction = (GPIO.input(right_dir) * 2) - 1
     right_encoder = right_encoder * direction
     print("right_encoder =", right_encoder)
-    #right_encoder = cut.maybe_change_sign(
-     #   right_encoder, right_speed, previous_right_speed
-    #)
     right_speed = right_pid.compute_output(right_encoder)
-    #right_speed = maybe_set_to_zero(right_speed, previous_right_speed)
-    #print("previous_speed=", previous_right_speed, " right_speed=", right_speed)
     previous_right_speed = right_speed
     
     current_speed_mmps = cut.compute_speed_from_ticks(right_encoder, milliseconds_update)
-    elapsed_time.append(int(counter*milliseconds_update))
+    elapsed_time.append(int(counter * milliseconds_update))
     right_speed_plot.append(int(current_speed_mmps))
     ref_speed_plot.append(speed_ref)
     timestamp = my_timer.get_time()
@@ -178,7 +171,7 @@ def convert_to_mmps(desired_speed):
 def test_move():
     print("wait 2s")
     time.sleep(1)
-    # after 2s change the setpoint speed
+    # change the setpoint speed
     print("==== change setpoint ====")
     desired_speed = 10
     desired_speed_mmps = convert_to_mmps(desired_speed)
