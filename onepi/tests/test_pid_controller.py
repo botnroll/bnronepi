@@ -12,10 +12,16 @@ left_pid_controller = PIDController(kp, ki, kd, -800, 800)
 
 
 def print_value(text, value):
+    """
+    prints text and value
+    """
     print(text, value)
 
 
 def print_pair(text, value1, value2):
+    """
+    prints the text and input values separated by comma
+    """
     print(text, value1, ", ", value2)
 
 
@@ -32,6 +38,9 @@ def maybe_change_sign(absValue, refValue):
 
 
 def test_pid():
+    """
+    test pid function for 5 seconds by setting the wheel speed
+    """
     global right_pid_controller
     global left_pid_controller
     left_power = 0
@@ -39,12 +48,12 @@ def test_pid():
     count = 0
     while count < 50:
         count = count + 1
-        #left_encoder = one.read_left_encoder()
-        #left_encoder = maybe_change_sign(left_encoder, left_power)
-        #left_power = left_pid_controller.compute_output(left_encoder)
+        # left_encoder = one.read_left_encoder()
+        # left_encoder = maybe_change_sign(left_encoder, left_power)
+        # left_power = left_pid_controller.compute_output(left_encoder)
 
         right_encoder = one.read_right_encoder()
-        #right_encoder = maybe_change_sign(right_encoder, right_power)
+        # right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
 
         one.move(0, right_power)
@@ -55,19 +64,22 @@ def test_pid():
 
 
 def setup():
+    """
+    setup function
+    """
     global right_pid_controller
     global left_pid_controller
     one.stop()
     one.min_battery(9.6)
 
-    one.lcd1("  PID Control")
+    one.lcd1("Test PID Control")
     one.lcd2("______v1.0______")
     time.sleep(1)  # ms
     one.reset_left_encoder()
     one.reset_right_encoder()
 
     set_speed = 30
-    setpoint = set_speed * 10 # emulate conversion from speed to encoder readings
+    setpoint = set_speed * 10  # emulate conversion from speed to encoder readings
     print("setpoint:", setpoint)
     left_pid_controller.change_set_point(setpoint)
     right_pid_controller.change_set_point(setpoint)
@@ -82,8 +94,6 @@ def loop():
 
 def main():
     setup()
-    #while True:
-    #    loop()
 
 
 if __name__ == "__main__":
