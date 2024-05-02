@@ -15,6 +15,7 @@ import os
 import time
 from collections import namedtuple
 from onepi.one import BnrOneA
+from onepi.utils.move_pid import MovePid
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -23,13 +24,15 @@ speed_conversion_factor = 17.2  # conversion factor from percentage to real spee
 config_pure_pursuit = "config_pure_pursuit.json"
 config_speed_factor = "config_speed_factor.json"
 filename = os.path.join(os.path.dirname(__file__), config_pure_pursuit)
-line_sensor_pos_x = 35  #50  #65 #36  # (mm) distance from the wheel axis
+line_sensor_pos_x = 35  # 50  #65 #36  # (mm) distance from the wheel axis
 line_sensor_width = 75  # (mm)
 Point = namedtuple("Point", ["x", "y"])
 target = Point(line_sensor_pos_x, 0)
 axis_width = 165  # (mm)
 y_tolerance = 0  # (mm) tolerance to move at full speed
 MAX_SPEED = 50.0
+
+one_pid = MovePid()
 
 
 def pure_pursuit(axis_width_in, v_max, local_target, y_tolerance_in):
@@ -126,7 +129,7 @@ def setup():
 
 
 def loop():
-    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance
+    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance, one_pid
     line = -one.read_line()
     print("\n\n")
     print("line: ", int(line))
@@ -135,12 +138,13 @@ def loop():
     print("target: ", int(target.x), ", ", int(target.y))
     (v_left, v_right) = pure_pursuit(axis_width, max_linear_speed, target, y_tolerance)
     print("pure_pursuit: ", int(v_left), ", ", int(v_right))
-    left_cmd = convert_to_percentage(v_left)
-    right_cmd = convert_to_percentage(v_right)
-    print("(left_cmd, right_cmd) = ", int(left_cmd), ",", int(right_cmd))
+    one_pid.move(v_left, v_right)
+    # left_cmd = convert_to_percentage(v_left)
+    # right_cmd = convert_to_percentage(v_right)
+    # print("(left_cmd, right_cmd) = ", int(left_cmd), ",", int(right_cmd))
     one.lcd1("line: ", int(line))
-    one.lcd2("  l:", int(left_cmd), "  r:", int(right_cmd))
-    one.move(left_cmd, right_cmd)
+    one.lcd2("  l:", int(v_left), "  r:", int(v_right))
+    # one.move(left_cmd, right_cmd)
     # time.sleep(0.5)
 
 
