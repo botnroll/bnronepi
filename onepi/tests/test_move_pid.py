@@ -11,10 +11,16 @@ def test_move_pid():
     at a certain speed for a small period of time
     """
     move_pid = MovePid()
+    print ("move: 200,200")
     move_pid.move(200, 200)
     time.sleep(3)
+    print ("move: 0,0")
     move_pid.move(0, 0)
-    time.sleep(1)
+    time.sleep(3)
+    print ("move: 400,400")
+    move_pid.move(400,400)
+    time.sleep(3)
+    print("stop")
     move_pid.stop()
 
 

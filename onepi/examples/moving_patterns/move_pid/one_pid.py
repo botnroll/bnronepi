@@ -1,12 +1,13 @@
 """
 This example shows how to use a PID controller to control the wheel speeds of Bot'n Roll ONE A
-The minimum speed is about 250 mm/s and the max speed is 850 mm/s for a reference battery of 12V.
+The minimum speed is about 200 mm/s and the max speed is 800 mm/s for a reference battery of 12V.
 Note that these values might change depending on the battery you're using and its current charge.
 You can specify your own PID params, kp, ki, kd.
-This example uses the default values and an update period of 200ms.
-Note if you change the update period you need to tune the PID params.
+This example uses the default values and an update period of 100ms.
 Important: Please run motors calibrate routine but instead of setting the power to when
-the wheels start moving set it to when they stop moving.
+the wheels start moving set it to when they stop moving without any load, i.e., first increase
+the power until the wheels start moving, then lift the robot and decrease the power until the wheels
+stop moving. Save the config at that point.
 This allows PID more room to control the speeds at lower values.
 """
 
@@ -23,10 +24,13 @@ def test_move_pid():
     at a certain speed for a small period of time
     """
     one_pid = MovePid()
+    print("Move with PID controller")
     one_pid.move(300, 300)
     time.sleep(3)
+    print("Stop with PID controller")
     one_pid.move(0, 0)
-    time.sleep(1)
+    time.sleep(3)
+    print("Stop")
     one_pid.stop()
     
 def setup():

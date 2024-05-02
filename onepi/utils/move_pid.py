@@ -23,16 +23,13 @@ class MovePid:
     _right_speed = 0
     _previous_left_speed = 0
     _previous_right_speed = 0
-    _milliseconds_update = 100
+    UPDATE_PERIOD_MS = 100
     _counter = 0
 
     KP = 0.02
     KI = 0.70
     KD = 0.03
-    MIN_SPEED_MMPS = 0
     MAX_SPEED_MMPS = 850
-    _left_pid = PIDController(KP, KI, KD, -MAX_SPEED_MMPS, MAX_SPEED_MMPS)
-    _right_pid = PIDController(KP, KI, KD, -MAX_SPEED_MMPS, MAX_SPEED_MMPS)
 
     AXIS_LENGHTH_MM = 163.0
     WHEEL_DIAMETER_MM = 65.0
@@ -43,22 +40,31 @@ class MovePid:
 
     _initialised = False
 
-    def __init__(self):
+    def __init__(self, kp=KP, ki=KI, kd=KD, max_speed_mmps=MAX_SPEED_MMPS, update_period_ms=UPDATE_PERIOD_MS):
+        """
+        initialises the class with kp, ki, kd, max speed (mm/s) and update period (ms)
+        """
         self._initialised = False
         GPIO.setmode(GPIO.BCM)
         self._left_dir_pin = 22  # DirL
         self._right_dir_pin = 23  # DirR
         GPIO.setup(self._left_dir_pin, GPIO.IN)
         GPIO.setup(self._right_dir_pin, GPIO.IN)
+        self._left_pid = PIDController(kp, ki, kd, -max_speed_mmps, max_speed_mmps)
+        self._right_pid = PIDController(kp, ki, kd, -max_speed_mmps, max_speed_mmps)
+        self._update_period_ms = update_period_ms
         self._pid_timer = SimpleTimer(
-            increment=self._milliseconds_update / 1000.0, function=self._update_speeds
+            increment=self._update_period_ms / 1000.0, function=self._update_speeds
         )
 
     def _initialise(self):
+        """
+        resets the system to be ready to start (again) 
+        """
         self._one.reset_left_encoder()
         self._one.reset_right_encoder()
         self._pid_timer.start()
-        self._initialised = False
+        self._initialised = True
 
     def _compute_left_speed(self):
         """
@@ -82,26 +88,34 @@ class MovePid:
 
     def _update_speeds(self):
         """
-        update wheel speeds
+        update wheel speeds by running the pid controller and sets the wheel
+        speeds of the robot
         """
         left_speed = self._compute_left_speed()
         right_speed = self._compute_right_speed()
         self._one.move(left_speed, right_speed)
 
     def move(self, left_speed_mmps, right_speed_mmps):
+        """
+        Makes the robot move at the desired wheel speeds in mm/s
+        """
         if not self._initialised:
             self._initialise()
         left_ticks = self._cut.compute_ticks_from_speed(
-            left_speed_mmps, self._milliseconds_update
+            left_speed_mmps, self._update_period_ms
         )
         right_ticks = self._cut.compute_ticks_from_speed(
-            right_speed_mmps, self._milliseconds_update
+            right_speed_mmps, self._update_period_ms
         )
         self._left_pid.change_set_point(left_ticks)
         self._right_pid.change_set_point(right_ticks)
 
     def stop(self):
+        """
+        Stops the robot and stops the corresponding timer used by the controller
+        """
         self._pid_timer.stop()
+        self._one.stop()
         self._initialised = False
 
 
