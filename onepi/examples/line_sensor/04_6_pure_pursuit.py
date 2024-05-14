@@ -19,7 +19,7 @@ from onepi.utils.move_pid import MovePid
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-max_linear_speed = 100  # (mm/s)
+max_linear_speed = 100  # (mm/s) it will be overriten by config value
 speed_conversion_factor = 17.2  # conversion factor from percentage to real speeds
 config_pure_pursuit = "config_pure_pursuit.json"
 config_speed_factor = "config_speed_factor.json"
@@ -30,7 +30,6 @@ Point = namedtuple("Point", ["x", "y"])
 target = Point(line_sensor_pos_x, 0)
 axis_width = 165  # (mm)
 y_tolerance = 0  # (mm) tolerance to move at full speed
-MAX_SPEED = 50.0
 
 one_pid = MovePid()
 
@@ -112,24 +111,44 @@ def convert_to_percentage(real_speed):
 
 
 def wait_user_input():
+    button = 0
     while one.read_button() == 0:  # Wait a button to be pressed
-        pass
+        button = one.read_button()
     while one.read_button() != 0:  # Wait for button release
         pass
+    return button
 
+
+def menu():
+    global max_linear_speed
+    one.stop()
+    option = wait_user_input()
+    while option != 3:
+        one.lcd1("max speed: ", max_linear_speed)
+        one.lcd2("1:INC 2:DEC 3:OK")
+        option = wait_user_input()
+        if option == 1:
+            max_linear_speed += 1
+        elif option == 2:
+            max_linear_speed -= 1
+    one.lcd2("      DONE      ")
+    save_config()
+    time.sleep(1)
 
 def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()
-    save_config()
-    one.lcd1("  Pure pursuit  ")
-    one.lcd2(" Press a button ")
-    wait_user_input()
-
+    while True:
+        menu()
+        one.lcd1("  Pure pursuit  ")
+        one.lcd2("1-Menu  3-Start ")
+        option = wait_user_input()
+        if option == 3:
+            break
 
 def loop():
-    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance, one_pid
+    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance, one_pid, one
     line = -one.read_line()
     print("\n\n")
     print("line: ", int(line))
