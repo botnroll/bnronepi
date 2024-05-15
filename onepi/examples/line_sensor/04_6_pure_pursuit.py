@@ -19,6 +19,7 @@ from onepi.utils.move_pid import MovePid
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
+MAX_SPEED_MMPS = 800
 max_linear_speed = 100  # (mm/s) it will be overriten by config value
 speed_conversion_factor = 17.2  # conversion factor from percentage to real speeds
 config_pure_pursuit = "config_pure_pursuit.json"
@@ -128,9 +129,14 @@ def menu():
         one.lcd2("1:INC 2:DEC 3:OK")
         option = wait_user_input()
         if option == 1:
-            max_linear_speed += 1
+            max_linear_speed += 5
+            if max_linear_speed > MAX_SPEED_MMPS:
+                max_linear_speed = MAX_SPEED_MMPS
         elif option == 2:
-            max_linear_speed -= 1
+            max_linear_speed -= 5
+            if max_linear_speed > 0:
+                max_linear_speed = 0
+
     one.lcd2("      DONE      ")
     save_config()
     time.sleep(1)
