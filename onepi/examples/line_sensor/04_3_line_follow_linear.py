@@ -43,14 +43,14 @@ def wait_user_input():
         pass
     return button
     
-    
 def set_max_speed(new_max_linear_speed):
     option = 0
     while option != 3:
-        if (option == 1) and (new_max_linear_speed < 100):
+        if option == 1:
             new_max_linear_speed += 1
-        if (option == 2) and (new_max_linear_speed > 0):
+        if option == 2:
             new_max_linear_speed -= 1
+        new_max_linear_speed = cap_value(new_max_linear_speed, 0, 100)
         one.lcd1("   VelMax:", new_max_linear_speed)
         option = wait_user_input()
     return new_max_linear_speed
@@ -59,10 +59,11 @@ def set_max_speed(new_max_linear_speed):
 def set_speed_boost(new_speed_boost):
     option = 0
     while option != 3:
-        if (option == 1) and (new_speed_boost < 20):
+        if option == 1:
             new_speed_boost += 1
-        if (option == 2) and (new_speed_boost > 0):
+        if option == 2:
             new_speed_boost -= 1
+        new_speed_boost = cap_value(new_speed_boost, 0, 20)
         one.lcd1(" Curve Boost:", new_speed_boost)
         option = wait_user_input()
     return new_speed_boost
@@ -72,10 +73,11 @@ def set_linear_gain(new_gain):
     new_gain = int(new_gain * 1000.0)
     option = 0
     while option != 3:
-        if (option == 1) and (new_gain < 3000):
+        if option == 1:
             new_gain += 10
-        if (option == 2) and (new_gain > 0):
+        if option == 2:
             new_gain -= 10
+        new_gain = cap_value(new_gain, 0, 3000)
         one.lcd1(" Line Gain:", new_gain)
         option = wait_user_input()
     return new_gain / 1000.0

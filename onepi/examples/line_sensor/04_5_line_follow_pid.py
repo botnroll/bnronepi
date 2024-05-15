@@ -35,95 +35,104 @@ differential_error = 0.0  # Differential error
 previous_proportional_error = 0  # Previous proportional eror
 MAX_SPEED = 100.0
 
+def wait_user_input():
+    button = 0
+    while button == 0:  # Wait a button to be pressed
+        button = one.read_button()
+    while one.read_button() != 0:  # Wait for button release
+        pass
+    return button
 
 def set_max_speed(new_max_linear_speed):
-    button = 0
-    while button != 3:
-        one.lcd2("   VelMax:", new_max_linear_speed)
-        button = one.read_button()
-        if button == 1:
+    option = 0
+    while option != 3:
+        if option == 1:
             new_max_linear_speed += 1
-            time.sleep(0.150)
-        if button == 2:
+        if option == 2:
             new_max_linear_speed -= 1
-            time.sleep(0.150)
-    while button == 3:  # Wait PB3 to be released
-        button = one.read_button()
+        new_max_linear_speed = cap_value(new_max_linear_speed, 0, 100)
+        one.lcd1("   VelMax:", new_max_linear_speed)
+        option = wait_user_input()
     return new_max_linear_speed
 
 
 def set_speed_boost(new_speed_boost):
-    button = 0
-    while button != 3:
-        one.lcd2("  Curve Boost:", new_speed_boost)
-        button = one.read_button()
-        if button == 1:
+    option = 0
+    while option != 3:
+        if option == 1:
             new_speed_boost += 1
-            time.sleep(0.150)
-        if button == 2:
+        if option == 2:
             new_speed_boost -= 1
-            time.sleep(0.150)
-    while button == 3:  # Wait PB3 to be released
-        button = one.read_button()
+        new_speed_boost = cap_value(new_speed_boost, 0, 20)
+        one.lcd1(" Curve Boost:", new_speed_boost)
+        option = wait_user_input()
     return new_speed_boost
 
 
-def set_gain(new_gain, multiplier, increment, text):
+def set_gain(new_gain, multiplier, increment, text, max_value, min_value=0):
     new_gain = int(new_gain * multiplier)
-    button = 0
-    while button != 3:
-        one.lcd2(text + " Gain:", new_gain)
-        button = one.read_button()
-        if button == 1:
+    max_value = max_value * multiplier
+    option = 0
+    while option != 3:
+        if option == 1:
             new_gain += increment
             time.sleep(0.150)
-        if button == 2:
+        if option == 2:
             new_gain -= increment
             time.sleep(0.150)
-    while button == 3:  # Wait PB3 to be released
-        button = one.read_button()
+        new_gain = cap_value(new_gain, min_value, max_value)
+        one.lcd1(text + " Gain:", new_gain)
+        option = wait_user_input()
     return new_gain / multiplier
 
 
 def set_kp_gain(new_gain):
-    return set_gain(new_gain, 1000, 10, " Kp")
+    return set_gain(new_gain, 1000, 10, " Kp", 10000)
 
 
 def set_ki_gain(new_gain):
-    return set_gain(new_gain, 10000, 1, " Ki")
+    return set_gain(new_gain, 10000, 1, " Ki", 100)
 
 
 def set_kd_gain(new_gain):
-    return set_gain(new_gain, 1000, 10, " Kd")
+    return set_gain(new_gain, 1000, 10, " Kd", 1000)
 
 
-def menu():
-    global max_linear_speed
-    global speed_boost
-    global kp
-    global ki
-    global kd
-
-    one.stop()
-    one.lcd1("  Menu Config:")
-    one.lcd2("PB1+ PB2- PB3ok")
-    time.sleep(0.250)
-    while one.read_button() == 3:  # Wait PB3 to be released
-        time.sleep(0.150)
+def config_menu():
+    global max_linear_speed, speed_boost, kp, ki, kd
+    one.lcd2("1:Menu")
+    time.sleep(1)
+    one.lcd2("1:++ 2:--   3:OK")
 
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
     speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
-    kp = set_kp_gain(kp)  # Linear gain KLine
+    kp = set_kp_gain(kp)
     ki = set_ki_gain(ki)
     kd = set_kd_gain(kd)
     save_config(
         max_linear_speed, speed_boost, kp, ki, kd
     )  # Save values to configuration file
 
-    one.lcd1("Line  Following!")
-    one.lcd2("www.botnroll.com")
-    time.sleep(0.250)
 
+def main_screen():
+    one.lcd1("Line Follow PID")
+    one.lcd2("www.botnroll.com")
+    
+def menu():
+    one.stop()
+    while one.read_button() != 0:
+        pass
+    option = 0
+    while option != 3:
+        one.lcd1("Line Follow PID")
+        one.lcd2("1:Menu   3:Start")
+        option = wait_user_input()
+        if option == 1:
+            config_menu()
+    one.lcd2("         3:Start")
+    time.sleep(1)
+    main_screen()
+    
 
 def load_config():
     """
@@ -184,15 +193,8 @@ def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()
-    one.lcd1("Line Follow PID.")
-    one.lcd2("1:Menu  3:Start ")
-    while one.read_button() == 0:  # Wait a button to be pressed
-        pass
-    if one.read_button() == 1:
-        menu()
-    while one.read_button() != 0:  # Wait for button release
-        pass
-
+    menu()
+    
 
 def loop():
     global integral_error
