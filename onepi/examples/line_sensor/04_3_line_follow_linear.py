@@ -35,7 +35,15 @@ speed_boost = 8  # Curve outside wheel max speed limit
 file_name = "config_line_follow.json"
 filename = os.path.join(os.path.dirname(__file__), file_name)
 
-
+def wait_user_input():
+    button = 0
+    while button == 0:  # Wait a button to be pressed
+        button = one.read_button()
+    while one.read_button() != 0:  # Wait for button release
+        pass
+    return button
+    
+    
 def set_max_speed(new_max_linear_speed):
     option = 0
     while option != 3:
@@ -75,7 +83,6 @@ def set_linear_gain(new_gain):
 
 def config_menu():
     global max_linear_speed, speed_boost, gain
-    one.stop()
     one.lcd2("1:Menu")
     time.sleep(1)
     one.lcd2("1:++ 2:--   3:OK")
@@ -93,6 +100,7 @@ def main_screen():
     one.lcd2("www.botnroll.com")
     
 def menu():
+    one.stop()
     while one.read_button() != 0:
         pass
     option = 0
@@ -152,14 +160,7 @@ def cap_value(value, lower_limit, upper_limit):
     else:
         return value
 
-def wait_user_input():
-    button = 0
-    while button == 0:  # Wait a button to be pressed
-        button = one.read_button()
-    while one.read_button() != 0:  # Wait for button release
-        pass
-    return button
-    
+
 def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
