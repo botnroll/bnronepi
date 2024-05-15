@@ -25,7 +25,7 @@ speed_conversion_factor = 17.2  # conversion factor from percentage to real spee
 config_pure_pursuit = "config_pure_pursuit.json"
 config_speed_factor = "config_speed_factor.json"
 filename = os.path.join(os.path.dirname(__file__), config_pure_pursuit)
-line_sensor_pos_x = 35  # 50  #65 #36  # (mm) distance from the wheel axis
+line_sensor_pos_x = 36  # 50  #65 #36  # (mm) distance from the wheel axis
 line_sensor_width = 75  # (mm)
 Point = namedtuple("Point", ["x", "y"])
 target = Point(line_sensor_pos_x, 0)
@@ -47,10 +47,9 @@ def pure_pursuit(axis_width_in, v_max, local_target, y_tolerance_in):
         d = ((x * x) - (y * y)) / (2 * y)
         r = y + d
         ratio = ((2 * r) - l) / ((2 * r) + l)
-        print("Ratio: ", float(int(ratio * 100)) / 100)
+        
         if abs(ratio) > 1.0:
             ratio = 1 / ratio
-            print("WARNING: INVERTING RATIO: ", float(int(ratio * 100)) / 100)
         if y > 0:
             v_right = v_max
             v_left = ratio * v_max
@@ -82,7 +81,7 @@ def load_config():
         with open(config_speed_factor, "r") as file:
             data = json.load(file)
             # Access values from JSON file
-            speed_conversion_factor = data["speed_conversion_factor":]
+            speed_conversion_factor = data["speed_conversion_factor"]
             return 0
 
     except FileNotFoundError:
@@ -123,10 +122,8 @@ def wait_user_input():
 def menu():
     global max_linear_speed
     one.stop()
-    option = wait_user_input()
+    option = 0
     while option != 3:
-        one.lcd1("max speed: ", max_linear_speed)
-        one.lcd2("1:INC 2:DEC 3:OK")
         if option == 1:
             max_linear_speed += 5
             if max_linear_speed > MAX_SPEED_MMPS:
@@ -135,12 +132,15 @@ def menu():
             max_linear_speed -= 5
             if max_linear_speed < 0:
                 max_linear_speed = 0
+        one.lcd1("max speed: ", max_linear_speed)
+        one.lcd2("1:INC 2:DEC 3:OK")
         option = wait_user_input()
 
     one.lcd2("      DONE      ")
     save_config()
     time.sleep(1)
 
+    
 def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
@@ -153,26 +153,23 @@ def setup():
             menu()
         if option == 3:
             break
+    one.lcd2("                ")
+    
 
 def loop():
-    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance, one_pid, one
-    line = -one.read_line()
-    print("\n\n")
-    print("line: ", int(line))
-    y_value = (line * (line_sensor_width / 2.0)) / 100.0
-    target = target._replace(y=y_value)
-    print("target: ", int(target.x), ", ", int(target.y))
-    (v_left, v_right) = pure_pursuit(axis_width, max_linear_speed, target, y_tolerance)
-    print("pure_pursuit: ", int(v_left), ", ", int(v_right))
-    one_pid.move(v_left, v_right)
-    # left_cmd = convert_to_percentage(v_left)
-    # right_cmd = convert_to_percentage(v_right)
-    # print("(left_cmd, right_cmd) = ", int(left_cmd), ",", int(right_cmd))
-    one.lcd1("line: ", int(line))
-    one.lcd2("  l:", int(v_left), "  r:", int(v_right))
-    # one.move(left_cmd, right_cmd)
-    # time.sleep(0.5)
-
+    """
+    While using one_pid do not use any other commands to the robot, e.g. sending
+    text to lcd or reading sensor values. It causes move_pid to not work correctly
+    as it uses a timer to send regular speed commands to the wheels
+    """
+    global max_linear_speed, target, line_sensor_width, axis_width, y_tolerance, one_pid
+    line = 0
+    while True:
+        y_value = (-line * (line_sensor_width / 2.0)) / 100.0
+        target = target._replace(y=y_value)
+        (v_left, v_right) = pure_pursuit(axis_width, max_linear_speed, target, y_tolerance)
+        line = one_pid.move(v_left, v_right, get_line=True)
+        print("line: ", int(line), " speeds: ", int(v_left), ", ", int(v_right), "target: ", int(target.x), ", ", int(target.y))
 
 def main():
     setup()

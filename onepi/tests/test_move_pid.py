@@ -4,7 +4,6 @@ from onepi.utils.move_pid import MovePid
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-
 def test_move_pid():
     """
     test the move_pid class by setting the wheels to move

@@ -44,6 +44,8 @@ class MovePid:
         """
         initialises the class with kp, ki, kd, max speed (mm/s) and update period (ms)
         """
+        self._get_line = False
+        self._line = 0
         self._initialised = False
         GPIO.setmode(GPIO.BCM)
         self._left_dir_pin = 22  # DirL
@@ -64,8 +66,13 @@ class MovePid:
         self._one.reset_left_encoder()
         self._one.reset_right_encoder()
         self._pid_timer.start()
+        self._get_line = False
+        self._line = 0
         self._initialised = True
 
+    def get_line(self):
+        return self._line;
+    
     def _compute_left_speed(self):
         """
         computes left speed
@@ -94,11 +101,14 @@ class MovePid:
         left_speed = self._compute_left_speed()
         right_speed = self._compute_right_speed()
         self._one.move(left_speed, right_speed)
+        if (self._get_line):
+            self._line = self._one.read_line()
 
-    def move(self, left_speed_mmps, right_speed_mmps):
+    def move(self, left_speed_mmps, right_speed_mmps, get_line=False):
         """
         Makes the robot move at the desired wheel speeds in mm/s
         """
+        self._get_line = get_line
         if not self._initialised:
             self._initialise()
         left_ticks = self._cut.compute_ticks_from_speed(
@@ -109,6 +119,7 @@ class MovePid:
         )
         self._left_pid.change_set_point(left_ticks)
         self._right_pid.change_set_point(right_ticks)
+        return self.get_line()
 
     def stop(self):
         """

@@ -25,20 +25,20 @@ def test_move_pid():
     """
     one_pid = MovePid()
     print("Move with PID controller")
-    one_pid.move(300, 300)
+    one_pid.move(250, 250)
     time.sleep(3)
     print("Stop with PID controller")
     one_pid.move(0, 0)
     time.sleep(3)
     print("Stop")
     one_pid.stop()
-    
+
 def setup():
     """
     setup method
     """
     test_move_pid()
-    
+
 def loop():
     """
     loop method
