@@ -123,10 +123,8 @@ def wait_user_input():
 def menu():
     global max_linear_speed
     one.stop()
-    option = wait_user_input()
+    option = 0
     while option != 3:
-        one.lcd1("max speed: ", max_linear_speed)
-        one.lcd2("1:INC 2:DEC 3:OK")
         if option == 1:
             max_linear_speed += 5
             if max_linear_speed > MAX_SPEED_MMPS:
@@ -135,6 +133,8 @@ def menu():
             max_linear_speed -= 5
             if max_linear_speed < 0:
                 max_linear_speed = 0
+        one.lcd1("max speed: ", max_linear_speed)
+        one.lcd2("1:INC 2:DEC 3:OK")
         option = wait_user_input()
 
     one.lcd2("      DONE      ")
