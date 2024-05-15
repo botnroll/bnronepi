@@ -25,7 +25,7 @@ def test_move_pid():
     """
     one_pid = MovePid()
     print("Move with PID controller")
-    one_pid.move(50, 50)
+    one_pid.move(250, 250)
     time.sleep(3)
     print("Stop with PID controller")
     one_pid.move(0, 0)

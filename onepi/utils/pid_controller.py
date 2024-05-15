@@ -22,10 +22,10 @@ def convert_range(x_value, x_min, x_max, y_min, y_max):
 
     # Avoid division by zero
     if x_range == 0:
-        return y_min + y_range / 2
+        return y_min + (y_range / 2)
 
     # Calculate the converted value
-    y = ((x_value - x_min) / x_range) * y_range + y_min
+    y = (((x_value - x_min) / x_range) * y_range) + y_min
     return y
 
 
@@ -139,7 +139,6 @@ class PIDController():
         #else:
         #    self._output = (proportional * 0.1) + (self._integral * 0.1)
         self._output = cap_to_limits(self._output, self._min_value, self._max_value)
-
         # Map the output to control the motor
         mapped_output = convert_range(self._output, self._min_value, self._max_value, -100, 100)
         self._last_error = error
