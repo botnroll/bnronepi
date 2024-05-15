@@ -185,9 +185,11 @@ def setup():
     one.stop()  # stop motors
     load_config()
     one.lcd1("Line Follow PID.")
-    one.lcd2(" Press a button ")
+    one.lcd2("1:Menu  3:Start ")
     while one.read_button() == 0:  # Wait a button to be pressed
         pass
+    if one.read_button() == 1:
+        menu()
     while one.read_button() != 0:  # Wait for button release
         pass
 
