@@ -127,15 +127,15 @@ def menu():
     while option != 3:
         one.lcd1("max speed: ", max_linear_speed)
         one.lcd2("1:INC 2:DEC 3:OK")
-        option = wait_user_input()
         if option == 1:
             max_linear_speed += 5
             if max_linear_speed > MAX_SPEED_MMPS:
                 max_linear_speed = MAX_SPEED_MMPS
         elif option == 2:
             max_linear_speed -= 5
-            if max_linear_speed > 0:
+            if max_linear_speed < 0:
                 max_linear_speed = 0
+        option = wait_user_input()
 
     one.lcd2("      DONE      ")
     save_config()
@@ -146,10 +146,11 @@ def setup():
     one.stop()  # stop motors
     load_config()
     while True:
-        menu()
         one.lcd1("  Pure pursuit  ")
         one.lcd2("1-Menu  3-Start ")
         option = wait_user_input()
+        if option == 1:
+            menu()
         if option == 3:
             break
 
