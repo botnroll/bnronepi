@@ -113,7 +113,7 @@ def convert_to_percentage(real_speed):
 
 def wait_user_input():
     button = 0
-    while one.read_button() == 0:  # Wait a button to be pressed
+    while button == 0:  # Wait a button to be pressed
         button = one.read_button()
     while one.read_button() != 0:  # Wait for button release
         pass
