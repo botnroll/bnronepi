@@ -82,7 +82,7 @@ def load_config():
         with open(config_speed_factor, "r") as file:
             data = json.load(file)
             # Access values from JSON file
-            speed_conversion_factor = data["speed_conversion_factor":]
+            speed_conversion_factor = data["speed_conversion_factor"]
             return 0
 
     except FileNotFoundError:
