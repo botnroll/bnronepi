@@ -37,8 +37,8 @@ def wait_user_input():
     while one.read_button() != 0:  # Wait for button release
         pass
     return button
-    
-    
+
+
 def load_config():
     """
     Read config values from file.
@@ -113,17 +113,17 @@ def set_speed_boost(new_speed_boost):
 
 
 def set_linear_gain(new_gain):
-    new_gain = int(new_gain * 1000.0)
+    new_gain = int(new_gain)
     option = 0
     while option != 3:
         if option == 1:
-            new_gain += 10
+            new_gain += 1
         if option == 2:
-            new_gain -= 10
-        new_gain = cap_value(new_gain, 0, 3000)
+            new_gain -= 1
+        new_gain = cap_value(new_gain, 0, 300)
         one.lcd1(" Line Gain:", new_gain)
         option = wait_user_input()
-    return new_gain / 1000.0
+    return new_gain
 
 
 def config_menu():
@@ -143,7 +143,7 @@ def config_menu():
 def main_screen():
     one.lcd1("Line Follow Wave")
     one.lcd2("www.botnroll.com")
-    
+
 def menu():
     one.stop()
     while one.read_button() != 0:
@@ -158,7 +158,7 @@ def menu():
     one.lcd2("         3:Start")
     time.sleep(1)
     main_screen()
-    
+
 def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
