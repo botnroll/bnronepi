@@ -117,7 +117,7 @@ def config_menu():
 def main_screen():
     one.lcd1("Line Follow PID")
     one.lcd2("www.botnroll.com")
-    
+
 def menu():
     one.stop()
     while one.read_button() != 0:
@@ -132,7 +132,7 @@ def menu():
     one.lcd2("         3:Start")
     time.sleep(1)
     main_screen()
-    
+
 
 def load_config():
     """
@@ -194,7 +194,7 @@ def setup():
     one.stop()  # stop motors
     load_config()
     menu()
-    
+
 
 def loop():
     global integral_error
@@ -209,12 +209,11 @@ def loop():
     error = line_ref - line  # Proportional error
     integral_error += error  # Increment integral error
     integral_error = cap_value(integral_error, -500, 500)
+    # Clean integral error if line value is zero or if line signal has changed
+    if (error * previous_error) <= 0:
+        integral_error = 0.0
     differential_error = error - previous_error  # Differential error
     output = (kp * error) + (ki * integral_error) + (kd * differential_error)
-
-    # Clean integral error if line value is zero or if line signal has changed
-    #if (error * previous_error) <= 0:
-    #    integral_error = 0.0
 
     output = cap_value(output, -MAX_SPEED, MAX_SPEED)
     previous_error = error
@@ -223,8 +222,8 @@ def loop():
     vel_m1 = max_speed - output
     vel_m2 = max_speed + output
     # Limit motors maximum and minimum speed
-    vel_m1 = cap_value(vel_m1, -max_linear_speed - speed_boost, max_linear_speed + speed_boost)
-    vel_m2 = cap_value(vel_m2, -max_linear_speed - speed_boost, max_linear_speed + speed_boost)
+    vel_m1 = cap_value(vel_m1, -max_speed, max_speed)
+    vel_m2 = cap_value(vel_m2, -max_speed, max_speed)
 
     print(
         " Line:",
