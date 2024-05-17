@@ -88,7 +88,7 @@ def config_menu():
 
     max_linear_speed = set_max_speed(max_linear_speed)  # Maximum speed
     speed_boost = set_speed_boost(speed_boost)  # Outside wheel speed boost
-    gain = set_gain(gain, 100, 1, " Kp", 100)
+    gain = set_gain(gain, 100, 2, "", 10)
 
     save_config(
         max_linear_speed, speed_boost, gain
@@ -96,7 +96,7 @@ def config_menu():
 
 
 def main_screen():
-    one.lcd1("Line Follow PID")
+    one.lcd1("Line Follow FAST")
     one.lcd2("www.botnroll.com")
 
 
@@ -106,7 +106,7 @@ def menu():
         pass
     option = 0
     while option != 3:
-        one.lcd1("Line Follow PID")
+        one.lcd1("Line Follow FAST")
         one.lcd2("1:Menu   3:Start")
         option = wait_user_input()
         if option == 1:
@@ -171,19 +171,20 @@ def setup():
 
 
 def loop():
+    global gain, speed_boost, max_linear_speed
     line = one.read_line()  # Read the line sensor value [-100, 100]
     line_ref = 0  # Reference line value
-    error = line_ref - line  # Proportional error
+    error = abs(line_ref - line)  # Proportional error
 
     if line < 0:
-        left_speed = max_linear_speed
-        right_speed = max_linear_speed - (error * gain)
+        left_speed = max_linear_speed - (error * gain) /2
+        right_speed = max_linear_speed + (error * gain)
     else:
-        right_speed = max_linear_speed
-        left_speed = max_linear_speed - (error * gain)
+        right_speed = max_linear_speed - (error * gain) / 2
+        left_speed = max_linear_speed + (error * gain)
 
-    left_speed  = cap_value(left_speed,  -max_linear_speed, max_linear_speed)
-    right_speed = cap_value(right_speed, -max_linear_speed, max_linear_speed)
+    left_speed  = cap_value(left_speed,  -max_linear_speed - speed_boost , max_linear_speed + speed_boost)
+    right_speed = cap_value(right_speed, -max_linear_speed - speed_boost , max_linear_speed + speed_boost)
 
     print(
         " Line:",
@@ -196,6 +197,8 @@ def loop():
         int(max_linear_speed),
         " error: ",
         int(error),
+        " gain: ",
+        int(gain * 100)/100,
         end="       \r",
     )
 
