@@ -201,8 +201,8 @@ def setup():
 
 
 def loop():
-    global integral_error, differential_error, previous_error, kp, ki, kd
-    global max_linear_speed, speed_boost, stop
+    global integral_error, differential_error, previous_error
+    global max_linear_speed, speed_boost, kp, ki, kd, stop
 
     line = one.read_line()  # Read the line sensor value [-100, 100]
     line_ref = 0  # Reference line value
@@ -259,7 +259,7 @@ def loop():
         previous_error = 0
 
 def on_key_event():
-    global stop
+    global stop, max_linear_speed, speed_boost, kp, ki, kd
     if keyboard.is_pressed('q'):
         kp += 1
     if keyboard.is_pressed('a'):
