@@ -18,6 +18,7 @@ Press push button 3 (PB3) to enter control configuration menu.
 import os
 import json
 import time
+import keyboard
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -34,6 +35,9 @@ integral_error = 0.0  # Integral error
 differential_error = 0.0  # Differential error
 previous_error = 0  # Previous proportional eror
 MAX_SPEED = 100.0
+stop = False
+
+keyboard.on_press(on_key_event)
 
 def wait_user_input():
     button = 0
@@ -197,18 +201,16 @@ def setup():
 
 
 def loop():
-    global integral_error
-    global differential_error
-    global previous_error
+    global integral_error, differential_error, previous_error, kp, ki, kd
+    global max_linear_speed, speed_boost, stop
 
     line = one.read_line()  # Read the line sensor value [-100, 100]
     line_ref = 0  # Reference line value
-    proportional_error = 0  # Proportional error
     output = 0.0  # PID control output
 
     error = line_ref - line  # Proportional error
     integral_error += error  # Increment integral error
-    integral_error = cap_value(integral_error, -500, 500)
+    integral_error = cap_value(integral_error, -1000, 1000)
     # Clean integral error if line value is zero or if line signal has changed
     if (error * previous_error) <= 0:
         integral_error = 0.0
@@ -238,10 +240,17 @@ def loop():
         int(error),
         "integral error",
         int(integral_error),
+        "differential error",
+        int(differential_error * 10) / 10.0,
+
         end="       \r",
     )
-    one.move(vel_m1, vel_m2)
-    time.sleep(0.05)
+
+    if stop:
+        one.stop()
+    else:
+        one.move(vel_m1, vel_m2)
+    #time.sleep(0.05)
 
     # Configuration menu
     if one.read_button() == 3:
@@ -249,6 +258,34 @@ def loop():
         integral_error = 0
         previous_error = 0
 
+def on_key_event():
+    global stop
+    if keyboard.is_pressed('q'):
+        kp += 1
+    if keyboard.is_pressed('a'):
+        kp -= 1
+    if keyboard.is_pressed('w'):
+        ki += 1
+    if keyboard.is_pressed('s'):
+        ki -= 1
+    if keyboard.is_pressed('e'):
+        kd += 1
+    if keyboard.is_pressed('d'):
+        kd -= 1
+    if keyboard.is_pressed('p'):
+        max_linear_speed += 1
+    if keyboard.is_pressed('l'):
+        max_linear_speed -= 1
+    if keyboard.is_pressed('o'):
+        speed_boost += 1
+    if keyboard.is_pressed('k'):
+        speed_boost -= 1
+    if keyboard.is_pressed('g'):
+        stop = False
+    if keyboard.is_pressed('b'):
+        stop = True
+
+    save_config(max_linear_speed, speed_boost, kp, ki, kd)
 
 def main():
     setup()
