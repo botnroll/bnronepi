@@ -220,7 +220,8 @@ def loop():
     output = cap_value(output, -MAX_SPEED, MAX_SPEED)
     previous_error = error
 
-    max_speed = (max_linear_speed * (1.0 - ((abs(error) / 100.0) / 2.0)))
+    #max_speed = (max_linear_speed * (1.0 - ((abs(error) / 100.0) / 2.0)))
+    max_speed = max_linear_speed
     vel_m1 = max_speed - output
     vel_m2 = max_speed + output
     # Limit motors maximum and minimum speed
@@ -242,7 +243,12 @@ def loop():
         int(integral_error),
         "differential error",
         int(differential_error * 10) / 10.0,
-
+        "kp",
+        kp,
+        "ki",
+        ki,
+        "kd",
+        kd,
         end="       \r",
     )
 
@@ -261,17 +267,17 @@ def loop():
 def on_key_event():
     global stop, max_linear_speed, speed_boost, kp, ki, kd
     if keyboard.is_pressed('q'):
-        kp += 1
+        kp += 0.05
     if keyboard.is_pressed('a'):
-        kp -= 1
+        kp -= 0.1
     if keyboard.is_pressed('w'):
-        ki += 1
+        ki += 0.01
     if keyboard.is_pressed('s'):
-        ki -= 1
+        ki -= 0.01
     if keyboard.is_pressed('e'):
-        kd += 1
+        kd += 0.01
     if keyboard.is_pressed('d'):
-        kd -= 1
+        kd -= 0.01
     if keyboard.is_pressed('p'):
         max_linear_speed += 1
     if keyboard.is_pressed('l'):
