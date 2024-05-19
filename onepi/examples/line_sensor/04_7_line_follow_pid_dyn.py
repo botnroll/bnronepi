@@ -219,10 +219,10 @@ def on_press(key):
             kp -= 0.1
             kp = cap_value(kp, 0, 10)
         elif key.char == 'w':
-            ki += 0.01
+            ki += 0.1
             ki = cap_value(ki, 0, 10)
         elif key.char == 's':
-            ki -= 0.01
+            ki -= 0.1
             ki = cap_value(ki, 0, 10)
         elif key.char == 'e':
             kd += 0.01
@@ -275,7 +275,7 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def setup():
-    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.min_battery(12.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()
     time.sleep(2)
@@ -302,7 +302,7 @@ def loop():
     if (error * previous_error) <= 0:
         integral_error = 0.0
     differential_error = error - previous_error  # Differential error
-    output = (kp * error) + (ki * integral_error) + (kd * differential_error)
+    output = (kp * error) + (ki / 100.0 * integral_error) + (kd * differential_error)
 
     output = cap_value(output, -MAX_SPEED, MAX_SPEED)
     previous_error = error
