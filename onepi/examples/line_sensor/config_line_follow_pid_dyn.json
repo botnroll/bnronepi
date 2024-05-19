@@ -1,7 +1,7 @@
 {
-    "max_linear_speed": 40,
-    "speed_boost": 20,
-    "kp": 0.2,
-    "ki": 0.05,
-    "kd": 0.0
+    "max_linear_speed": 50,
+    "speed_boost": 2,
+    "kp": 0.7000000000000001,
+    "ki": 0,
+    "kd": 0.3800000000000001
 }

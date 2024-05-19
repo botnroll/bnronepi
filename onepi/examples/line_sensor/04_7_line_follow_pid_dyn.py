@@ -18,7 +18,8 @@ Press push button 3 (PB3) to enter control configuration menu.
 import os
 import json
 import time
-import keyboard
+from pynput import keyboard
+import threading
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -36,9 +37,8 @@ differential_error = 0.0  # Differential error
 previous_error = 0  # Previous proportional eror
 MAX_SPEED = 100.0
 stop = False
-
-keyboard.on_press(on_key_event)
-
+key_pressed = False
+        
 def wait_user_input():
     button = 0
     while button == 0:  # Wait a button to be pressed
@@ -74,6 +74,7 @@ def set_speed_boost(new_speed_boost):
 
 
 def set_gain(new_gain, multiplier, increment, text, max_value, min_value=0):
+    global key_pressed
     new_gain = int(new_gain * multiplier)
     max_value = max_value * multiplier
     option = 0
@@ -85,7 +86,9 @@ def set_gain(new_gain, multiplier, increment, text, max_value, min_value=0):
             new_gain -= increment
             time.sleep(0.150)
         new_gain = cap_value(new_gain, min_value, max_value)
-        one.lcd1(text + " Gain:", new_gain)
+        
+        if not key_pressed:
+            one.lcd1(text + " Gain:", new_gain)
         option = wait_user_input()
     return new_gain / multiplier
 
@@ -104,6 +107,7 @@ def set_kd_gain(new_gain):
 
 def config_menu():
     global max_linear_speed, speed_boost, kp, ki, kd
+    print("Menu")
     one.lcd2("1:Menu")
     time.sleep(1)
     one.lcd2("1:++ 2:--   3:OK")
@@ -123,6 +127,7 @@ def main_screen():
     one.lcd2("www.botnroll.com")
 
 def menu():
+    print("Menu -> stop robot")
     one.stop()
     while one.read_button() != 0:
         pass
@@ -180,6 +185,80 @@ def save_config(new_max_linear_speed, new_speed_boost, new_kp, new_ki, new_kd):
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
 
+def on_press(key):
+    global stop, max_linear_speed, speed_boost, kp, ki, kd, one, key_pressed
+    key_pressed = True
+    try:
+        #print(f'Key {key.char} pressed')
+        if key == keyboard.Key.left:
+            one.stop()
+            one.move(-max_linear_speed*3/4, max_linear_speed*3/4)
+            time.sleep(.3)
+            one.stop()
+        elif key == keyboard.gbKey.right:
+            one.stop()
+            one.move(max_linear_speed*3/4, -max_linear_speed*3/4)
+            time.sleep(.3)
+            one.stop()
+        elif key == keyboard.Key.up:
+            one.stop()
+            one.move(max_linear_speed*2/3, max_linear_speed*2/3)
+            time.sleep(.5)
+            one.stop()
+        elif key == keyboard.Key.down:
+            one.stop()
+            one.move(-max_linear_speed*2/3, -max_linear_speed*2/3)
+            time.sleep(0.5)
+            one.stop()
+        elif key.char == 'q':
+            kp += 0.05
+            kp = cap_value(kp, 0, 10)
+        elif key.char == 'a':
+            kp -= 0.1
+            kp = cap_value(kp, 0, 10)
+        elif key.char =='w':
+            ki += 0.01
+            ki = cap_value(ki, 0, 10)
+        elif key.char =='s':
+            ki -= 0.01
+            ki = cap_value(ki, 0, 10)
+        elif key.char =='e':
+            kd += 0.01
+            kd = cap_value(kd, 0, 10)
+        elif key.char =='d':
+            kd -= 0.01
+            kd = cap_value(kd, 0, 10)
+        elif key.char =='p':
+            max_linear_speed += 1
+        elif key.char =='l':
+            max_linear_speed -= 1
+        elif key.char =='o':
+            speed_boost += 1
+        elif key.char =='k':
+            speed_boost -= 1
+        elif key.char =='g':
+            stop = False
+        elif key.char =='b':
+            one.stop()
+            stop = True
+        save_config(max_linear_speed, speed_boost, kp, ki, kd)
+    except AttributeError:
+        print(f'Special key {key} pressed')
+    key_pressed = False
+    
+def on_release(key):
+    #print(f'Key {key} released')
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
+
+def start_listener():
+    with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+        listener.join()
+
+listener_thread = threading.Thread(target=start_listener)
+listener_thread.start()
+
 
 def cap_value(value, lower_limit, upper_limit):
     """
@@ -197,14 +276,18 @@ def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()
-    menu()
+    time.sleep(2)
+    #menu()
 
 
 def loop():
     global integral_error, differential_error, previous_error
-    global max_linear_speed, speed_boost, kp, ki, kd, stop
-
-    line = one.read_line()  # Read the line sensor value [-100, 100]
+    global max_linear_speed, speed_boost, kp, ki, kd, stop, key_pressed
+    
+    if not key_pressed:
+        line = one.read_line()  # Read the line sensor value [-100, 100]
+    else:
+        line = 0
     line_ref = 0  # Reference line value
     output = 0.0  # PID control output
 
@@ -244,54 +327,27 @@ def loop():
         "differential error",
         int(differential_error * 10) / 10.0,
         "kp",
-        kp,
+        int(kp * 100) / 100,
         "ki",
-        ki,
+        int(ki * 1000) / 1000,
         "kd",
-        kd,
+        int(kd * 100) / 100,
         end="       \r",
     )
-
-    if stop:
-        one.stop()
-    else:
-        one.move(vel_m1, vel_m2)
+    if not key_pressed:
+        if stop:
+            one.stop()
+        else:
+            one.move(vel_m1, vel_m2)
     #time.sleep(0.05)
 
-    # Configuration menu
-    if one.read_button() == 3:
-        menu()  # PB3 to enter menu
-        integral_error = 0
-        previous_error = 0
+        # Configuration menu
+#    if not key_pressed:
+#        if one.read_button() == 3:
+#            menu()  # PB3 to enter menu
+#            integral_error = 0
+#            previous_error = 0
 
-def on_key_event():
-    global stop, max_linear_speed, speed_boost, kp, ki, kd
-    if keyboard.is_pressed('q'):
-        kp += 0.05
-    if keyboard.is_pressed('a'):
-        kp -= 0.1
-    if keyboard.is_pressed('w'):
-        ki += 0.01
-    if keyboard.is_pressed('s'):
-        ki -= 0.01
-    if keyboard.is_pressed('e'):
-        kd += 0.01
-    if keyboard.is_pressed('d'):
-        kd -= 0.01
-    if keyboard.is_pressed('p'):
-        max_linear_speed += 1
-    if keyboard.is_pressed('l'):
-        max_linear_speed -= 1
-    if keyboard.is_pressed('o'):
-        speed_boost += 1
-    if keyboard.is_pressed('k'):
-        speed_boost -= 1
-    if keyboard.is_pressed('g'):
-        stop = False
-    if keyboard.is_pressed('b'):
-        stop = True
-
-    save_config(max_linear_speed, speed_boost, kp, ki, kd)
 
 def main():
     setup()
