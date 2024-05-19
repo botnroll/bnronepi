@@ -213,15 +213,17 @@ def on_press(key):
             time.sleep(0.5)
             one.stop()
         elif key.char == 'q':
-            kp += 0.05
+            kp += 0.02
             kp = cap_value(kp, 0, 10)
         elif key.char == 'a':
-            kp -= 0.1
+            kp -= 0.02
             kp = cap_value(kp, 0, 10)
         elif key.char == 'w':
+            ki = round(ki * 10) / 10
             ki += 0.1
             ki = cap_value(ki, 0, 10)
         elif key.char == 's':
+            ki = round(ki * 10) / 10
             ki -= 0.1
             ki = cap_value(ki, 0, 10)
         elif key.char == 'e':
@@ -297,7 +299,7 @@ def loop():
 
     error = line_ref - line  # Proportional error
     integral_error += error  # Increment integral error
-    integral_error = cap_value(integral_error, -1000, 1000)
+    integral_error = cap_value(integral_error, -3000, 3000)
     # Clean integral error if line value is zero or if line signal has changed
     if (error * previous_error) <= 0:
         integral_error = 0.0
@@ -335,7 +337,7 @@ def loop():
         "ki",
         int(ki * 1000) / 1000,
         "kd",
-        int(kd * 100) / 100,
+        round(kd * 100) / 100,
         end="       \r",
     )
     if not key_pressed:
