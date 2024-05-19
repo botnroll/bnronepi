@@ -186,8 +186,10 @@ def save_config(new_max_linear_speed, new_speed_boost, new_kp, new_ki, new_kd):
         json.dump(data, file, indent=4)
 
 def on_press(key):
-    global stop, max_linear_speed, speed_boost, kp, ki, kd, one, key_pressed
+    global stop, max_linear_speed, speed_boost, kp, ki, kd, one, key_pressed, executing_command
     key_pressed = True
+    while executing_command:
+        pass
     try:
         #print(f'Key {key.char} pressed')
         if key == keyboard.Key.left:
@@ -195,7 +197,7 @@ def on_press(key):
             one.move(-max_linear_speed * 3 / 4.0, max_linear_speed * 3 / 4.0)
             time.sleep(.3)
             one.stop()
-        elif key == keyboard.gbKey.right:
+        elif key == keyboard.Key.right:
             one.stop()
             one.move(max_linear_speed * 3 / 4.0, -max_linear_speed * 3 / 4.0)
             time.sleep(.3)
@@ -282,10 +284,12 @@ def setup():
 
 def loop():
     global integral_error, differential_error, previous_error
-    global max_linear_speed, speed_boost, kp, ki, kd, stop, key_pressed
+    global max_linear_speed, speed_boost, kp, ki, kd, stop, key_pressed, executing_command
 
     if not key_pressed:
+        executing_command = True
         line = one.read_line()  # Read the line sensor value [-100, 100]
+        executing_command = False
     else:
         line = 0
     line_ref = 0  # Reference line value
@@ -336,9 +340,13 @@ def loop():
     )
     if not key_pressed:
         if stop:
+            executing_command = True
             one.stop()
+            executing_command = False
         else:
+            executing_command = True
             one.move(vel_m1, vel_m2)
+            executing_command = False
     #time.sleep(0.05)
 
         # Configuration menu
