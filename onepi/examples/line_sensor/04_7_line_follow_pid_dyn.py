@@ -38,7 +38,7 @@ previous_error = 0  # Previous proportional eror
 MAX_SPEED = 100.0
 stop = False
 key_pressed = False
-        
+
 def wait_user_input():
     button = 0
     while button == 0:  # Wait a button to be pressed
@@ -86,7 +86,7 @@ def set_gain(new_gain, multiplier, increment, text, max_value, min_value=0):
             new_gain -= increment
             time.sleep(0.150)
         new_gain = cap_value(new_gain, min_value, max_value)
-        
+
         if not key_pressed:
             one.lcd1(text + " Gain:", new_gain)
         option = wait_user_input()
@@ -192,22 +192,22 @@ def on_press(key):
         #print(f'Key {key.char} pressed')
         if key == keyboard.Key.left:
             one.stop()
-            one.move(-max_linear_speed*3/4, max_linear_speed*3/4)
+            one.move(-max_linear_speed * 3 / 4.0, max_linear_speed * 3 / 4.0)
             time.sleep(.3)
             one.stop()
         elif key == keyboard.gbKey.right:
             one.stop()
-            one.move(max_linear_speed*3/4, -max_linear_speed*3/4)
+            one.move(max_linear_speed * 3 / 4.0, -max_linear_speed * 3 / 4.0)
             time.sleep(.3)
             one.stop()
         elif key == keyboard.Key.up:
             one.stop()
-            one.move(max_linear_speed*2/3, max_linear_speed*2/3)
+            one.move(max_linear_speed * 2 / 3.0, max_linear_speed * 2 / 3.0)
             time.sleep(.5)
             one.stop()
         elif key == keyboard.Key.down:
             one.stop()
-            one.move(-max_linear_speed*2/3, -max_linear_speed*2/3)
+            one.move(-max_linear_speed * 2 / 3.0, -max_linear_speed * 2 / 3.0)
             time.sleep(0.5)
             one.stop()
         elif key.char == 'q':
@@ -216,36 +216,36 @@ def on_press(key):
         elif key.char == 'a':
             kp -= 0.1
             kp = cap_value(kp, 0, 10)
-        elif key.char =='w':
+        elif key.char == 'w':
             ki += 0.01
             ki = cap_value(ki, 0, 10)
-        elif key.char =='s':
+        elif key.char == 's':
             ki -= 0.01
             ki = cap_value(ki, 0, 10)
-        elif key.char =='e':
+        elif key.char == 'e':
             kd += 0.01
             kd = cap_value(kd, 0, 10)
-        elif key.char =='d':
+        elif key.char == 'd':
             kd -= 0.01
             kd = cap_value(kd, 0, 10)
-        elif key.char =='p':
+        elif key.char == 'p':
             max_linear_speed += 1
-        elif key.char =='l':
+        elif key.char == 'l':
             max_linear_speed -= 1
-        elif key.char =='o':
+        elif key.char == 'o':
             speed_boost += 1
-        elif key.char =='k':
+        elif key.char == 'k':
             speed_boost -= 1
-        elif key.char =='g':
+        elif key.char == 'g':
             stop = False
-        elif key.char =='b':
+        elif key.char == 'b':
             one.stop()
             stop = True
         save_config(max_linear_speed, speed_boost, kp, ki, kd)
     except AttributeError:
         print(f'Special key {key} pressed')
     key_pressed = False
-    
+
 def on_release(key):
     #print(f'Key {key} released')
     if key == keyboard.Key.esc:
@@ -283,7 +283,7 @@ def setup():
 def loop():
     global integral_error, differential_error, previous_error
     global max_linear_speed, speed_boost, kp, ki, kd, stop, key_pressed
-    
+
     if not key_pressed:
         line = one.read_line()  # Read the line sensor value [-100, 100]
     else:
