@@ -12,7 +12,7 @@ kd = 0.2  # 0.5
 
 AXIS_LENGHTH_MM = 163.0
 WHEEL_DIAMETER_MM = 65.0
-TICKS_PER_REV = 1490
+PULSES_PER_REV = 1490
 MIN_SPEED_MMPS = -850
 MAX_SPEED_MMPS = 850
 
@@ -20,10 +20,10 @@ update_time_ms = 100
 
 right_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
 left_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
-cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, TICKS_PER_REV)
+cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, PULSES_PER_REV)
 
 timestamp = 0
-    
+
 def print_value(text, value):
     print(text, value)
 
@@ -60,7 +60,7 @@ def test_pid():
         right_encoder = one.read_right_encoder()
         right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
-        
+
         one.move(0, right_power)
         time.sleep(0.1)  # ms
 
@@ -81,10 +81,10 @@ def setup():
     one.reset_right_encoder()
 
     ref_speed_mmps = 200
-    num_ticks = cut.compute_ticks_from_speed(ref_speed_mmps, update_time_ms)
-    print("setpoint ticks:", int(num_ticks))
-    right_pid_controller.change_set_point(num_ticks)  # min 10, max 70
-    #left_pid_controller.change_set_point(num_ticks)
+    num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+    print("setpoint pulses:", int(num_pulses))
+    right_pid_controller.change_set_point(num_pulses)  # min 10, max 70
+    #left_pid_controller.change_set_point(num_pulses)
     test_pid()
     one.stop()
 
@@ -96,41 +96,41 @@ def loop():
 data = []
 def write_to_csv():
     global data
-    
+
     with open('step_data.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(data)
-    
+
 def change_setpoint(ref_speed_mmps):
     global update_time_ms
     global data, cut, timestamp
-    
-    num_ticks = cut.compute_ticks_from_speed(ref_speed_mmps, update_time_ms)
-    print("setpoint ticks:", int(num_ticks))
-    right_pid_controller.change_set_point(num_ticks)  # min 10, max 70
-    input_data = num_ticks
+
+    num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+    print("setpoint pulses:", int(num_pulses))
+    right_pid_controller.change_set_point(num_pulses)  # min 10, max 70
+    input_data = num_pulses
     # compute pid
     right_power = 0
     for i in range(0,50):
-                
+
         right_encoder = one.read_right_encoder()
         right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
         data.append([timestamp, input_data, right_encoder])
         timestamp += 100
         time.sleep(update_time_ms / 1000.0)
-        
+
         one.move(0, right_power)
-    
-    
-def step_response():   
+
+
+def step_response():
     one.reset_right_encoder()
     change_setpoint(0)
     change_setpoint(200)
     change_setpoint(0)
     one.stop()
     write_to_csv()
-    
+
 def main():
     #step_response()
     setup()

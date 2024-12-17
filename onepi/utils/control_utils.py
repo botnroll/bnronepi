@@ -9,12 +9,12 @@ def cap_to_limits(value, min_value, max_value):
 
 class ControlUtils:
     """
-    collection of methods to compute speeds, distance, ticks
+    collection of methods to compute speeds, distance, pulses
     """
 
     _axis_length_mm = 163.0
     _wheel_diameter_mm = 65.0
-    _ticks_per_rev = 80
+    _pulses_per_rev = 80
     _max_speed_mmps = 850
     _min_speed_mmps = 0
     _spot_rotation_delta = -14.5  # For spot rotations only
@@ -24,7 +24,7 @@ class ControlUtils:
         self,
         axis_length_mm,
         wheel_diameter_mm,
-        ticks_per_rev,
+        pulses_per_rev,
         max_speed_mmps=850,
         min_speed_mmps=0,
     ):
@@ -33,7 +33,7 @@ class ControlUtils:
         """
         self._axis_length_mm = axis_length_mm
         self._wheel_diameter_mm = wheel_diameter_mm
-        self._ticks_per_rev = ticks_per_rev
+        self._pulses_per_rev = pulses_per_rev
         self._max_speed_mmps = max_speed_mmps
         self._min_speed_mmps = min_speed_mmps
 
@@ -53,12 +53,12 @@ class ControlUtils:
         y = ((x_value - x_min) / x_range) * y_range + y_min
         return y
 
-    def compute_rev_from_ticks(self, pulses):
+    def compute_rev_from_pulses(self, pulses):
         """
            computes the expected number of pulses given the number of revolutions of the wheel
         */
         """
-        return float(pulses) / self._ticks_per_rev
+        return float(pulses) / self._pulses_per_rev
 
     def compute_distance_from_rev(self, revolutions):
         """
@@ -73,11 +73,11 @@ class ControlUtils:
         """
         return (distance_mm * 1000) / time_ms
 
-    def compute_speed_from_ticks(self, num_ticks, time_ms):
+    def compute_speed_from_pulses(self, num_pulses, time_ms):
         """
-        computes speed given the number of ticks and time
+        computes speed given the number of pulses and time
         """
-        revolutions = self.compute_rev_from_ticks(num_ticks)
+        revolutions = self.compute_rev_from_pulses(num_pulses)
         distance_mm = self.compute_distance_from_rev(revolutions)
         speed_mmps = self.compute_speed_from_distance(distance_mm, time_ms)
         return speed_mmps
@@ -110,26 +110,26 @@ class ControlUtils:
             ) / 2.0
         return arc_length_mm
 
-    def compute_ticks_from_rev(self, revolutions):
+    def compute_pulses_from_rev(self, revolutions):
         """
-        computes number of ticks from number of revolutions
+        computes number of pulses from number of revolutions
         """
-        return revolutions * self._ticks_per_rev
+        return revolutions * self._pulses_per_rev
 
     def compute_pulses_from_rev(self, revolutions):
         """
-        computes the expected number of ticks given the number of revolutions of the wheel
+        computes the expected number of pulses given the number of revolutions of the wheel
         """
-        return round(self._ticks_per_rev * revolutions)
+        return round(self._pulses_per_rev * revolutions)
 
-    def compute_ticks_from_speed(self, speed_mmps, time_ms):
+    def compute_pulses_from_speed(self, speed_mmps, time_ms):
         """
-        computes number of ticks given speed and time
+        computes number of pulses given speed and time
         """
         distance_mm = self.compute_distance_from_speed(speed_mmps, time_ms)
         revolutions = self.compute_revolutions_from_distance(distance_mm)
-        num_ticks = self.compute_ticks_from_rev(revolutions)
-        return num_ticks
+        num_pulses = self.compute_pulses_from_rev(revolutions)
+        return num_pulses
 
     def maybe_change_sign(self, abs_value, ref_value, previous_ref_value):
         """

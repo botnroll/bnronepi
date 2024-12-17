@@ -22,7 +22,7 @@ speed_conversion_factor = 1  # conversion factor from real speeds to percentage
 file_name = "config_speed_factor.json"
 filename = os.path.join(os.path.dirname(__file__), file_name)
 MAX_SPEED = 50.0
-TICKS_PER_REV = 1500  # encoder ticks per revolution
+PULSES_PER_REV = 1500  # encoder pulses per revolution
 WHEEL_DIAMETER_MM = 63  # mm
 
 
@@ -56,7 +56,7 @@ def save_config(speed_conversion_factor_in):
         json.dump(data, file, indent=4)
 
 
-def determine_speed(speed_in, wheel_diameter, ticks_per_rev, motion_duration_s=1):
+def determine_speed(speed_in, wheel_diameter, pulses_per_rev, motion_duration_s=1):
     one.stop()
     one.move(10, 10)
     time.sleep(0.1)
@@ -70,7 +70,7 @@ def determine_speed(speed_in, wheel_diameter, ticks_per_rev, motion_duration_s=1
     one.stop()
     average_count = (left_count + right_count) / 2.0
     print("average_count: ", average_count)
-    revolutions = average_count / ticks_per_rev
+    revolutions = average_count / pulses_per_rev
     wheel_perimeter = wheel_diameter * math.pi
     distance = wheel_perimeter * revolutions
     speed_mmps = distance / motion_duration_s  #
@@ -84,8 +84,8 @@ def determine_speed(speed_in, wheel_diameter, ticks_per_rev, motion_duration_s=1
 
 def calibrate_speed_factor():
     global speed_conversion_factor, max_speed_mmps
-    global MAX_SPEED, WHEEL_DIAMETER_MM, TICKS_PER_REV
-    max_speed_mmps = determine_speed(MAX_SPEED, WHEEL_DIAMETER_MM, TICKS_PER_REV)
+    global MAX_SPEED, WHEEL_DIAMETER_MM, PULSES_PER_REV
+    max_speed_mmps = determine_speed(MAX_SPEED, WHEEL_DIAMETER_MM, PULSES_PER_REV)
     speed_conversion_factor = max_speed_mmps / MAX_SPEED
     save_config(speed_conversion_factor)
 
@@ -103,12 +103,12 @@ def within_tolerance(value_in, value_ref, tolerance):
 
 def verify_calibration():
     global speed_conversion_factor, max_speed_mmps
-    global MAX_SPEED, WHEEL_DIAMETER_MM, TICKS_PER_REV
+    global MAX_SPEED, WHEEL_DIAMETER_MM, PULSES_PER_REV
 
     tolerance = 2  # tolerance percentage
     half_max_speed_mmps = max_speed_mmps / 2.0
     # verify linearity of the speed conversion
-    speed_mmps = determine_speed(MAX_SPEED / 2.0, WHEEL_DIAMETER_MM, TICKS_PER_REV)
+    speed_mmps = determine_speed(MAX_SPEED / 2.0, WHEEL_DIAMETER_MM, PULSES_PER_REV)
     print("half_max_speed_mmps: ", speed_mmps)
     real_speed_tolerance = (tolerance * max_speed_mmps) / 100.0
     error = speed_mmps - half_max_speed_mmps

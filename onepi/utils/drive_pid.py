@@ -47,7 +47,7 @@ class DrivePID:
 
         self._cut = ControlUtils(params._axis_length_mm,
                                  params.wheel_diameter_mm,
-                                 params.ticks_per_rev)
+                                 params.pulses_per_rev)
 
         GPIO.setmode(GPIO.BCM)
         self._left_dir_pin = 22  # DirL
@@ -110,14 +110,14 @@ class DrivePID:
         """
         if not self._initialised:
             self._initialise()
-        left_ticks = self._cut.compute_ticks_from_speed(
+        left_pulses = self._cut.compute_pulses_from_speed(
             left_speed_mmps, self._update_period_ms
         )
-        right_ticks = self._cut.compute_ticks_from_speed(
+        right_pulses = self._cut.compute_pulses_from_speed(
             right_speed_mmps, self._update_period_ms
         )
-        self._left_pid.change_set_point(left_ticks)
-        self._right_pid.change_set_point(right_ticks)
+        self._left_pid.change_set_point(left_pulses)
+        self._right_pid.change_set_point(right_pulses)
 
     def stop(self):
         """
