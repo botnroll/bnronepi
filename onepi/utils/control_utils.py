@@ -1,3 +1,10 @@
+"""
+Collection of utility methods to perform useful conversions and calculations
+"""
+
+from onepi.utils.robot_params import RobotParams
+
+
 def cap_to_limits(value, min_value, max_value):
     """
     Cap input value within the given min and max limits
@@ -60,19 +67,16 @@ class ControlUtils:
 
     def __init__(
         self,
-        axis_length_mm,
-        wheel_diameter_mm,
-        pulses_per_rev,
-        max_speed_mmps=850,
+        params=RobotParams(),
         min_speed_mmps=0,
     ):
         """
         constructor
         """
-        self._axis_length_mm = axis_length_mm
-        self._wheel_diameter_mm = wheel_diameter_mm
-        self._pulses_per_rev = pulses_per_rev
-        self._max_speed_mmps = max_speed_mmps
+        self._axis_length_mm = params.axis_length_mm
+        self._wheel_diameter_mm = params.wheel_diameter_mm
+        self._pulses_per_rev = params.pulses_per_rev
+        self._max_speed_mmps = params.max_speed_mmps
         self._min_speed_mmps = min_speed_mmps
 
     def convert_range(self, x_value, x_min, x_max, y_min, y_max):
@@ -93,8 +97,8 @@ class ControlUtils:
 
     def compute_rev_from_pulses(self, pulses):
         """
-           computes the expected number of pulses given the number of revolutions of the wheel
-        */
+        computes the expected number of pulses given
+        the number of revolutions of the wheel
         """
         return float(pulses) / self._pulses_per_rev
 
@@ -129,7 +133,8 @@ class ControlUtils:
 
     def compute_revolutions_from_distance(self, distance_mm):
         """
-        computes the number of revolutions expected for the wheel for a given distance
+        computes the number of revolutions expected for the wheel
+        for a given distance
         """
         perimeter_of_circle = self._pi * float(self._wheel_diameter_mm)
         revolutions = distance_mm / perimeter_of_circle
@@ -140,17 +145,19 @@ class ControlUtils:
         Computes the arc length given the angle and radius of curvature
         """
         arc_length_mm = 0.0
-        if radius_of_curvature_mm != 0.0:
+        if abs(radius_of_curvature_mm) > 0.1:
             arc_length_mm = angle_rad * radius_of_curvature_mm
         else:
             arc_length_mm = (
-                angle_rad * float(self._axis_length_mm + self._spot_rotation_delta)
+                angle_rad * float(self._axis_length_mm +
+                                  self._spot_rotation_delta)
             ) / 2.0
         return arc_length_mm
 
     def compute_pulses_from_rev(self, revolutions):
         """
-        computes the expected number of pulses given the number of revolutions of the wheel
+        computes the expected number of pulses given
+        the number of revolutions of the wheel
         """
         return round(self._pulses_per_rev * revolutions)
 
@@ -180,11 +187,19 @@ class ControlUtils:
         capped_speed = cap_to_limits(desired_speed_percentage, -100, 100)
         if capped_speed < 0:
             return self.convert_range(
-                capped_speed, -100, 0, -self._max_speed_mmps, -self._min_speed_mmps
+                capped_speed,
+                -100,
+                0,
+                -self._max_speed_mmps,
+                -self._min_speed_mmps
             )
         if capped_speed > 0:
             return self.convert_range(
-                capped_speed, 0, 100, self._min_speed_mmps, self._max_speed_mmps
+                capped_speed,
+                0,
+                100,
+                self._min_speed_mmps,
+                self._max_speed_mmps
             )
         return 0
 
@@ -193,7 +208,9 @@ class ControlUtils:
         convert real speed to speed percentage
         """
         capped_speed = cap_to_limits(
-            desired_speed_mmps, -self._max_speed_mmps, self._max_speed_mmps
+            desired_speed_mmps,
+            -self._max_speed_mmps,
+            self._max_speed_mmps
         )
         if capped_speed <= -self._min_speed_mmps:
             return self.convert_range(
