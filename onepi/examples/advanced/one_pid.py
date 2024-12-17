@@ -12,7 +12,7 @@ This allows PID more room to control the speeds at lower values.
 """
 
 from onepi.one import BnrOneA
-from onepi.utils.move_pid import MovePid
+from onepi.utils.drive_pid import DrivePID
 import time
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -23,7 +23,7 @@ def test_move_pid():
     test the move_pid class by setting the wheels to move
     at a certain speed for a small period of time
     """
-    one_pid = MovePid()
+    one_pid = DrivePID()
     print("Move with PID controller")
     one_pid.move(250, 250)
     time.sleep(3)

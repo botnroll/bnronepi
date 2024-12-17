@@ -1,23 +1,24 @@
 import time
 from onepi.one import BnrOneA
-from onepi.utils.move_pid import MovePid
+from onepi.utils.drive_pid import DrivePID
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+
 
 def test_move_pid():
     """
     test the move_pid class by setting the wheels to move
     at a certain speed for a small period of time
     """
-    move_pid = MovePid()
-    print ("move: 200,200")
+    move_pid = DrivePID()
+    print("move: 200, 200")
     move_pid.move(200, 200)
     time.sleep(3)
-    print ("move: 0,0")
+    print("move: 0,0")
     move_pid.move(0, 0)
     time.sleep(3)
-    print ("move: 400,400")
-    move_pid.move(400,400)
+    print("move: 400, 400")
+    move_pid.move(400, 400)
     time.sleep(3)
     print("stop")
     move_pid.stop()

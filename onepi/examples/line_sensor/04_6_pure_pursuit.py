@@ -15,7 +15,7 @@ import os
 import time
 from collections import namedtuple
 from onepi.one import BnrOneA
-from onepi.utils.move_pid import MovePid
+from onepi.utils.drive_pid import DrivePID
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
@@ -32,7 +32,7 @@ target = Point(line_sensor_pos_x, 0)
 axis_width = 165  # (mm)
 y_tolerance = 0  # (mm) tolerance to move at full speed
 
-one_pid = MovePid()
+one_pid = DrivePID()
 
 
 def pure_pursuit(axis_width_in, v_max, local_target, y_tolerance_in):

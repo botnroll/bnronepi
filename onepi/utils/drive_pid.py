@@ -10,69 +10,71 @@ the wheels start moving set it to when they stop moving.
 This allows PID more room to control the speeds at lower values.
 """
 
+import RPi.GPIO as GPIO
 from onepi.utils.pid_controller import PIDController
 from onepi.utils.control_utils import ControlUtils
 from onepi.utils.simple_timer import SimpleTimer
+from onepi.utils.robot_params import RobotParams
 from onepi.one import BnrOneA
-import RPi.GPIO as GPIO
 
 
-class MovePid:
-
+class DrivePID:
+    """
+    This class provides PID control for a differential drive robot.
+    """
     _left_speed = 0
     _right_speed = 0
     _previous_left_speed = 0
     _previous_right_speed = 0
-    UPDATE_PERIOD_MS = 100
     _counter = 0
 
     KP = 0.02
     KI = 0.70
     KD = 0.03
-    MAX_SPEED_MMPS = 850
-
-    AXIS_LENGHTH_MM = 163.0
-    WHEEL_DIAMETER_MM = 65.0
-    TICKS_PER_REV = 1490
-    _cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, TICKS_PER_REV)
 
     _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
     _initialised = False
 
-    def __init__(self, kp=KP, ki=KI, kd=KD, max_speed_mmps=MAX_SPEED_MMPS, update_period_ms=UPDATE_PERIOD_MS):
+    def __init__(self, kp=KP, ki=KI, kd=KD,
+                 params=RobotParams(),
+                 update_period_ms=100):
         """
-        initialises the class with kp, ki, kd, max speed (mm/s) and update period (ms)
+        initialises the class with kp, ki, kd,
+        max speed (mm/s) and update period (ms)
         """
-        self._get_line = False
-        self._line = 0
         self._initialised = False
+
+        self._cut = ControlUtils(params._axis_length_mm,
+                                 params.wheel_diameter_mm,
+                                 params.ticks_per_rev)
+
         GPIO.setmode(GPIO.BCM)
         self._left_dir_pin = 22  # DirL
         self._right_dir_pin = 23  # DirR
         GPIO.setup(self._left_dir_pin, GPIO.IN)
         GPIO.setup(self._right_dir_pin, GPIO.IN)
-        self._left_pid = PIDController(kp, ki, kd, -max_speed_mmps, max_speed_mmps)
-        self._right_pid = PIDController(kp, ki, kd, -max_speed_mmps, max_speed_mmps)
+        self._left_pid = PIDController(kp, ki, kd,
+                                       -params.max_speed_mmps,
+                                       params.max_speed_mmps)
+        self._right_pid = PIDController(kp, ki, kd,
+                                        -params.max_speed_mmps,
+                                        params.max_speed_mmps)
         self._update_period_ms = update_period_ms
         self._pid_timer = SimpleTimer(
-            increment=self._update_period_ms / 1000.0, function=self._update_speeds
+            increment=self._update_period_ms / 1000.0,
+            function=self._update_speeds
         )
 
     def _initialise(self):
         """
-        resets the system to be ready to start (again) 
+        resets the system to be ready to start (again)
         """
         self._one.reset_left_encoder()
         self._one.reset_right_encoder()
         self._pid_timer.start()
-        self._get_line = False
-        self._line = 0
         self._initialised = True
 
-    def get_line(self):
-        return self._line;
-    
     def _compute_left_speed(self):
         """
         computes left speed
@@ -101,14 +103,11 @@ class MovePid:
         left_speed = self._compute_left_speed()
         right_speed = self._compute_right_speed()
         self._one.move(left_speed, right_speed)
-        if (self._get_line):
-            self._line = self._one.read_line()
 
-    def move(self, left_speed_mmps, right_speed_mmps, get_line=False):
+    def move(self, left_speed_mmps, right_speed_mmps):
         """
         Makes the robot move at the desired wheel speeds in mm/s
         """
-        self._get_line = get_line
         if not self._initialised:
             self._initialise()
         left_ticks = self._cut.compute_ticks_from_speed(
@@ -119,11 +118,11 @@ class MovePid:
         )
         self._left_pid.change_set_point(left_ticks)
         self._right_pid.change_set_point(right_ticks)
-        return self.get_line()
 
     def stop(self):
         """
-        Stops the robot and stops the corresponding timer used by the controller
+        Stops the robot and stops the corresponding timer
+        used by the controller
         """
         self._pid_timer.stop()
         self._one.stop()
