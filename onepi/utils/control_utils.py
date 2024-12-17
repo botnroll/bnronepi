@@ -7,6 +7,33 @@ def cap_to_limits(value, min_value, max_value):
     return value
 
 
+class Pose:
+    x_mm = 0
+    y_mm = 0
+    theta_rad = 0
+
+    def __init__(self, x_mm_in=0, y_mm_in=0, theta_rad_in=0):
+        self.x_mm = x_mm_in
+        self.y_mm = y_mm_in
+        self.theta_rad = theta_rad_in
+
+class PoseSpeeds:
+    linearMmps = 0
+    angularRad = 0
+
+    def __init__(self, linear=0, angular=0):
+        self.linearMmps = linear
+        self.angularRad = angular
+
+class WheelSpeeds:
+    left = 0
+    right = 0
+
+    def __init__(self, leftSpeed=0, rightSpeed=0):
+        self.left = leftSpeed
+        self.right = rightSpeed
+
+
 class ControlUtils:
     """
     collection of methods to compute speeds, distance, pulses
@@ -112,12 +139,6 @@ class ControlUtils:
 
     def compute_pulses_from_rev(self, revolutions):
         """
-        computes number of pulses from number of revolutions
-        """
-        return revolutions * self._pulses_per_rev
-
-    def compute_pulses_from_rev(self, revolutions):
-        """
         computes the expected number of pulses given the number of revolutions of the wheel
         """
         return round(self._pulses_per_rev * revolutions)
@@ -165,10 +186,38 @@ class ControlUtils:
         )
         if capped_speed <= -self._min_speed_mmps:
             return self.convert_range(
-                capped_speed, -self._max_speed_mmps, -self._min_speed_mmps, -100, 0
+                capped_speed,
+                -self._max_speed_mmps,
+                -self._min_speed_mmps,
+                -100,
+                0
             )
         if capped_speed >= self._min_speed_mmps:
             return self.convert_range(
-                capped_speed, self._min_speed_mmps, self._max_speed_mmps, 0, 100
+                capped_speed,
+                self._min_speed_mmps,
+                self._max_speed_mmps,
+                0,
+                100
             )
         return 0
+
+    def compute_pose_speeds(self, left_speed, right_speed):
+        """
+        computes the pose speeds given left and right wheel speeds
+        """
+        linear = (right_speed + left_speed) / 2.0
+        angular = (right_speed - left_speed) / self._axis_length_mm
+        pose_speeds = PoseSpeeds(linear, angular)
+        return pose_speeds
+
+    def compute_wheel_speeds(self, linear_speed, angular_speed_rad):
+        """
+        Computes the wheel speeds from linear and angular speeds
+        """
+        wheel_speeds = WheelSpeeds()
+        wheel_speeds.left = linear_speed - \
+            ((angular_speed_rad * self._axis_length_mm) / 2.0)
+        wheel_speeds.right = linear_speed + \
+            ((angular_speed_rad * self._axis_length_mm) / 2.0)
+        return wheel_speeds
