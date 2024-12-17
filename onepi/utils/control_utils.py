@@ -8,6 +8,9 @@ def cap_to_limits(value, min_value, max_value):
 
 
 class Pose:
+    """
+    Pose definition. Contains x, y and theta coordinates
+    """
     x_mm = 0
     y_mm = 0
     theta_rad = 0
@@ -17,21 +20,29 @@ class Pose:
         self.y_mm = y_mm_in
         self.theta_rad = theta_rad_in
 
+
 class PoseSpeeds:
-    linearMmps = 0
-    angularRad = 0
+    """
+    Encodes the speed of the robot in terms of linear and angular speeds
+    """
+    linear_mmps = 0
+    angular_rad = 0
 
     def __init__(self, linear=0, angular=0):
-        self.linearMmps = linear
-        self.angularRad = angular
+        self.linear_mmps = linear
+        self.angular_rad = angular
+
 
 class WheelSpeeds:
+    """
+    Encodes the speed of the robot in terms of left and right wheel speeds
+    """
     left = 0
     right = 0
 
-    def __init__(self, leftSpeed=0, rightSpeed=0):
-        self.left = leftSpeed
-        self.right = rightSpeed
+    def __init__(self, left_speed=0, right_speed=0):
+        self.left = left_speed
+        self.right = right_speed
 
 
 class ControlUtils:
