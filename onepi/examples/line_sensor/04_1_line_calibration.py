@@ -42,7 +42,7 @@ import json
 import os
 import time
 from onepi.one import BnrOneA
-from onepi.utils.config import Config
+from onepi.utils.line_sensor_config import LineSensorConfig
 from onepi.utils.line_detector import LineDetector
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -90,7 +90,7 @@ def save_config():
     Saves configuration to default file
     """
     global line_detector
-    cfg = Config()
+    cfg = LineSensorConfig()
     cfg.sensor_min = line_detector._config.sensor_min
     cfg.sensor_max = line_detector._config.sensor_max
     cfg.threshold = line_detector._config.threshold
@@ -123,7 +123,7 @@ def calibrate_min_max():
     one.stop()
     print("Done")
 
-    line_detector._config = Config()
+    line_detector._config = LineSensorConfig()
     line_detector._config.load()  # loads default values
     line_detector._config.sensor_max = sensor_value_max
     line_detector._config.sensor_min = sensor_value_min
@@ -356,7 +356,7 @@ def view_calibration():
     """
     Reads and prints saved config values on the terminal
     """
-    cfg = Config()
+    cfg = LineSensorConfig()
     cfg.load()
     cfg.print()
 

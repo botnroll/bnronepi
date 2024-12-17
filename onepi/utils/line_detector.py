@@ -2,7 +2,7 @@
 Line detector class
 """
 
-from onepi.utils.config import Config
+from onepi.utils.line_sensor_config import LineSensorConfig
 
 
 class LineDetector:
@@ -21,7 +21,7 @@ class LineDetector:
         0
     ] * 8  # array of 8 elements with correction factor for each line sensor
     _previous_line_value = 0
-    _config = Config()
+    _config = LineSensorConfig()
 
     def _normalise(self, reading, minimum, scale):
         """

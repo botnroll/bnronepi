@@ -6,7 +6,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 sys.path.append(project_root)
 
-from onepi.utils.config import Config
+from onepi.utils.line_sensor_config import LineSensorConfig
 
 
 def test_config():
@@ -15,7 +15,7 @@ def test_config():
      - loading values from config file
      - saving values to config file
     """
-    cfg = Config("test_cfg.json")
+    cfg = LineSensorConfig("test_cfg.json")
     print(">> Create config file")
     cfg.sensor_min = [100, 200, 300, 300]
     cfg.sensor_max = [500, 400, 700, 800]

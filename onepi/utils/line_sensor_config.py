@@ -11,7 +11,7 @@ import json
 import os
 
 
-class Config:
+class LineSensorConfig:
     """
     Saves and load config values to and from file
     """
@@ -59,7 +59,7 @@ class Config:
 
 
 def main():
-    cfg = Config()
+    cfg = LineSensorConfig()
     cfg.save()
     cfg.load()
     cfg.print()
