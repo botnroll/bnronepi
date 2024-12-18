@@ -16,10 +16,19 @@ Motors Calibration.
 """
 
 import time
+import signal
 from onepi.one import BnrOneA
 
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     one = BnrOneA(0, 0)  # object to control Bot'n Roll ONE A
     one.stop()  # stop motors
     one.min_battery(9.5)  # set minimum value for battery

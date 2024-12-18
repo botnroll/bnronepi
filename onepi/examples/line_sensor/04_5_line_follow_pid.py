@@ -18,6 +18,7 @@ Press push button 3 (PB3) to enter control configuration menu.
 import os
 import json
 import time
+import signal
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -35,6 +36,7 @@ differential_error = 0.0  # Differential error
 previous_proportional_error = 0  # Previous proportional eror
 MAX_SPEED = 100.0
 
+
 def wait_user_input():
     button = 0
     while button == 0:  # Wait a button to be pressed
@@ -42,6 +44,7 @@ def wait_user_input():
     while one.read_button() != 0:  # Wait for button release
         pass
     return button
+
 
 def set_max_speed(new_max_linear_speed):
     option = 0
@@ -117,7 +120,8 @@ def config_menu():
 def main_screen():
     one.lcd1("Line Follow PID")
     one.lcd2("www.botnroll.com")
-    
+
+
 def menu():
     one.stop()
     while one.read_button() != 0:
@@ -132,7 +136,7 @@ def menu():
     one.lcd2("         3:Start")
     time.sleep(1)
     main_screen()
-    
+
 
 def load_config():
     """
@@ -194,7 +198,7 @@ def setup():
     one.stop()  # stop motors
     load_config()
     menu()
-    
+
 
 def loop():
     global integral_error
@@ -252,6 +256,14 @@ def loop():
 
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()

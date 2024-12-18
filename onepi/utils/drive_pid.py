@@ -22,6 +22,7 @@ class DrivePID:
     """
     This class provides PID control for a differential drive robot.
     """
+
     _left_speed = 0
     _right_speed = 0
     _previous_left_speed = 0
@@ -36,34 +37,29 @@ class DrivePID:
 
     _initialised = False
 
-    def __init__(self, kp=KP, ki=KI, kd=KD,
-                 params=RobotParams(),
-                 update_period_ms=100):
+    def __init__(self, kp=KP, ki=KI, kd=KD, params=RobotParams(), update_period_ms=200):
         """
         initialises the class with kp, ki, kd,
         max speed (mm/s) and update period (ms)
         """
         self._initialised = False
 
-        self._cut = ControlUtils(params._axis_length_mm,
-                                 params.wheel_diameter_mm,
-                                 params.pulses_per_rev)
+        self._cut = ControlUtils(params)
 
         GPIO.setmode(GPIO.BCM)
         self._left_dir_pin = 22  # DirL
         self._right_dir_pin = 23  # DirR
         GPIO.setup(self._left_dir_pin, GPIO.IN)
         GPIO.setup(self._right_dir_pin, GPIO.IN)
-        self._left_pid = PIDController(kp, ki, kd,
-                                       -params.max_speed_mmps,
-                                       params.max_speed_mmps)
-        self._right_pid = PIDController(kp, ki, kd,
-                                        -params.max_speed_mmps,
-                                        params.max_speed_mmps)
+        self._left_pid = PIDController(
+            kp, ki, kd, -params.max_speed_mmps, params.max_speed_mmps
+        )
+        self._right_pid = PIDController(
+            kp, ki, kd, -params.max_speed_mmps, params.max_speed_mmps
+        )
         self._update_period_ms = update_period_ms
         self._pid_timer = SimpleTimer(
-            increment=self._update_period_ms / 1000.0,
-            function=self._update_speeds
+            increment=self._update_period_ms / 1000.0, function=self._update_speeds
         )
 
     def _initialise(self):

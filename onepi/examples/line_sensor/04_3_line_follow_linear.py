@@ -24,6 +24,7 @@ After this operation the values are capped using the speed_boost value
 import os
 import json
 import time
+import signal
 
 from onepi.one import BnrOneA
 
@@ -35,6 +36,7 @@ speed_boost = 8  # Curve outside wheel max speed limit
 file_name = "config_line_follow.json"
 filename = os.path.join(os.path.dirname(__file__), file_name)
 
+
 def wait_user_input():
     button = 0
     while button == 0:  # Wait a button to be pressed
@@ -42,7 +44,8 @@ def wait_user_input():
     while one.read_button() != 0:  # Wait for button release
         pass
     return button
-    
+
+
 def set_max_speed(new_max_linear_speed):
     option = 0
     while option != 3:
@@ -100,7 +103,8 @@ def config_menu():
 def main_screen():
     one.lcd1("Line Follow Lin.")
     one.lcd2("www.botnroll.com")
-    
+
+
 def menu():
     one.stop()
     while one.read_button() != 0:
@@ -169,6 +173,7 @@ def setup():
     load_config()
     menu()
 
+
 def loop():
     line = one.read_line()
     vel_m1 = max_linear_speed + line * gain  # Linear function for Motor1
@@ -186,6 +191,14 @@ def loop():
 
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()

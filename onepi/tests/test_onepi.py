@@ -1,8 +1,10 @@
 """
 Test functions to verify methods of BnrOneA class
 """
+
 import os
 import time
+import signal
 from onepi.one import BnrOneA
 
 
@@ -783,4 +785,12 @@ def main():
 
 
 if __name__ == "__main__":
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+    
     main()

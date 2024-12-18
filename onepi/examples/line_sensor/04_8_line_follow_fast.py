@@ -15,6 +15,7 @@ Press push button 3 (PB3) to enter control configuration menu.
 import os
 import json
 import time
+import signal
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -177,14 +178,18 @@ def loop():
     error = abs(line_ref - line)  # Proportional error
 
     if line < 0:
-        left_speed = max_linear_speed - (error * gain) /2
+        left_speed = max_linear_speed - (error * gain) / 2
         right_speed = max_linear_speed + (error * gain)
     else:
         right_speed = max_linear_speed - (error * gain) / 2
         left_speed = max_linear_speed + (error * gain)
 
-    left_speed  = cap_value(left_speed,  -max_linear_speed - speed_boost , max_linear_speed + speed_boost)
-    right_speed = cap_value(right_speed, -max_linear_speed - speed_boost , max_linear_speed + speed_boost)
+    left_speed = cap_value(
+        left_speed, -max_linear_speed - speed_boost, max_linear_speed + speed_boost
+    )
+    right_speed = cap_value(
+        right_speed, -max_linear_speed - speed_boost, max_linear_speed + speed_boost
+    )
 
     print(
         " Line:",
@@ -198,7 +203,7 @@ def loop():
         " error: ",
         int(error),
         " gain: ",
-        int(gain * 100)/100,
+        int(gain * 100) / 100,
         end="       \r",
     )
 
@@ -208,10 +213,20 @@ def loop():
     if one.read_button() == 3:
         menu()  # PB3 to enter menu
 
+
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()
+
 
 if __name__ == "__main__":
     main()

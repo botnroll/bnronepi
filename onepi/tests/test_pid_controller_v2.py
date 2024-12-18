@@ -1,4 +1,5 @@
 import time
+import signal
 from onepi.one import BnrOneA
 from onepi.utils.pid_controller import PIDController
 from onepi.utils.control_utils import ControlUtils
@@ -23,6 +24,7 @@ left_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
 cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, PULSES_PER_REV)
 
 timestamp = 0
+
 
 def print_value(text, value):
     print(text, value)
@@ -53,9 +55,9 @@ def test_pid():
     count = 0
     while count < 50:
         count = count + 1
-        #left_encoder = one.read_left_encoder()
+        # left_encoder = one.read_left_encoder()
         # left_encoder = maybe_change_sign(left_encoder, left_power)
-        #left_power = left_pid_controller.compute_output(left_encoder)
+        # left_power = left_pid_controller.compute_output(left_encoder)
 
         right_encoder = one.read_right_encoder()
         right_encoder = maybe_change_sign(right_encoder, right_power)
@@ -84,7 +86,7 @@ def setup():
     num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
     print("setpoint pulses:", int(num_pulses))
     right_pid_controller.change_set_point(num_pulses)  # min 10, max 70
-    #left_pid_controller.change_set_point(num_pulses)
+    # left_pid_controller.change_set_point(num_pulses)
     test_pid()
     one.stop()
 
@@ -93,13 +95,17 @@ def loop():
     one.stop()
     time.sleep(1)
 
+
 data = []
+
+
 def write_to_csv():
     global data
 
-    with open('step_data.csv', 'w', newline='') as file:
+    with open("step_data.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerows(data)
+
 
 def change_setpoint(ref_speed_mmps):
     global update_time_ms
@@ -111,7 +117,7 @@ def change_setpoint(ref_speed_mmps):
     input_data = num_pulses
     # compute pid
     right_power = 0
-    for i in range(0,50):
+    for i in range(0, 50):
 
         right_encoder = one.read_right_encoder()
         right_encoder = maybe_change_sign(right_encoder, right_power)
@@ -131,10 +137,19 @@ def step_response():
     one.stop()
     write_to_csv()
 
+
 def main():
-    #step_response()
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
+    # step_response()
     setup()
-    #while True:
+    # while True:
     #    loop()
 
 

@@ -18,6 +18,7 @@ Press push button 3 (PB3) to enter control configuration menu.
 import os
 import json
 import time
+import signal
 from pynput import keyboard
 import threading
 from onepi.one import BnrOneA
@@ -39,6 +40,7 @@ MAX_SPEED = 100.0
 stop = False
 key_pressed = False
 
+
 def wait_user_input():
     button = 0
     while button == 0:  # Wait a button to be pressed
@@ -46,6 +48,7 @@ def wait_user_input():
     while one.read_button() != 0:  # Wait for button release
         pass
     return button
+
 
 def set_max_speed(new_max_linear_speed):
     option = 0
@@ -126,6 +129,7 @@ def main_screen():
     one.lcd1("Line Follow PID")
     one.lcd2("www.botnroll.com")
 
+
 def menu():
     print("Menu -> stop robot")
     one.stop()
@@ -185,80 +189,84 @@ def save_config(new_max_linear_speed, new_speed_boost, new_kp, new_ki, new_kd):
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
 
+
 def on_press(key):
     global stop, max_linear_speed, speed_boost, kp, ki, kd, one, key_pressed, executing_command
     key_pressed = True
     while executing_command:
         pass
     try:
-        #print(f'Key {key.char} pressed')
+        # print(f'Key {key.char} pressed')
         if key == keyboard.Key.left:
             one.stop()
             one.move(-max_linear_speed * 3 / 4.0, max_linear_speed * 3 / 4.0)
-            time.sleep(.3)
+            time.sleep(0.3)
             one.stop()
         elif key == keyboard.Key.right:
             one.stop()
             one.move(max_linear_speed * 3 / 4.0, -max_linear_speed * 3 / 4.0)
-            time.sleep(.3)
+            time.sleep(0.3)
             one.stop()
         elif key == keyboard.Key.up:
             one.stop()
             one.move(max_linear_speed * 2 / 3.0, max_linear_speed * 2 / 3.0)
-            time.sleep(.5)
+            time.sleep(0.5)
             one.stop()
         elif key == keyboard.Key.down:
             one.stop()
             one.move(-max_linear_speed * 2 / 3.0, -max_linear_speed * 2 / 3.0)
             time.sleep(0.5)
             one.stop()
-        elif key.char == 'q':
+        elif key.char == "q":
             kp += 0.02
             kp = cap_value(kp, 0, 10)
-        elif key.char == 'a':
+        elif key.char == "a":
             kp -= 0.02
             kp = cap_value(kp, 0, 10)
-        elif key.char == 'w':
+        elif key.char == "w":
             ki = round(ki * 10) / 10
             ki += 0.1
             ki = cap_value(ki, 0, 10)
-        elif key.char == 's':
+        elif key.char == "s":
             ki = round(ki * 10) / 10
             ki -= 0.1
             ki = cap_value(ki, 0, 10)
-        elif key.char == 'e':
+        elif key.char == "e":
             kd += 0.01
             kd = cap_value(kd, 0, 10)
-        elif key.char == 'd':
+        elif key.char == "d":
             kd -= 0.01
             kd = cap_value(kd, 0, 10)
-        elif key.char == 'p':
+        elif key.char == "p":
             max_linear_speed += 1
-        elif key.char == 'l':
+        elif key.char == "l":
             max_linear_speed -= 1
-        elif key.char == 'o':
+        elif key.char == "o":
             speed_boost += 1
-        elif key.char == 'k':
+        elif key.char == "k":
             speed_boost -= 1
-        elif key.char == 'g':
+        elif key.char == "g":
             stop = False
-        elif key.char == 'b':
+        elif key.char == "b":
             one.stop()
             stop = True
         save_config(max_linear_speed, speed_boost, kp, ki, kd)
     except AttributeError:
-        print(f'Special key {key} pressed')
+        print(f"Special key {key} pressed")
     key_pressed = False
 
+
 def on_release(key):
-    #print(f'Key {key} released')
+    # print(f'Key {key} released')
     if key == keyboard.Key.esc:
         # Stop listener
         return False
 
+
 def start_listener():
     with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
+
 
 listener_thread = threading.Thread(target=start_listener)
 listener_thread.start()
@@ -281,7 +289,7 @@ def setup():
     one.stop()  # stop motors
     load_config()
     time.sleep(2)
-    #menu()
+    # menu()
 
 
 def loop():
@@ -309,7 +317,7 @@ def loop():
     output = cap_value(output, -MAX_SPEED, MAX_SPEED)
     previous_error = error
 
-    #max_speed = (max_linear_speed * (1.0 - ((abs(error) / 100.0) / 2.0)))
+    # max_speed = (max_linear_speed * (1.0 - ((abs(error) / 100.0) / 2.0)))
     max_speed = max_linear_speed
     vel_m1 = max_speed - output
     vel_m2 = max_speed + output
@@ -349,9 +357,11 @@ def loop():
             executing_command = True
             one.move(vel_m1, vel_m2)
             executing_command = False
-    #time.sleep(0.05)
+    # time.sleep(0.05)
 
-        # Configuration menu
+    # Configuration menu
+
+
 #    if not key_pressed:
 #        if one.read_button() == 3:
 #            menu()  # PB3 to enter menu
@@ -360,6 +370,14 @@ def loop():
 
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()

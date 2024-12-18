@@ -41,6 +41,7 @@ chose to finish the calibration is automatically saved to the config file.
 import json
 import os
 import time
+import signal
 from onepi.one import BnrOneA
 from onepi.utils.line_sensor_config import LineSensorConfig
 from onepi.utils.line_detector import LineDetector
@@ -404,6 +405,14 @@ def main():
     """
     Calls setup and then loops forever
     """
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()

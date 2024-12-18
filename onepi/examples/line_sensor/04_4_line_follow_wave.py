@@ -19,6 +19,7 @@ import os
 import math
 import json
 import time
+import signal
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -29,6 +30,7 @@ gain = 40.0  #  function gain
 speed_boost = 4  # Curve outside wheel max speed limit
 file_name = "config_line_follow_cosine.json"
 filename = os.path.join(os.path.dirname(__file__), file_name)
+
 
 def wait_user_input():
     button = 0
@@ -85,6 +87,7 @@ def cap_value(value, lower_limit, upper_limit):
         return upper_limit
     else:
         return value
+
 
 def set_max_speed(new_max_linear_speed):
     option = 0
@@ -144,6 +147,7 @@ def main_screen():
     one.lcd1("Line Follow Wave")
     one.lcd2("www.botnroll.com")
 
+
 def menu():
     one.stop()
     while one.read_button() != 0:
@@ -158,6 +162,7 @@ def menu():
     one.lcd2("         3:Start")
     time.sleep(1)
     main_screen()
+
 
 def setup():
     one.min_battery(10.5)  # safety voltage for discharging the battery
@@ -199,6 +204,14 @@ def loop():
 
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()

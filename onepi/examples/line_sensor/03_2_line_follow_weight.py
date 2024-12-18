@@ -10,6 +10,7 @@ The speed of the motors is set differently for each case.
 """
 
 import time
+import signal
 from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -108,6 +109,14 @@ def loop():
 
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+
     setup()
     while True:
         loop()

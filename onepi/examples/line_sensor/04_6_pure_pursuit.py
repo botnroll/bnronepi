@@ -13,6 +13,7 @@ import json
 import math
 import os
 import time
+import signal
 from collections import namedtuple
 from onepi.one import BnrOneA
 from onepi.utils.drive_pid import DrivePID
@@ -172,6 +173,14 @@ def loop():
         print("line: ", int(line), " speeds: ", int(v_left), ", ", int(v_right), "target: ", int(target.x), ", ", int(target.y))
 
 def main():
+
+    # function to stop the robot on exiting with CTRL+C
+    def stop_and_exit(sig, frame):
+        one.stop()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_and_exit)
+    
     setup()
     while True:
         loop()
