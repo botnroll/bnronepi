@@ -1,3 +1,8 @@
+"""
+This test version of PID control uses real speeds in mm per second
+For that it needs the methods in ControlUtils class
+"""
+
 import time
 import signal
 from onepi.one import BnrOneA
@@ -7,9 +12,9 @@ import csv
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 1  # 2.5. error^3 -> 0.65
+kp = 0.02  # 2.5. error^3 -> 0.65
 ki = 0.7  # 1.4   3.5
-kd = 0.2  # 0.5
+kd = 0.03  # 0.5
 
 
 MIN_SPEED_MMPS = -850

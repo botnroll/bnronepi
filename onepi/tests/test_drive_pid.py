@@ -21,6 +21,9 @@ def test_move_pid():
     print("move: 400, 400")
     move_pid.move(400, 400)
     time.sleep(3)
+    print("move: 800, 800")
+    move_pid.move(800, 800)
+    time.sleep(3)
     print("stop")
     move_pid.stop()
 
@@ -31,7 +34,7 @@ def setup():
     """
     one.stop()
     one.min_battery(9.6)
-    one.lcd1(" Test move_pid  ")
+    one.lcd1(" Test drive_pid  ")
     one.lcd2("________________")
     test_move_pid()
     one.stop()

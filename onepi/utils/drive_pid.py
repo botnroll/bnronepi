@@ -29,9 +29,9 @@ class DrivePID:
     _previous_right_speed = 0
     _counter = 0
 
-    KP = 0.02
-    KI = 0.70
-    KD = 0.03
+    KP = 0.65  # 0.02
+    KI = 1.40  # 0.70
+    KD = 0.00  # 0.03
 
     _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 

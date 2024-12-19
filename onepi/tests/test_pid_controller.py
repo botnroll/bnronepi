@@ -1,3 +1,7 @@
+"""
+This version of PID controller doesn't use real speeds in mm per second
+"""
+
 import time
 import signal
 from onepi.one import BnrOneA
