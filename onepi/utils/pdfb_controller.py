@@ -8,16 +8,16 @@ transfer function has no zeros
 from onepi.utils.maths_utils import MathsUtils
 
 
-class PDController:
+class PdfbController:
 
     _min_value = -100
     _max_value = 100
     _setpoint = 0
     _change_sign = False
 
-    def __init__(self, kp, kd):
+    def __init__(self, kp, kd, min_value=-100, max_value=100):
         """
-        Initialize the PDController with proportional (kp)
+        Initialize the PdfbController with proportional (kp)
         and derivative (kd) gains.
         """
         self.kp = kp
@@ -49,9 +49,9 @@ class PDController:
 
         control_output = self.kp * error
 
-        control_output = MathsUtils.cap_to_limits(control_output,
-                                                  self._min_value,
-                                                  self._max_value)
+        control_output = MathsUtils.cap_to_limits(
+            control_output, self._min_value, self._max_value
+        )
         # Map the output to control the motor
         mapped_output = MathsUtils.convert_range(
             control_output, self._min_value, self._max_value, -100, 100

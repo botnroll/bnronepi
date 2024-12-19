@@ -1,4 +1,4 @@
-onepi/__pycache__/
+*__pycache__*
 .DS_Store
 .vscode/
 build/
