@@ -15,6 +15,7 @@ from onepi.utils.pid_controller import PIDController
 from onepi.utils.control_utils import ControlUtils
 from onepi.utils.simple_timer import SimpleTimer
 from onepi.utils.robot_params import RobotParams
+from onepi.utils.pid_params import PidParams
 from onepi.one import BnrOneA
 
 
@@ -29,22 +30,20 @@ class DrivePID:
     _previous_right_speed = 0
     _counter = 0
 
-    KP = 0.65  # 0.02
-    KI = 1.40  # 0.70
-    KD = 0.00  # 0.03
-
     _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
     _initialised = False
 
-    def __init__(self, kp=KP, ki=KI, kd=KD, params=RobotParams(), update_period_ms=200):
+    def __init__(
+        self, pid_params=PidParams(), robot_params=RobotParams(), update_period_ms=200
+    ):
         """
         initialises the class with kp, ki, kd,
         max speed (mm/s) and update period (ms)
         """
         self._initialised = False
 
-        self._cut = ControlUtils(params)
+        self._cut = ControlUtils(robot_params)
 
         GPIO.setmode(GPIO.BCM)
         self._left_dir_pin = 22  # DirL
@@ -52,10 +51,10 @@ class DrivePID:
         GPIO.setup(self._left_dir_pin, GPIO.IN)
         GPIO.setup(self._right_dir_pin, GPIO.IN)
         self._left_pid = PIDController(
-            kp, ki, kd, -params.max_speed_mmps, params.max_speed_mmps
+            pid_params, -robot_params.max_speed_mmps, robot_params.max_speed_mmps
         )
         self._right_pid = PIDController(
-            kp, ki, kd, -params.max_speed_mmps, params.max_speed_mmps
+            pid_params, -robot_params.max_speed_mmps, robot_params.max_speed_mmps
         )
         self._update_period_ms = update_period_ms
         self._pid_timer = SimpleTimer(
