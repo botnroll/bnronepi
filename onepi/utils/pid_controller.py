@@ -3,32 +3,7 @@ PID controller
 """
 
 from onepi.utils.pid_params import PidParams
-
-
-def cap_to_limits(value, min_value, max_value):
-    """
-    cap value to given limits (min and max)
-    """
-    value = max(value, min_value)
-    value = min(max_value, value)
-    return value
-
-
-def convert_range(x_value, x_min, x_max, y_min, y_max):
-    """
-    Converts a value x given in the range [x_min : x_max]
-    to a new value in the range [y_min : y_max]
-    """
-    x_range = x_max - x_min
-    y_range = y_max - y_min
-
-    # Avoid division by zero
-    if x_range == 0:
-        return y_min + (y_range / 2)
-
-    # Calculate the converted value
-    y = (((x_value - x_min) / x_range) * y_range) + y_min
-    return y
+from onepi.utils.maths_utils import MathsUtils
 
 
 class PIDController:
@@ -87,7 +62,7 @@ class PIDController:
 
         # Integral term
         self._integral += self._pid.ki * error
-        self._integral = cap_to_limits(self._integral, self._min_value, self._max_value)
+        self._integral = MathsUtils.cap_to_limits(self._integral, self._min_value, self._max_value)
 
         # Derivative term
         derivative = self._pid.kd * (error - self._last_error)
@@ -97,9 +72,9 @@ class PIDController:
         self._output = proportional + self._integral + derivative
         # else:
         #    self._output = (proportional * 0.1) + (self._integral * 0.1)
-        self._output = cap_to_limits(self._output, self._min_value, self._max_value)
+        self._output = MathsUtils.cap_to_limits(self._output, self._min_value, self._max_value)
         # Map the output to control the motor
-        mapped_output = convert_range(
+        mapped_output = MathsUtils.convert_range(
             self._output, self._min_value, self._max_value, -100, 100
         )
         self._last_error = error
