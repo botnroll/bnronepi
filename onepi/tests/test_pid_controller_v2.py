@@ -15,7 +15,7 @@ kd = 0.2  # 0.5
 MIN_SPEED_MMPS = -850
 MAX_SPEED_MMPS = 850
 
-update_time_ms = 100
+update_time_ms = 200
 
 right_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
 left_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
@@ -141,6 +141,7 @@ def main():
     # function to stop the robot on exiting with CTRL+C
     def stop_and_exit(sig, frame):
         one.stop()
+        time.sleep(0.1)
         exit(0)
 
     signal.signal(signal.SIGINT, stop_and_exit)

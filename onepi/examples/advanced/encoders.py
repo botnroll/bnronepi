@@ -92,6 +92,7 @@ def main():
     # function to stop the robot on exiting with CTRL+C
     def stop_and_exit(sig, frame):
         one.stop()
+        time.sleep(0.1)
         exit(0)
 
     signal.signal(signal.SIGINT, stop_and_exit)

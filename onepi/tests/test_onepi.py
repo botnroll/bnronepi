@@ -737,9 +737,9 @@ def test_lcd():
 
 def main():
     """
-    Calls functions to test public interface with BotnRoll One A
-    Most of these tests should be verified with the robot connected to the raspbery pi
-    and by visually inspecting the robot and/or the terminal
+    Calls functions to test public interface with BotnRoll One A Plus
+    Most of these tests should be verified with the robot connected
+    to the raspberry pi and by visually inspecting the robot and/or the terminal
     """
     print("Run tests using: pytest", os.path.basename(__file__), "-s")
 
@@ -763,7 +763,7 @@ def main():
     # test_read_battery()
     # test_read_left_encoder()
     # test_read_right_encoder()
-    # test_read_left_encoder_increment()
+    test_read_left_encoder_increment()
     # test_read_right_encoder_increment()
     # test_read_firmware()
     # test_obstacle_sensors()
@@ -789,8 +789,10 @@ if __name__ == "__main__":
     # function to stop the robot on exiting with CTRL+C
     def stop_and_exit(sig, frame):
         one.stop()
+        time.sleep(0.1)
         exit(0)
 
     signal.signal(signal.SIGINT, stop_and_exit)
-    
+
     main()
+read_encoder_increment
