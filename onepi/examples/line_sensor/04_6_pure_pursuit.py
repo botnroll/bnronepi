@@ -5,7 +5,8 @@
  http://www.botnroll.com
 
 IMPORTANT!!!!
-Before you use this example you MUST calibrate the line sensor. Use example _04_1_Calibrate.ino first!!!
+Before you use this example you MUST calibrate the line sensor. 
+Run line_sensor_calibration.py (in calibration folder) first!
 Line reading provides a linear value between -100 to 100
 """
 
@@ -168,9 +169,23 @@ def loop():
     while True:
         y_value = (-line * (line_sensor_width / 2.0)) / 100.0
         target = target._replace(y=y_value)
-        (v_left, v_right) = pure_pursuit(axis_width, max_linear_speed, target, y_tolerance)
+        (v_left, v_right) = pure_pursuit(
+            axis_width, max_linear_speed, target, y_tolerance
+        )
         line = one_pid.move(v_left, v_right, get_line=True)
-        print("line: ", int(line), " speeds: ", int(v_left), ", ", int(v_right), "target: ", int(target.x), ", ", int(target.y))
+        print(
+            "line: ",
+            int(line),
+            " speeds: ",
+            int(v_left),
+            ", ",
+            int(v_right),
+            "target: ",
+            int(target.x),
+            ", ",
+            int(target.y),
+        )
+
 
 def main():
 
@@ -180,7 +195,7 @@ def main():
         exit(0)
 
     signal.signal(signal.SIGINT, stop_and_exit)
-    
+
     setup()
     while True:
         loop()

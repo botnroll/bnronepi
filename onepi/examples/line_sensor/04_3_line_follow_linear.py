@@ -6,7 +6,7 @@
 
 IMPORTANT!!!!
 Before you use this example you MUST calibrate the line sensor.
-Use example 04_1_line_calibration first!!!
+Run line_sensor_calibration.py (in calibration folder) first!
 
 Line reading provides a linear value between -100 to 100
 Line follow:

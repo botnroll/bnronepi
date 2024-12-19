@@ -24,7 +24,7 @@ class LineSensorConfig:
 
     def __init__(self, filename=None):
         if filename is None:
-            file_name = "config.json"
+            file_name = "line_sensor_config.json"
             self.cfg_file = os.path.join(os.path.dirname(__file__), file_name)
         else:
             self.cfg_file = filename

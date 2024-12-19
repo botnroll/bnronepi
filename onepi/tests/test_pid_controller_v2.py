@@ -11,9 +11,7 @@ kp = 1  # 2.5. error^3 -> 0.65
 ki = 0.7  # 1.4   3.5
 kd = 0.2  # 0.5
 
-AXIS_LENGHTH_MM = 163.0
-WHEEL_DIAMETER_MM = 65.0
-PULSES_PER_REV = 1490
+
 MIN_SPEED_MMPS = -850
 MAX_SPEED_MMPS = 850
 
@@ -21,7 +19,7 @@ update_time_ms = 100
 
 right_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
 left_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
-cut = ControlUtils(AXIS_LENGHTH_MM, WHEEL_DIAMETER_MM, PULSES_PER_REV)
+cut = ControlUtils()
 
 timestamp = 0
 

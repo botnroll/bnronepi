@@ -5,7 +5,8 @@
  http://www.botnroll.com
 
 IMPORTANT!!!!
-Before you use this example you MUST calibrate the line sensor. Use example _04_1_Calibrate.ino first!!!
+Before you use this example you MUST calibrate the line sensor. 
+Run line_sensor_calibration.py (in calibration folder) first!
 
 Line reading provides a linear value between -100 to 100
 Line follow:

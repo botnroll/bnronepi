@@ -6,7 +6,7 @@ Latest update: 04-09-2023
 
 IMPORTANT!!!!
 Before you use this example you MUST calibrate the line sensor.
-Use example 04_1_line_calibration first!!!
+Run line_sensor_calibration.py (in calibration folder) first!
 
 Line reading returns a value between -100 to 100 where:
   * 0 (zero) corresponds to the line being centred

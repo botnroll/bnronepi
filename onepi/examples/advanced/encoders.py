@@ -23,6 +23,7 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 speed_1 = 35
 speed_2 = 35
+TARGET_PULSES = 1490
 
 
 def setup():
@@ -34,7 +35,9 @@ def setup():
     print("This example sets the robot moving at a constant speed.")
     print("It reads the encoders and displays the readings in the lcd and terminal.")
     print("Use PB1 to increase the speed and PB2 to decrease the speed of the motors.")
-    print("Motors will automatically stop after left encoder count gets over 495.")
+    print(
+        "Motors will automatically stop after left encoder count gets over TARGET_PULSES."
+    )
     print(
         "To reset press PB3 and change the motor speeed with PB1 and PB2.", end="\n\n"
     )
@@ -74,10 +77,13 @@ def loop():
         " " * 10,
         end="\r",
     )
-    if encoder_left >= 495:
-        speed_1 = 0
-        speed_2 = 0
-    one.move(speed_1, speed_2)
+    if encoder_left >= TARGET_PULSES - 500:
+        speed_1 = 20
+        speed_2 = 20
+    if encoder_left >= TARGET_PULSES:
+        one.stop()
+    else:
+        one.move(speed_1, speed_2)
     time.sleep(0.05)
 
 
