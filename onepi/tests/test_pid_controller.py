@@ -4,6 +4,8 @@ This version of PID controller doesn't use real speeds in mm per second
 
 import time
 import signal
+import keyboard
+import threading
 from onepi.one import BnrOneA
 from onepi.utils.pid_params import PidParams
 from onepi.utils.pid_controller import PidController
@@ -16,6 +18,29 @@ kd = 0.03
 pid_params = PidParams(kp, ki, kd)
 right_pid_controller = PidController(pid_params, -800, 800)
 left_pid_controller = PidController(pid_params, -800, 800)
+
+def update_pid_params():
+    """
+    updates pid params using keyboard
+    """
+    global kp, ki, kd
+    while True:
+        if keyboard.is_pressed('P'):
+            kp += 0.01
+        if keyboard.is_pressed('p'):
+            kp -= 0.01
+        if keyboard.is_pressed('I'):
+            ki += 0.01
+        if keyboard.is_pressed('i'):
+            ki -= 0.01
+        if keyboard.is_pressed('D'):
+            kd += 0.01
+        if keyboard.is_pressed('d'):
+            kd -= 0.01
+
+# Start a thread to listen for key presses
+thread = threading.Thread(target=update_pid_params, daemon=True)
+thread.start()
 
 
 def print_value(text, value):
