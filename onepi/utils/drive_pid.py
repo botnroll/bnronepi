@@ -11,7 +11,7 @@ This allows PID more room to control the speeds at lower values.
 """
 
 import RPi.GPIO as GPIO
-from onepi.utils.pid_controller import PIDController
+from onepi.utils.pid_controller import PidController
 from onepi.utils.control_utils import ControlUtils
 from onepi.utils.simple_timer import SimpleTimer
 from onepi.utils.robot_params import RobotParams
@@ -50,10 +50,10 @@ class DrivePID:
         self._right_dir_pin = 23  # DirR
         GPIO.setup(self._left_dir_pin, GPIO.IN)
         GPIO.setup(self._right_dir_pin, GPIO.IN)
-        self._left_pid = PIDController(
+        self._left_pid = PidController(
             pid_params, -robot_params.max_speed_mmps, robot_params.max_speed_mmps
         )
-        self._right_pid = PIDController(
+        self._right_pid = PidController(
             pid_params, -robot_params.max_speed_mmps, robot_params.max_speed_mmps
         )
         self._update_period_ms = update_period_ms

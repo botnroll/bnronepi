@@ -6,7 +6,8 @@ For that it needs the methods in ControlUtils class
 import time
 import signal
 from onepi.one import BnrOneA
-from onepi.utils.pid_controller import PIDController
+from onepi.utils.pid_params import PidParams
+from onepi.utils.pid_controller import PidController
 from onepi.utils.control_utils import ControlUtils
 import csv
 
@@ -15,15 +16,15 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 kp = 0.02  # 2.5. error^3 -> 0.65
 ki = 0.7  # 1.4   3.5
 kd = 0.03  # 0.5
-
+pid_params = PidParams(kp, ki, kd)
 
 MIN_SPEED_MMPS = -850
 MAX_SPEED_MMPS = 850
 
 update_time_ms = 200
 
-right_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
-left_pid_controller = PIDController(kp, ki, kd, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
+right_pid_controller = PidController(pid_params, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
+left_pid_controller = PidController(pid_params, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
 cut = ControlUtils()
 
 timestamp = 0

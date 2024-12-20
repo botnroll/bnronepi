@@ -6,7 +6,7 @@ from onepi.utils.pid_params import PidParams
 from onepi.utils.maths_utils import MathsUtils
 
 
-class PIDController:
+class PidController:
     """
     Construct a new PID controller object
     kp proportional gain
@@ -62,7 +62,9 @@ class PIDController:
 
         # Integral term
         self._integral += self._pid.ki * error
-        self._integral = MathsUtils.cap_to_limits(self._integral, self._min_value, self._max_value)
+        self._integral = MathsUtils.cap_to_limits(
+            self._integral, self._min_value, self._max_value
+        )
 
         # Derivative term
         derivative = self._pid.kd * (error - self._last_error)
@@ -72,7 +74,9 @@ class PIDController:
         self._output = proportional + self._integral + derivative
         # else:
         #    self._output = (proportional * 0.1) + (self._integral * 0.1)
-        self._output = MathsUtils.cap_to_limits(self._output, self._min_value, self._max_value)
+        self._output = MathsUtils.cap_to_limits(
+            self._output, self._min_value, self._max_value
+        )
         # Map the output to control the motor
         mapped_output = MathsUtils.convert_range(
             self._output, self._min_value, self._max_value, -100, 100

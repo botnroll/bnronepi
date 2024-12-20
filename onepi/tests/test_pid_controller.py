@@ -5,15 +5,17 @@ This version of PID controller doesn't use real speeds in mm per second
 import time
 import signal
 from onepi.one import BnrOneA
-from onepi.utils.pid_controller import PIDController
+from onepi.utils.pid_params import PidParams
+from onepi.utils.pid_controller import PidController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 kp = 0.02
 ki = 0.7
 kd = 0.03
-right_pid_controller = PIDController(kp, ki, kd, -800, 800)
-left_pid_controller = PIDController(kp, ki, kd, -800, 800)
+pid_params = PidParams(kp, ki, kd)
+right_pid_controller = PidController(pid_params, -800, 800)
+left_pid_controller = PidController(pid_params, -800, 800)
 
 
 def print_value(text, value):
