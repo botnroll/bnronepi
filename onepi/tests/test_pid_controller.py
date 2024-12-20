@@ -65,11 +65,12 @@ def test_pid():
         time.sleep(0.1)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
-        print_pair(
+
+        print(
             "setpoint, right_encoder, right_power: ",
+            right_pid_controller.get_setpoint(),
             right_encoder,
             int(right_power),
-            right_pid_controller.get_setpoint(),
         )
 
 
