@@ -89,8 +89,8 @@ def setup():
     ref_speed_mmps = 200
     num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
     print("setpoint pulses:", int(num_pulses))
-    right_pid_controller.change_set_point(num_pulses)  # min 10, max 70
-    # left_pid_controller.change_set_point(num_pulses)
+    right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
+    # left_pid_controller.change_setpoint(num_pulses)
     test_pid()
     one.stop()
 
@@ -117,7 +117,7 @@ def change_setpoint(ref_speed_mmps):
 
     num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
     print("setpoint pulses:", int(num_pulses))
-    right_pid_controller.change_set_point(num_pulses)  # min 10, max 70
+    right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
     input_data = num_pulses
     # compute pid
     right_power = 0

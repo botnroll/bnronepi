@@ -34,7 +34,13 @@ class PidController:
         self._min_value = min_value
         self._max_value = max_value
 
-    def change_set_point(self, setpoint):
+    def get_setpoint(self):
+        """
+        returns the setpoint
+        """
+        return self._setpoint
+
+    def change_setpoint(self, setpoint):
         """
         Change the setpoint or reference value.
         This is the value the PID controller is trying to reach.

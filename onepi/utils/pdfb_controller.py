@@ -23,7 +23,7 @@ class PdfbController:
         self.kp = kp
         self.kd = kd
 
-    def change_set_point(self, setpoint):
+    def change_setpoint(self, setpoint):
         """
         Change the setpoint or reference value.
         This is the value the PID controller is trying to reach.

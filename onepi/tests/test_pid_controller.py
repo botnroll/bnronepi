@@ -48,8 +48,6 @@ def test_pid():
     """
     test pid function for 5 seconds by setting the wheel speed
     """
-    global right_pid_controller
-    global left_pid_controller
     left_power = 0
     right_power = 0
     count = 0
@@ -67,7 +65,12 @@ def test_pid():
         time.sleep(0.1)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
-        print_pair("right_encoder, right_power: ", right_encoder, int(right_power))
+        print_pair(
+            "setpoint, right_encoder, right_power: ",
+            right_encoder,
+            int(right_power),
+            right_pid_controller.get_setpoint(),
+        )
 
 
 def setup():
@@ -88,8 +91,15 @@ def setup():
     set_speed = 30
     setpoint = set_speed * 10  # emulate conversion from speed to encoder readings
     print("setpoint:", setpoint)
-    left_pid_controller.change_set_point(setpoint)
-    right_pid_controller.change_set_point(setpoint)
+    left_pid_controller.change_setpoint(setpoint)
+    right_pid_controller.change_setpoint(setpoint)
+
+    test_pid()
+    right_pid_controller.change_setpoint(10 * 10)
+    test_pid()
+    right_pid_controller.change_setpoint(50 * 10)
+    test_pid()
+    right_pid_controller.change_setpoint(5 * 10)
     test_pid()
     one.stop()
 
@@ -114,3 +124,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+onepi / utils / drive_pid.py

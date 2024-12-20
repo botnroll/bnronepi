@@ -111,8 +111,8 @@ class DrivePID:
         right_pulses = self._cut.compute_pulses_from_speed(
             right_speed_mmps, self._update_period_ms
         )
-        self._left_pid.change_set_point(left_pulses)
-        self._right_pid.change_set_point(right_pulses)
+        self._left_pid.change_setpoint(left_pulses)
+        self._right_pid.change_setpoint(right_pulses)
 
     def stop(self):
         """

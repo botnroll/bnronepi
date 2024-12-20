@@ -64,8 +64,8 @@ def test_pdfb():
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
         print_pair("right_encoder, right_power: ", right_encoder, int(right_power))
 
-    left_pdfb_controller.change_set_point(50 * 10)
-    right_pdfb_controller.change_set_point(50 * 10)
+    left_pdfb_controller.change_setpoint(50 * 10)
+    right_pdfb_controller.change_setpoint(50 * 10)
 
     print("New set point is 50.")
     while count < 100:
@@ -101,8 +101,8 @@ def setup():
     set_speed = 30
     setpoint = set_speed * 10  # emulate conversion from speed to encoder readings
     print("setpoint:", setpoint)
-    left_pdfb_controller.change_set_point(setpoint)
-    right_pdfb_controller.change_set_point(setpoint)
+    left_pdfb_controller.change_setpoint(setpoint)
+    right_pdfb_controller.change_setpoint(setpoint)
     test_pdfb()
     one.stop()
 
