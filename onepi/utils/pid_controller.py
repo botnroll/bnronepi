@@ -38,7 +38,13 @@ class PidController:
         """
         updates pid params
         """
-        _pid = pid_params
+        self._pid = pid_params
+
+    def get_pid_params(self):
+        """
+        returns pid params
+        """
+        return self._pid
 
     def get_setpoint(self):
         """
