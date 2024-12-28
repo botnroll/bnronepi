@@ -34,6 +34,12 @@ class PidController:
         self._min_value = min_value
         self._max_value = max_value
 
+    def set_pid_params(self, pid_params):
+        """
+        updates pid params
+        """
+        _pid = pid_params
+
     def get_setpoint(self):
         """
         returns the setpoint

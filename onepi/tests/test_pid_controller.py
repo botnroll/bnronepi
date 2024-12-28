@@ -19,24 +19,38 @@ pid_params = PidParams(kp, ki, kd)
 right_pid_controller = PidController(pid_params, -800, 800)
 left_pid_controller = PidController(pid_params, -800, 800)
 
+
 def update_pid_params():
     """
     updates pid params using keyboard
     """
-    global kp, ki, kd
+    global kp, ki, kd, right_pid_controller, left_pid_controller
+
+    def update_pid():
+        right_pid_controller.set_pid_params(PidParams(kp, ki, kd))
+        left_pid_controller.set_pid_params(PidParams(kp, ki, kd))
+        print("kp,ki,kd: ", kp, ki, kd)
+
     while True:
         if keyboard.is_pressed('P'):
             kp += 0.01
+            update_pid()
         if keyboard.is_pressed('p'):
             kp -= 0.01
+            update_pid()
         if keyboard.is_pressed('I'):
             ki += 0.01
+            update_pid()
         if keyboard.is_pressed('i'):
             ki -= 0.01
+            update_pid()
         if keyboard.is_pressed('D'):
             kd += 0.01
+            update_pid()
         if keyboard.is_pressed('d'):
             kd -= 0.01
+            update_pid()
+
 
 # Start a thread to listen for key presses
 thread = threading.Thread(target=update_pid_params, daemon=True)
@@ -71,22 +85,33 @@ def maybe_change_sign(absValue, refValue):
 
 def test_pid():
     """
-    test pid function for 5 seconds by setting the wheel speed
+    test pid function for 5 seconds by sett        print(
+            "setpoint, right_encoder, right_power: ",
+            right_pid_controller.get_setpoint(),
+            right_encoder,
+            int(right_power),
+        )ing the wheel speed
     """
     left_power = 0
     right_power = 0
     count = 0
     while count < 50:
         count = count + 1
-        # left_encoder = one.read_left_encoder()
+        # left_encoder = one.read_left_enco        print(
+            "setpoint, right_encoder, right_power: ",
+            right_pid_controller.get_setpoint(),
+            right_encoder,
+            int(right_power),
+        )der()
         # left_encoder = maybe_change_sign(left_encoder, left_power)
         # left_power = left_pid_controller.compute_output(left_encoder)
-
-        right_encoder = one.read_right_encoder()
-        # right_encoder = maybe_change_sign(right_encoder, right_power)
-        right_power = right_pid_controller.compute_output(right_encoder)
-
-        one.move(0, right_power)
+        print(
+            "setpoint, right_encoder, right_power: ",
+            right_pid_controller.get_setpoint(),
+            right_encoder,
+            int(right_power),
+        )
+        one.move_calibrate(0, right_power)
         time.sleep(0.1)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
