@@ -27,11 +27,25 @@ right_pid_controller = PidController(pid_params, -800, 800)
 left_pid_controller = PidController(pid_params, -800, 800)
 
 
+class StoppableThread(threading.Thread):
+    def __init__(self, target):
+        super().__init__()
+        self._stop_event = threading.Event()
+        self.target = target
+
+    def run(self):
+        while not self._stop_event.is_set():
+            self.target()
+    
+    def stop(self):
+        self._stop_event.set()
+
+
 def update_pid_params():
     """
     updates pid params using keyboard
     """
-    global file_descriptors
+    global stop_execution
     global kp, ki, kd, right_pid_controller, left_pid_controller
     # Save the current terminal settings
     file_descriptors = termios.tcgetattr(sys.stdin)
@@ -39,12 +53,13 @@ def update_pid_params():
     tty.setcbreak(sys.stdin)
 
     def update_pid():
-        right_pid_controller.set_pid_params(PidParams(kp, ki, kd))
-        left_pid_controller.set_pid_params(PidParams(kp, ki, kd))
-        print("kp,ki,kd: ", kp, ki, kd)
+        if not stop_execution:
+            right_pid_controller.set_pid_params(PidParams(kp, ki, kd))
+            left_pid_controller.set_pid_params(PidParams(kp, ki, kd))
+    
 
     try:
-        while True:
+        while not stop_execution:
             char = sys.stdin.read(1)[0]
             if char == "P":
                 kp = ((kp * 100) + 1)
@@ -70,13 +85,18 @@ def update_pid_params():
                 kd = int((kd * 100) - 1)
                 kd /= 100.0
                 update_pid()
+        
+        print("thread stopped")
+        try:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, file_descriptors)
+        except:
+            pass
+
     finally:
-        # Restore the terminal settings
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, file_descriptors)
-
-
-thread = threading.Thread(target=update_pid_params)
-thread.start()
+        try:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, file_descriptors)
+        except:
+            pass
 
 
 def print_value(text, value):
@@ -109,11 +129,12 @@ def test_pid():
     """
     test pid function for 5 seconds by setting the wheel speed
     """
-    global plotter
+    global plotter, stop_execution
     left_power = 0
     right_power = 0
     count = 0
-    while count < 50:
+    time_previous = time.time()
+    while count < 100 and not stop_execution:
         count = count + 1
         # left_encoder = one.read_left_encoder()
         # left_encoder = maybe_change_sign(left_encoder, left_power)
@@ -129,6 +150,9 @@ def test_pid():
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
         plotter.update_buffers(right_pid_controller.get_setpoint(), right_encoder)
+        time_now = time.time()
+        time_elapsed_ms = int((time_now - time_previous) * 1000)
+        time_previous = time_now
         print(
             "setpoint, right_encoder, right_power: (kp, ki, kd) ",
             right_pid_controller.get_setpoint(),
@@ -141,7 +165,9 @@ def test_pid():
             ",",
             right_pid_controller.get_pid_params().kd,
             ")",
+            time_elapsed_ms,
         )
+        
 
 
 def setup():
@@ -150,7 +176,8 @@ def setup():
     """
     global right_pid_controller
     global left_pid_controller
-    global plotter
+    global plotter, stop_execution
+    global my_thread
     one.stop()
     one.min_battery(9.6)
 
@@ -165,9 +192,14 @@ def setup():
     print("setpoint:", setpoint)
     left_pid_controller.change_setpoint(setpoint)
     right_pid_controller.change_setpoint(setpoint)
-    plotter = PlotChart()
+    plotter = PlotChart(500)
     plotter.show_plot()
-    while True:
+    
+    stop_execution = False
+    my_thread = StoppableThread(target=update_pid_params)
+    my_thread.start()
+
+    while not stop_execution:
         right_pid_controller.change_setpoint(50 * 10)
         test_pid()
         right_pid_controller.change_setpoint(5 * 10)
@@ -180,19 +212,23 @@ def loop():
     time.sleep(1)
 
 
+# function to stop the robot on exiting with CTRL+C
+def stop_and_exit(sig, frame):
+    global my_thread, plotter
+    global stop_execution
+    
+    print("Exiting application")
+    stop_execution = True
+    my_thread.stop()
+    my_thread.join()
+    one.stop()
+    time.sleep(0.01)
+    plotter.close_plot()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, stop_and_exit)
+
 def main():
-    global file_descriptors
-
-    # function to stop the robot on exiting with CTRL+C
-    def stop_and_exit(sig, frame):
-        one.stop()
-        # Restore the terminal settings
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, file_descriptors)
-        time.sleep(0.1)
-        exit(0)
-
-    signal.signal(signal.SIGINT, stop_and_exit)
-
     setup()
 
 

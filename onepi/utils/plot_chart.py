@@ -39,6 +39,9 @@ class PlotChart:
     def show_plot(self):
         plt.ion()
         plt.show()
+    
+    def close_plot(self):
+        plt.close('all')
 
 
 # Example of using the class
