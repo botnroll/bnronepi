@@ -19,9 +19,9 @@ from onepi.utils.pid_controller import PidController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 0.02
-ki = 0.07  # 0.7
-kd = 0.03
+kp = 0.2
+ki = 0.2  # 0.7
+kd = 0.1
 pid_params = PidParams(kp, ki, kd)
 right_pid_controller = PidController(pid_params, -800, 800)
 left_pid_controller = PidController(pid_params, -800, 800)
@@ -151,8 +151,12 @@ def test_pid():
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
         plotter.update_buffers(right_pid_controller.get_setpoint(), right_encoder)
         time_now = time.time()
+
         time_elapsed_ms = int((time_now - time_previous) * 1000)
-        time_previous = time_now
+        if time_elapsed_ms < 100:
+            time.sleep((100-time_elapsed_ms)/1000.0)
+            time_elapsed_ms = int((time.time() - time_previous) * 1000)
+        time_previous = time.time()
         print(
             "setpoint, right_encoder, right_power: (kp, ki, kd) ",
             right_pid_controller.get_setpoint(),
@@ -166,6 +170,7 @@ def test_pid():
             right_pid_controller.get_pid_params().kd,
             ")",
             time_elapsed_ms,
+            "ms"
         )
         
 
@@ -192,7 +197,7 @@ def setup():
     print("setpoint:", setpoint)
     left_pid_controller.change_setpoint(setpoint)
     right_pid_controller.change_setpoint(setpoint)
-    plotter = PlotChart(500)
+    plotter = PlotChart(100)
     plotter.show_plot()
     
     stop_execution = False
