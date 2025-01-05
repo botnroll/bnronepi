@@ -21,7 +21,7 @@ If you already have a Raspberry Pi setup with SPI and I2C enabled please skip to
 * Reboot the Raspberry Pi
 
 
-### 1.2. Install onepi library:
+### 1.2. Install onepi library:source ~/env/onepi/bin/activate
 You can chose to install the onepi library by following one of the two options listed below.
 
 #### 1.2.1 Install using pip (option 1):
@@ -33,7 +33,7 @@ pip3 install onepi
 
 1. Open a terminal (CTRL + ALT + T)
 2. Create a directory to clone the repo: “mkdir src; cd src”
-3. Download the zip file (https://github.com/ninopereira/bnronepi/archive/refs/heads/release.zip) and extract it into the src directory.
+source ~/env/onepi/bin/activate3. Download the zip file (https://github.com/ninopereira/bnronepi/archive/refs/heads/release.zip) and extract it into the src directory.
 4. Navigate to directory “cd bnronepi-release/
 5. Run:
 ```python
@@ -47,6 +47,25 @@ If you find an error when installing matplotlitb you might need to install the O
 
 ```python
 sudo apt-get install libopenblas-dev
+```
+If installation fails and asks you to create a virtual environment then do:
+
+```
+sudo apt-get install python-full
+mkdir ~/env/onepi
+python3 -m venv ~/env/onepi
+```
+to activate the virtual environment:
+```
+source ~/env/onepi/bin/activate
+```
+to deactivate
+```
+deactivate
+```
+Within the virtual environment you can install the external library e.g.
+```
+pip install rpi-lgpio 
 ```
 
 ### 1.4. Verify the installation:

@@ -41,34 +41,34 @@ def update_pid_params():
     def update_pid():
         right_pid_controller.set_pid_params(PidParams(kp, ki, kd))
         left_pid_controller.set_pid_params(PidParams(kp, ki, kd))
-        # print("kp,ki,kd: ", kp, ki, kd)
+        print("kp,ki,kd: ", kp, ki, kd)
 
     try:
         while True:
             char = sys.stdin.read(1)[0]
             if char == "P":
-                kp = int((kp * 100) + 1)
-                kp /= 100
+                kp = ((kp * 100) + 1)
+                kp /= 100.0
                 update_pid()
             if char == "p":
                 kp = int((kp * 100) - 1)
-                kp /= 100
+                kp /= 100.0
                 update_pid()
             if char == "I":
                 ki = int((ki * 100) + 1)
-                ki /= 100
+                ki /= 100.0
                 update_pid()
             if char == "i":
                 ki = int((ki * 100) - 1)
-                ki /= 100
+                ki /= 100.0
                 update_pid()
             if char == "D":
                 kd = int((kd * 100) + 1)
-                kd /= 100
+                kd /= 100.0
                 update_pid()
             if char == "d":
                 kd = int((kd * 100) - 1)
-                kd /= 100
+                kd /= 100.0
                 update_pid()
     finally:
         # Restore the terminal settings
@@ -123,7 +123,8 @@ def test_pid():
         right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
 
-        one.move_calibrate(0, right_power)
+        one.move(0, right_power)
+        # one.move_calibrate(0, right_power)
         # time.sleep(0.05)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))

@@ -17,7 +17,7 @@ class PlotChart:
         )
         (self.line2,) = self.ax.plot(self.x, self.actual_buffer, label="Actual Value")
 
-        self.ax.set_ylim(-2, 2)
+        self.ax.set_ylim(0, 800)
         self.ax.legend()
         self.ax.set_title("Reference vs. Actual Values")
         self.ax.set_xlabel("Time")

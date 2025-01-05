@@ -1,2 +1,3 @@
 spidev>=3.5
 matplotlib>=3.8
+rpi-lgpio>=0.2.2.0
