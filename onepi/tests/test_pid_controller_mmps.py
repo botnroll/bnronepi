@@ -13,15 +13,15 @@ import csv
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 0.02  # 2.5. error^3 -> 0.65
-ki = 0.7  # 1.4   3.5
-kd = 0.03  # 0.5
+kp = 0.2
+ki = 0.2
+kd = 0.1
 pid_params = PidParams(kp, ki, kd)
 
 MIN_SPEED_MMPS = -850
 MAX_SPEED_MMPS = 850
 
-update_time_ms = 200
+update_time_ms = 100
 
 right_pid_controller = PidController(pid_params, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
 left_pid_controller = PidController(pid_params, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
@@ -57,6 +57,7 @@ def test_pid():
     left_power = 0
     right_power = 0
     count = 0
+    time_previous = time.time()
     while count < 50:
         count = count + 1
         # left_encoder = one.read_left_encoder()
@@ -67,10 +68,15 @@ def test_pid():
         right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
 
-        one.move(0, right_power)
-        time.sleep(0.1)  # ms
+        time_now = time.time()
+        time_elapsed_ms = int((time_now - time_previous) * 1000)
+        if time_elapsed_ms < 100:
+            time.sleep((100-time_elapsed_ms)/1000.0)
+            time_elapsed_ms = int((time.time() - time_previous) * 1000)
+        time_previous = time.time()
+        
+        one.move(0, right_power)     
 
-        # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
         print_pair("right_encoder, right_power: ", right_encoder, int(right_power))
 
 
@@ -86,12 +92,21 @@ def setup():
     one.reset_left_encoder()
     one.reset_right_encoder()
 
-    ref_speed_mmps = 200
-    num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
-    print("setpoint pulses:", int(num_pulses))
-    right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
-    # left_pid_controller.change_setpoint(num_pulses)
-    test_pid()
+    while(True):
+        ref_speed_mmps = 200
+        num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+        print("setpoint pulses:", int(num_pulses))
+        right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
+        # left_pid_controller.change_setpoint(num_pulses)
+        test_pid()
+
+        ref_speed_mmps = 50
+        num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+        print("setpoint pulses:", int(num_pulses))
+        right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
+        # left_pid_controller.change_setpoint(num_pulses)
+        test_pid()
+
     one.stop()
 
 

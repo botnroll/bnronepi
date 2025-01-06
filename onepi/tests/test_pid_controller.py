@@ -5,7 +5,8 @@ import termios
 import time
 
 """
-This version of PID controller doesn't use Main program running...real speeds in mm per second
+This version of PID controller doesn't use real speeds in mm per second.
+It just uses encoders count.
 """
 
 import time
