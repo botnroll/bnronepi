@@ -29,7 +29,8 @@ class DrivePid:
     _previous_left_speed = 0
     _previous_right_speed = 0
     _counter = 0
-
+    _left_encoder = 0
+    _right_encoder = 0
     _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
     _initialised = False
@@ -68,6 +69,8 @@ class DrivePid:
         self._one.reset_left_encoder()
         self._one.reset_right_encoder()
         self._pid_timer.start()
+        self._left_encoder = 0
+        self._right_encoder = 0
         self._initialised = True
 
     def _compute_left_speed(self):
@@ -77,6 +80,7 @@ class DrivePid:
         left_encoder = self._one.read_left_encoder()
         direction = (GPIO.input(self._left_dir_pin) * 2) - 1
         left_encoder = left_encoder * direction
+        self._left_encoder += left_encoder
         left_speed = self._left_pid.compute_output(left_encoder)
         return left_speed
 
@@ -87,6 +91,7 @@ class DrivePid:
         right_encoder = self._one.read_right_encoder()
         direction = (GPIO.input(self._right_dir_pin) * 2) - 1
         right_encoder = right_encoder * direction
+        self._right_encoder += right_encoder
         right_speed = self._right_pid.compute_output(right_encoder)
         return right_speed
 
@@ -113,6 +118,11 @@ class DrivePid:
         )
         self._left_pid.change_setpoint(left_pulses)
         self._right_pid.change_setpoint(right_pulses)
+        left_encoder = self._left_encoder
+        right_encoder = self._right_encoder
+        self._left_encoder = 0
+        self._right_encoder = 0
+        return [left_encoder, right_encoder]
 
     def stop(self):
         """

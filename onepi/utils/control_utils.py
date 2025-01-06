@@ -32,7 +32,7 @@ class Pose:
     
     def update_pose(self, delta_distance_mm, delta_theta_rad):
         self.x_mm += delta_distance_mm * math.cos(self.theta_rad + delta_theta_rad / 2.0)
-        self.y_mm += delta_distance_mm * math.sin(self.theta_rad + delta_theta_rad / 2.0)
+        self.y_mm -= delta_distance_mm * math.sin(self.theta_rad + delta_theta_rad / 2.0)
         self.theta_rad += delta_theta_rad
 
 

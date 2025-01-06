@@ -4,12 +4,14 @@ import time
 from onepi.utils.joystick_reader import JoystickReader
 from onepi.utils.control_utils import ControlUtils, PoseSpeeds, WheelSpeeds
 from onepi.utils.drive_pid import DrivePid
+from onepi.utils.pose_tracker import PoseTracker
 from onepi.one import BnrOneA
 
 def main():
     joystick_reader = JoystickReader()
     cut = ControlUtils()
     drive_pid = DrivePid()
+    pose_tracker = PoseTracker()
 
     # function to stop the robot on exiting with CTRL+C
     def stop_and_exit(sig, frame):
@@ -39,10 +41,12 @@ def main():
         # convert from pose speeds to wheel speeds
         wheel_speeds = cut.compute_wheel_speeds(linear_speed, angular_speed)
 
-        drive_pid.move(apply_filter(wheel_speeds.left), apply_filter(wheel_speeds.right))
+        left_encoder, right_encoder = drive_pid.move(apply_filter(wheel_speeds.left), apply_filter(wheel_speeds.right))
+        pose = pose_tracker.update_location(left_encoder, right_encoder)
 
         print(f"linear: {linear_speed:.2f}, angular: {angular_speed:.2f}, \
-                left: {wheel_speeds.left:.2f}, right: {wheel_speeds.right:.2f}", end='         \r')
+                left: {wheel_speeds.left:.2f}, right: {wheel_speeds.right:.2f}, \
+                pose: {pose.x_mm:.0f}, {pose.y_mm:.0f}, {pose.theta_rad:.2f},", end='         \r')
         
         time.sleep(0.1)
 
