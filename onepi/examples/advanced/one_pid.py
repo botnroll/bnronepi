@@ -12,7 +12,7 @@ This allows PID more room to control the speeds at lower values.
 """
 
 from onepi.one import BnrOneA
-from onepi.utils.drive_pid import DrivePID
+from onepi.utils.drive_pid import DrivePid
 import time
 import signal
 
@@ -24,7 +24,7 @@ def test_move_pid():
     test the move_pid class by setting the wheels to move
     at a certain speed for a small period of time
     """
-    one_pid = DrivePID()
+    one_pid = DrivePid()
     print("Move with PID controller")
     one_pid.move(250, 250)
     time.sleep(3)

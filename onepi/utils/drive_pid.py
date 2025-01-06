@@ -19,7 +19,7 @@ from onepi.utils.pid_params import PidParams
 from onepi.one import BnrOneA
 
 
-class DrivePID:
+class DrivePid:
     """
     This class provides PID control for a differential drive robot.
     """
