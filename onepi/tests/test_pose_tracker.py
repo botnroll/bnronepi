@@ -1,9 +1,9 @@
 import os
-from onepi.utils.odometry import Odometry
+from onepi.utils.pose_tracker import PoseTracker
 
 def test_odometry():  
-    odom = Odometry()
-    pose = odom.get_pose()
+    pose_tracker = PoseTracker()
+    pose = pose_tracker.get_pose()
     
     def print_pose():
         print("(x, y, theta) = ", pose.x_mm, pose.y_mm, pose.theta_rad)
@@ -17,7 +17,7 @@ def test_odometry():
     print_pose()
     
     # move forward
-    pose = odom.update_location(3500, 3500)
+    pose = pose_tracker.update_location(3500, 3500)
     round_pose()
     print_pose()
     assert pose.x_mm == 479
@@ -25,7 +25,7 @@ def test_odometry():
     assert pose.theta_rad == 0.0
 
     # rotate cw
-    pose = odom.update_location(900, -900)
+    pose = pose_tracker.update_location(900, -900)
     round_pose()
     print_pose()
     assert pose.x_mm == 479
@@ -33,7 +33,7 @@ def test_odometry():
     assert pose.theta_rad == -1.51
 
     # move backwards
-    pose = odom.update_location(-3500, -3500)
+    pose = pose_tracker.update_location(-3500, -3500)
     round_pose()
     print_pose()
     assert pose.x_mm == 449
@@ -41,7 +41,7 @@ def test_odometry():
     assert pose.theta_rad == -1.51
 
     # rotate ccw
-    pose = odom.update_location(-900, 900)
+    pose = pose_tracker.update_location(-900, 900)
     round_pose()
     print_pose()
     assert pose.x_mm == 449

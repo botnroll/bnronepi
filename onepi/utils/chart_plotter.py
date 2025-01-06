@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 
-class PlotChart:
+class ChartPlotter:
     def __init__(self, buffer_size=100):
         self.buffer_size = buffer_size
         self.reference_buffer = np.zeros(buffer_size)
@@ -46,7 +46,7 @@ class PlotChart:
 
 # Example of using the class
 def main():
-    plotter = PlotChart()
+    plotter = ChartPlotter()
     plotter.show_plot()
 
     for i in range(200):

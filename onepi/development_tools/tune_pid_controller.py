@@ -7,6 +7,16 @@ import time
 """
 This version of PID controller doesn't use real speeds in mm per second.
 It just uses encoders count.
+It allows you to change the kp, ki and kd params by using the keyboard
+'P' - increases the kp param
+'p' - decreases the kp param
+'I' - increases the ki param
+'i' - decreases the ki param
+'D' - increases the kd param
+'d' - decreases the kd param
+It runs in a loop until you press CTRL-C and then Enter
+You can see a plot showing how the response tracks the reference value.
+The reference values changes periodically between two different values.
 """
 
 import time
@@ -15,7 +25,7 @@ import keyboard
 import threading
 from onepi.one import BnrOneA
 from onepi.utils.pid_params import PidParams
-from onepi.utils.plot_chart import PlotChart
+from onepi.utils.chart_plotter import ChartPlotter
 from onepi.utils.pid_controller import PidController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
@@ -198,7 +208,7 @@ def setup():
     print("setpoint:", setpoint)
     left_pid_controller.change_setpoint(setpoint)
     right_pid_controller.change_setpoint(setpoint)
-    plotter = PlotChart(100)
+    plotter = ChartPlotter(100)
     plotter.show_plot()
     
     stop_execution = False

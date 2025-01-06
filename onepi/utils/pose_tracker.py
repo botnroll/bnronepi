@@ -4,7 +4,7 @@
 from onepi.utils.robot_params import RobotParams
 from onepi.utils.control_utils import Pose, ControlUtils
 
-class Odometry:
+class PoseTracker:
     '''
     Provides the localisation in x,y coordinates after having the wheel encoder readings
     '''
@@ -35,23 +35,23 @@ class Odometry:
 # Example of using the class
 def main():
     
-    odom = Odometry()
-    pose = odom.get_pose()
+    pose_tracker = PoseTracker()
+    pose = pose_tracker.get_pose()
     
     def print_pose():
         print("(x, y, theta) = ", int(pose.x_mm), int(pose.y_mm), int(pose.theta_rad * 100) / 100.0)
       
     # move forward
-    pose = odom.update_location(3500, 3500)
+    pose = pose_tracker.update_location(3500, 3500)
     print_pose()
     # rotate cw
-    pose = odom.update_location(900, -900)
+    pose = pose_tracker.update_location(900, -900)
     print_pose()
     # move backwards
-    pose = odom.update_location(-3500, -3500)
+    pose = pose_tracker.update_location(-3500, -3500)
     print_pose()
     # rotate ccw
-    pose = odom.update_location(-900, 900)
+    pose = pose_tracker.update_location(-900, 900)
     print_pose()
     
 
