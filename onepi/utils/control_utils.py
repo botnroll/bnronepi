@@ -3,7 +3,7 @@ Collection of utility methods to perform useful conversions and calculations
 """
 
 from onepi.utils.robot_params import RobotParams
-
+import math
 
 def cap_to_limits(value, min_value, max_value):
     """
@@ -16,7 +16,10 @@ def cap_to_limits(value, min_value, max_value):
 
 class Pose:
     """
-    Pose definition. Contains x, y and theta coordinates
+    Pose definition. Contains x, y and theta coordinates in a 2D coordinate system
+     x coordinate points forward
+     y coordinate points left
+     theta_rad orientation positive direction is counterclockwise
     """
     x_mm = 0
     y_mm = 0
@@ -26,6 +29,11 @@ class Pose:
         self.x_mm = x_mm_in
         self.y_mm = y_mm_in
         self.theta_rad = theta_rad_in
+    
+    def update_pose(self, delta_distance_mm, delta_theta_rad):
+        self.x_mm += delta_distance_mm * math.cos(self.theta_rad + delta_theta_rad / 2.0)
+        self.y_mm += delta_distance_mm * math.sin(self.theta_rad + delta_theta_rad / 2.0)
+        self.theta_rad += delta_theta_rad
 
 
 class PoseSpeeds:
@@ -108,6 +116,13 @@ class ControlUtils:
         """
         distance_mm = self._pi * float(self._wheel_diameter_mm) * revolutions
         return distance_mm
+    
+    def compute_distance_from_pulses(self, pulses):
+        """
+        computes distance given the number of pulses
+        """
+        rev = self.compute_rev_from_pulses(pulses)
+        return self.compute_distance_from_rev(rev)
 
     def compute_speed_from_distance(self, distance_mm, time_ms):
         """
