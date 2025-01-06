@@ -5,6 +5,7 @@ from onepi.utils.joystick_reader import JoystickReader
 from onepi.utils.control_utils import ControlUtils, PoseSpeeds, WheelSpeeds
 from onepi.utils.drive_pid import DrivePid
 from onepi.utils.pose_tracker import PoseTracker
+from onepi.utils.stage import Stage
 from onepi.one import BnrOneA
 
 def main():
@@ -12,6 +13,7 @@ def main():
     cut = ControlUtils()
     drive_pid = DrivePid()
     pose_tracker = PoseTracker()
+    stage = Stage()
 
     # function to stop the robot on exiting with CTRL+C
     def stop_and_exit(sig, frame):
@@ -43,6 +45,9 @@ def main():
 
         left_encoder, right_encoder = drive_pid.move(apply_filter(wheel_speeds.left), apply_filter(wheel_speeds.right))
         pose = pose_tracker.update_location(left_encoder, right_encoder)
+        stage.update_pose(pose)
+
+        # There's a bug in that when using combined linear and angular speed the stage shows the robot turning the oposite way
 
         print(f"linear: {linear_speed:.2f}, angular: {angular_speed:.2f}, \
                 left: {wheel_speeds.left:.2f}, right: {wheel_speeds.right:.2f}, \

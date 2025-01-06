@@ -9,7 +9,7 @@ class PoseTracker:
     Provides the localisation in x,y coordinates after having the wheel encoder readings
     '''
 
-    def __init__(self, initial_pose=Pose(), robot_params=RobotParams()):
+    def __init__(self, initial_pose=Pose(.0,.0,.0), robot_params=RobotParams()):
         self._robot_params = robot_params
         self._cut = ControlUtils(robot_params)
         self._pose = initial_pose
@@ -28,8 +28,15 @@ class PoseTracker:
     def get_pose(self):
         return self._pose
 
-    def reset_pose(self, new_pose=Pose()):
+    def set_pose(self, new_pose):
         self._pose = new_pose
+        return self._pose
+
+    def reset_pose(self):
+        self._pose.x_mm = .0
+        self._pose.y_mm = .0
+        self._pose.theta_rad = .0
+        return self._pose
 
 
 # Example of using the class
@@ -42,18 +49,51 @@ def main():
         print("(x, y, theta) = ", int(pose.x_mm), int(pose.y_mm), int(pose.theta_rad * 100) / 100.0)
       
     # move forward
+    print("move forward")
     pose = pose_tracker.update_location(3500, 3500)
     print_pose()
+
     # rotate cw
+    print("rotate cw")
+    pose = pose_tracker.reset_pose()
     pose = pose_tracker.update_location(900, -900)
     print_pose()
+    
     # move backwards
+    print("move backwards")
+    pose = pose_tracker.reset_pose()
     pose = pose_tracker.update_location(-3500, -3500)
     print_pose()
+
     # rotate ccw
+    print("rotate ccw")
+    pose = pose_tracker.reset_pose()
     pose = pose_tracker.update_location(-900, 900)
     print_pose()
+
+    # move forward and rotate cw
+    print("move forward and rotate cw")
+    pose = pose_tracker.reset_pose()
+    pose = pose_tracker.update_location(3500, 2000)
+    print_pose()
     
+    # move forward and rotate ccw
+    print("move forward and rotate ccw")
+    pose = pose_tracker.reset_pose()    
+    pose = pose_tracker.update_location(2000, 3500)
+    print_pose()
+
+    # move backwards and rotate cw
+    print("move backwards and rotate cw")
+    pose = pose_tracker.reset_pose()
+    pose = pose_tracker.update_location(-2000, -3500)
+    print_pose()
+
+    # move backwards and rotate ccw
+    print("move backwards and rotate ccw")
+    pose = pose_tracker.reset_pose()
+    pose = pose_tracker.update_location(-3500, -2000)
+    print_pose()
 
 if __name__ == "__main__":
     main()
