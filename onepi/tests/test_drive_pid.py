@@ -6,26 +6,27 @@ from onepi.utils.drive_pid import DrivePID
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 
-def test_move_pid():
+def test_drive_pid():
     """
-    test the move_pid class by setting the wheels to move
+    test the drive_pid class by setting the wheels to move
     at a certain speed for a small period of time
     """
-    move_pid = DrivePID()
-    print("move: 200, 200")
-    move_pid.move(200, 200)
-    time.sleep(3)
-    print("move: 0,0")
-    move_pid.move(0, 0)
-    time.sleep(3)
-    print("move: 400, 400")
-    move_pid.move(400, 400)
-    time.sleep(3)
-    print("move: 700, 700")
-    move_pid.move(700, 700)
-    time.sleep(3)
-    print("stop")
-    move_pid.stop()
+    while(True):
+        drive_pid = DrivePID()
+        print("move: 200, 200")
+        drive_pid.move(200, 200)
+        time.sleep(3)
+        print("move: 0,0")
+        drive_pid.move(0, 0)
+        time.sleep(3)
+        # print("move: 400, 400")
+        # drive_pid.move(400, 400)
+        # time.sleep(3)
+        # print("move: 700, 700")
+        # drive_pid.move(700, 700)
+        # time.sleep(3)
+        # print("stop")
+        # drive_pid.stop()
 
 
 def setup():
@@ -36,7 +37,7 @@ def setup():
     one.min_battery(9.6)
     one.lcd1(" Test drive_pid  ")
     one.lcd2("________________")
-    test_move_pid()
+    test_drive_pid()
     one.stop()
 
 

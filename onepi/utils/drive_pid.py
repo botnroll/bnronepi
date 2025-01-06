@@ -35,7 +35,7 @@ class DrivePID:
     _initialised = False
 
     def __init__(
-        self, pid_params=PidParams(), robot_params=RobotParams(), update_period_ms=200
+        self, pid_params=PidParams(), robot_params=RobotParams(), update_period_ms=100
     ):
         """
         initialises the class with kp, ki, kd,
