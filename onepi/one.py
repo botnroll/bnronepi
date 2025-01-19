@@ -148,7 +148,7 @@ class BnrOneA:
         """
         self._spi.open(self.bus, self.device)
         self._spi.max_speed_hz = (
-            488000  # see https://www.takaitra.com/spi-device-raspberry-pi/
+            244000 # see https://www.takaitra.com/spi-device-raspberry-pi/
         )
         self._spi.mode = 1
 
@@ -222,7 +222,7 @@ class BnrOneA:
         ]
         self.__send_data(self._COMMAND_MOVE, msg)
 
-    def move_calibrate(self, left_power, right_power):
+    def move_raw(self, left_power, right_power):
         """
         Sends calibration power data to the spi device
 
@@ -425,7 +425,10 @@ class BnrOneA:
         :return: counter of the encoder
         :rtype: int
         """
-        return self.__request_word(self._COMMAND_ENCL)
+        value = self.__request_word(self._COMMAND_ENCL)
+        if (value >> 15) == 1:
+            value -= 0XFFFF
+        return value
 
     def read_right_encoder(self):
         """
@@ -435,7 +438,10 @@ class BnrOneA:
         :return: counter of the encoder
         :rtype: int
         """
-        return self.__request_word(self._COMMAND_ENCR)
+        value = self.__request_word(self._COMMAND_ENCR)
+        if (value >> 15) == 1:
+            value -= 0XFFFF
+        return value
 
     def read_left_encoder_increment(self):
         """
@@ -445,7 +451,10 @@ class BnrOneA:
         :return: encoder reading
         :rtype: int
         """
-        return self.__request_word(self._COMMAND_ENCL_INC)
+        value = self.__request_word(self._COMMAND_ENCL_INC)
+        if (value >> 15) == 1:
+            value -= 0XFFFF
+        return value
 
     def read_right_encoder_increment(self):
         """
@@ -455,7 +464,10 @@ class BnrOneA:
         :return: encoder reading
         :rtype: int
         """
-        return self.__request_word(self._COMMAND_ENCR_INC)
+        value = self.__request_word(self._COMMAND_ENCR_INC)
+        if (value >> 15) == 1:
+            value -= 0XFFFF
+        return value
 
     def read_firmware(self):
         """

@@ -156,7 +156,7 @@ def test_pid():
         right_power = right_pid_controller.compute_output(right_encoder)
 
         one.move(0, right_power)
-        # one.move_calibrate(0, right_power)
+        # one.move_raw(0, right_power)
         # time.sleep(0.05)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))

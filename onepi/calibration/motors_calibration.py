@@ -52,7 +52,7 @@ def main():
             end_time += 0.5
             battery = one.read_battery()
             battery = int(battery * 10) / 10
-            one.move_calibrate(powerL, powerR)
+            one.move_raw(powerL, powerR)
             one.lcd1("Bat:", str(battery))
             one.lcd2(powerL, powerR)
             print(
@@ -62,7 +62,7 @@ def main():
                 powerL,
                 "\tPower right:",
                 powerR,
-                end="\r",
+                end="         \r",
             )
 
         button = one.read_button()

@@ -71,10 +71,10 @@ def test_move_calibrate():
     delay_ms = 2000
     for i in range(0, 101, 5):
         print("Duty_cycle:", i)
-        one.move_calibrate(i, i)
+        one.move_raw(i, i)
         time.sleep(0.5)
     print("Stopping both motors")
-    one.move_calibrate(0, 0)
+    one.move_raw(0, 0)
     print("At the start motors are not supposed to move.")
     print(
         "After a certain value they should start moving but not necessarily at the same time."
