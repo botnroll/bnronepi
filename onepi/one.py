@@ -1,5 +1,9 @@
 """ Library to interface with Bot'n Roll ONE A+ from www.botnroll.com """
 
+import os
+import psutil
+import subprocess
+import time
 import spidev
 import struct
 import time
@@ -108,17 +112,62 @@ class BnrOneAPlus:
     _delay_TR = 20  # 20 MinStable:15  Crash:14
     _delay_SS = 20  # 20 Crash: No crash even with 0 (ZERO)
 
-    def __init__(self, bus=0, device=0):
+    def __init__(self, bus=0, device=0, monitor=1):
         """
         Constructor for BnrOneAPlus class
 
         :param bus: specifies which bus to use, in the case of raspberry pi should be 0
         :param device: is the chip select pin. Set to 0 or 1, depending on the connections
+        :param monitor: specifies if this process should be monitored
         """
-        self.bus = bus
-        self.device = device
-        self._spi = spidev.SpiDev()
-        self.line_detector = LineDetector()
+
+        if not self.is_monitor_running():       # Check if the monitorBNR is running, if not turn it on
+            subprocess.Popen(["python3", f"{os.path.dirname(__file__)}/monitorBNR.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setpgrp )
+
+        can_run = True
+        if monitor:
+            can_run = self.write_pid_to_file("BnrOneA")    # Checks if the code can run, and if soo, writes the PID is using the SPI communication with the Bot'n Roll
+
+        if can_run:                 # Runs Normally
+            self.bus = bus
+            self.device = device
+            self._spi = spidev.SpiDev()
+            self.line_detector = LineDetector()
+        elif monitor:               # It can not run because other process is using the SPI communication with the Bot'n Roll
+            print("There is already a Python Code communicating with the Bot'n Roll One A+.")
+            print("Please quit the other process first.")
+            os._exit(1)
+
+
+    def is_monitor_running(self, script_name="monitorBNR"):
+        """
+        Checks if the monitorBNR process is running, wchich monitors the SPI communication with the Bot'n Roll
+        :param script_name: specifies the name of the script to check if it is running
+        """
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                for arg in proc.info['cmdline']:
+                    if script_name in arg:
+                        return True
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        return False
+
+
+    def write_pid_to_file(self, file_name):
+        """
+        Reads the file that contains the active PIDs that are using the Bot'n Roll
+        If it is 0, writes this PID and returns True allowing the library to run normally
+        :param file_name: specifies the name of the text file to check
+        """
+        try:
+            with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'r') as f: pid = int(f.read().strip())
+        except:
+            pid = 0
+
+        if pid == 0:
+            with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'w') as f: f.write(str(os.getpid()))
+        return not pid
 
     def __us_sleep(self, microseconds):
         """
