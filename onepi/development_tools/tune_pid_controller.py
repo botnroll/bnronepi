@@ -123,19 +123,6 @@ def print_pair(text, value1, value2):
     """
     print(text, value1, ", ", value2)
 
-
-def maybe_change_sign(absValue, refValue):
-    """
-    brief sets the sign of the output value to match the sign of refValue
-    param absValue
-    param refValue
-    return int
-    """
-    if refValue < 0:
-        return -absValue
-    return absValue
-
-
 def test_pid():
     """
     test pid function for 5 seconds by setting the wheel speed
@@ -148,15 +135,13 @@ def test_pid():
     while count < 100 and not stop_execution:
         count = count + 1
         # left_encoder = one.read_left_encoder()
-        # left_encoder = maybe_change_sign(left_encoder, left_power)
         # left_power = left_pid_controller.compute_output(left_encoder)
 
         right_encoder = one.read_right_encoder()
-        right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
 
-        one.move(0, right_power)
-        # one.move_raw(0, right_power)
+        #one.move(0, right_power)
+        one.move_raw(0, right_power)
         # time.sleep(0.05)  # ms
 
         # print_pair("left_encoder, leftPower: ", left_encoder, int(left_power))
