@@ -42,7 +42,7 @@ class BnrOneA:
     _COMMAND_BRAKE = 0xF5  # Stop motors with brake torque
     _COMMAND_BAT_MIN = 0xF4  # Configure low battery level
     _COMMAND_MOVE_PID = 0xF3  # Move motor with PID control
-    _COMMAND_MOVE_CALIBRATE = 0xF2  # Move motors for calibration
+    _COMMAND_MOVE_RAW = 0xF2  # Move motors for calibration
     _COMMAND_SAVE_CALIBRATE = 0xF1  # Save calibration data
     _COMMAND_ENCL_RESET = 0xF0  # Preset the value of encoder1
     _COMMAND_ENCR_RESET = 0xEF  # Preset the value of encoder2
@@ -235,7 +235,7 @@ class BnrOneA:
             self.__high_byte(right_power),
             self.__low_byte(right_power),
         ]
-        self.__send_data(self._COMMAND_MOVE_CALIBRATE, msg)
+        self.__send_data(self._COMMAND_MOVE_RAW, msg)
 
     def move_1m(self, motor, speed):
         """
@@ -426,8 +426,8 @@ class BnrOneA:
         :rtype: int
         """
         value = self.__request_word(self._COMMAND_ENCL)
-        if (value >> 15) == 1:
-            value -= 0XFFFF
+        if value >= 0x8000:
+            value -= 0x10000
         return value
 
     def read_right_encoder(self):
@@ -439,8 +439,8 @@ class BnrOneA:
         :rtype: int
         """
         value = self.__request_word(self._COMMAND_ENCR)
-        if (value >> 15) == 1:
-            value -= 0XFFFF
+        if value >= 0x8000:
+            value -= 0x10000
         return value
 
     def read_left_encoder_increment(self):
@@ -452,8 +452,10 @@ class BnrOneA:
         :rtype: int
         """
         value = self.__request_word(self._COMMAND_ENCL_INC)
-        if (value >> 15) == 1:
-            value -= 0XFFFF
+        
+        # Check if value should be negative
+        if value >= 0x8000:
+            value -= 0x10000
         return value
 
     def read_right_encoder_increment(self):
@@ -465,8 +467,8 @@ class BnrOneA:
         :rtype: int
         """
         value = self.__request_word(self._COMMAND_ENCR_INC)
-        if (value >> 15) == 1:
-            value -= 0XFFFF
+        if value >= 0x8000:
+            value -= 0x10000
         return value
 
     def read_firmware(self):

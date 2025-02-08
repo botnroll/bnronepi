@@ -21,9 +21,9 @@ from onepi.one import BnrOneA
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-speed_1 = 25
-speed_2 = 25
-TARGET_PULSES = 3000 #1490
+speed_1 = 10
+speed_2 = 10
+TARGET_PULSES = 3000
 
 
 def setup():
@@ -49,80 +49,50 @@ def setup():
     one.read_right_encoder()
 
 
-# def loop():
-#     global speed_1, speed_2
-#     encoder_left = one.read_left_encoder_increment()
-#     encoder_right = one.read_right_encoder_increment()
-#     button = one.read_button()
-#     if button == 1:
-#         speed_1 += 1
-#         speed_2 += 1
-#     elif button == 2:
-#         speed_1 -= 1
-#         speed_2 -= 1
-#     elif button == 3:
-#         speed_1 = 0
-#         speed_2 = 0
-#         encoder_left = one.read_left_encoder()
-#         encoder_right = one.read_right_encoder()
-#     one.lcd1("L:", encoder_left, "vel:", speed_1)
-#     one.lcd2("R:", encoder_right, "vel:", speed_2)
-#     print(
-#         "Left:",
-#         encoder_left,
-#         " vel:",
-#         speed_1,
-#         " ||  Right:",
-#         encoder_right,
-#         " vel:",
-#         speed_2,
-#         " " * 10,
-#         # end="\r",
-#     )
-#     if encoder_left >= TARGET_PULSES - 500 or \
-#         encoder_right >= TARGET_PULSES - 500:
-#         speed_1 = 20
-#         speed_2 = 20
-#     if encoder_left >= TARGET_PULSES or \
-#         encoder_right >= TARGET_PULSES:
-#         one.stop()
-#     else:
-#         one.move(speed_1, speed_2)
-#         pass
-#         # one.move(speed_1, speed_2)
-#     time.sleep(0.05)
-
-def read_encoders():
+def loop():
+    global speed_1, speed_2
     encoder_left = one.read_left_encoder_increment()
     encoder_right = one.read_right_encoder_increment()
-    # encoder_left = one.read_left_encoder()
-    # encoder_right = one.read_right_encoder()
+    button = one.read_button()
+    if button == 1:
+        speed_1 += 1
+        speed_2 += 1
+        time.sleep(0.1)
+    elif button == 2:
+        speed_1 -= 1
+        speed_2 -= 1
+        time.sleep(0.1)
+    elif button == 3:
+        encoder_left = one.read_left_encoder() # reset encoders
+        encoder_right = one.read_right_encoder()
+    read_encoders()
+    one.lcd1("L:", encoder_left, "vel:", speed_1)
+    one.lcd2("R:", encoder_right, "vel:", speed_2)
+    if encoder_left >= TARGET_PULSES or \
+        encoder_right >= TARGET_PULSES:
+        one.stop()
+    else:
+        one.move(speed_1, speed_2)
+    time.sleep(0.05)
+
+def read_encoders():
+    global encoder_left
+    global encoder_right
+    encoder_left = one.read_left_encoder_increment()
+    encoder_right = one.read_right_encoder_increment()
     print(
     "Left:",
     encoder_left,
-    # " vel:",
-    # speed_1,
+    " vel:",
+    speed_1,
     " ||  Right:",
     encoder_right,
-    # " vel:",
-    # speed_2,
+    " vel:",
+    speed_2,
     " " * 10,
-    # end="\r",
+    end="\r",
 )
-def loop():
-    speed_1 = 0
-    speed_2 = 20
-    for i in range(10):
-        one.move(speed_1,speed_2)
-        read_encoders()
-        time.sleep(0.5)
         
-    for i in range(10):
-        one.move(-speed_1,-speed_2)
-        read_encoders()
-        time.sleep(0.5)
-        
-
 def main():
 
     # function to stop the robot on exiting with CTRL+C
