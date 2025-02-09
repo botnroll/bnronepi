@@ -30,9 +30,12 @@ from onepi.utils.pid_controller import PidController
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 0.2
-ki = 0.2  # 0.7
-kd = 0.1
+# pid params that work well both free wheeling and under load at both high and low speeds
+# minimum speed tested :
+kp = 0.070
+ki = 0.015
+kd = 0.000
+
 pid_params = PidParams(kp, ki, kd)
 right_pid_controller = PidController(pid_params, -800, 800)
 left_pid_controller = PidController(pid_params, -800, 800)
@@ -64,37 +67,55 @@ def update_pid_params():
     tty.setcbreak(sys.stdin)
 
     def update_pid():
+        global kp, ki, kd
         if not stop_execution:
+            if kp < 0.0:
+                kp = 0.0
+            if ki < 0.0:
+                ki = 0.0
+            if kd < 0.0:
+                kd = 0.0
             right_pid_controller.set_pid_params(PidParams(kp, ki, kd))
             left_pid_controller.set_pid_params(PidParams(kp, ki, kd))
     
 
     try:
+        correction = 5.0
         while not stop_execution:
-            char = sys.stdin.read(1)[0]
+            char = sys.stdin.read(1)[0]            
+            if char == "C":
+                correction += 1.0
+                print("correction = ", correction)
+                time.sleep(0.5)
+            if char == "c":
+                correction -= 1.0
+                if correction < 0:
+                    correction = 0 
+                print("correction = ", correction)
+                time.sleep(0.5)
             if char == "P":
-                kp = ((kp * 100) + 1)
-                kp /= 100.0
+                kp = ((kp * 1000) + correction)
+                kp /= 1000.0
                 update_pid()
             if char == "p":
-                kp = int((kp * 100) - 1)
-                kp /= 100.0
+                kp = int((kp * 1000) - correction)
+                kp /= 1000.0
                 update_pid()
             if char == "I":
-                ki = int((ki * 100) + 1)
-                ki /= 100.0
+                ki = int((ki * 1000) + correction)
+                ki /= 1000.0
                 update_pid()
             if char == "i":
-                ki = int((ki * 100) - 1)
-                ki /= 100.0
+                ki = int((ki * 1000) - correction)
+                ki /= 1000.0
                 update_pid()
             if char == "D":
-                kd = int((kd * 100) + 1)
-                kd /= 100.0
+                kd = int((kd * 1000) + correction / 5.0)
+                kd /= 1000.0
                 update_pid()
             if char == "d":
-                kd = int((kd * 100) - 1)
-                kd /= 100.0
+                kd = int((kd * 1000) - correction / 5.0)
+                kd /= 1000.0
                 update_pid()
         
         print("thread stopped")
@@ -132,7 +153,7 @@ def test_pid():
     right_power = 0
     count = 0
     time_previous = time.time()
-    while count < 100 and not stop_execution:
+    while count < 50 and not stop_execution:
         count = count + 1
         # left_encoder = one.read_left_encoder()
         # left_power = left_pid_controller.compute_output(left_encoder)
@@ -159,11 +180,11 @@ def test_pid():
             right_encoder,
             int(right_power),
             "(",
-            right_pid_controller.get_pid_params().kp,
+            round(right_pid_controller.get_pid_params().kp, 3),
             ",",
-            right_pid_controller.get_pid_params().ki,
+            round(right_pid_controller.get_pid_params().ki, 3),
             ",",
-            right_pid_controller.get_pid_params().kd,
+            round(right_pid_controller.get_pid_params().kd, 3),
             ")",
             time_elapsed_ms,
             "ms"
@@ -203,7 +224,7 @@ def setup():
     while not stop_execution:
         right_pid_controller.change_setpoint(50 * 10)
         test_pid()
-        right_pid_controller.change_setpoint(5 * 10)
+        right_pid_controller.change_setpoint(10 * 10)
         test_pid()
     one.stop()
 

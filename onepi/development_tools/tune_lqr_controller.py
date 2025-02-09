@@ -42,14 +42,14 @@ D = np.array([[0]])
 # better at low, worst at high
 # q0, q1, r = 0.5, 13.8, 7.5
 
-q0 = 0.7 # velocity 
+q0 = 0.3 # velocity 
 q1 = 13.8 # acceleration: A smaller Q reduces the emphasis on state errors, making the controller less sensitive to deviations.
-r = 10  # A larger R value will reduce the control effort, making the system less aggressive.
+r = 7.5  # A larger R value will reduce the control effort, making the system less aggressive.
 # Increase R from 10 to 20 to reduce control effort and stabilize low-speed performance.
 # Q = np.diag([0.5, 5])  # Adjust Q matrix to emphasize velocity control
 
 # LQR design parameters
-Q = np.diag([q0, q1])
+Q = np.diag([q0, q1, 0.01])  # Include small weight for integral action
 R = np.array([[r]])
 
 # Instantiate the LQR controller
@@ -89,7 +89,7 @@ def update_lqr_params():
 
     def update_lqr():
         if not stop_execution:
-            Q = np.diag([q0, q1])
+            Q = np.diag([q0, q1, 0.01])
             R = np.array([[r]])
             right_lqr_controller.set_lqr_params(Q, R)
             left_lqr_controller.set_lqr_params(Q, R)
@@ -160,10 +160,10 @@ def test_lqr():
     while count < 100 and not stop_execution:
         count = count + 1
         left_encoder = one.read_left_encoder()
-        left_state, left_power = left_lqr_controller.compute_output(left_encoder)
+        left_power = left_lqr_controller.compute_output(left_encoder)
 
         # right_encoder = one.read_right_encoder()
-        # right_state, right_power = right_lqr_controller.compute_output(right_encoder)
+        # right_power = right_lqr_controller.compute_output(right_encoder)
 
         one.move_raw(left_power, 0)
         # time.sleep(0.05)  # ms

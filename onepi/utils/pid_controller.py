@@ -96,11 +96,13 @@ class PidController:
             self._output, self._min_value, self._max_value
         )
         # Map the output to control the motor
-        mapped_output = MathsUtils.convert_range(
-            self._output, self._min_value, self._max_value, -100, 100
-        )
+        # mapped_output = MathsUtils.convert_range(
+        #     self._output, self._min_value, self._max_value, -100, 100
+        # )
         self._last_error = error
-        return mapped_output
+        
+        return self._output
+        #return mapped_output
 
     def reset_controller(self):
         """

@@ -9,17 +9,27 @@ class LQRController:
         self.B = B
         self.C = C
         self.D = D
-        self.sys = ctrl.StateSpace(A, B, C, D)
+        
+        # Augment the system with integral action
+        A_aug = np.block([
+            [self.A, np.zeros((self.A.shape[0], 1))],
+            [-self.C, np.zeros((1, 1))]
+        ])
+        B_aug = np.vstack([self.B, np.zeros((1, 1))])
         
         # LQR design parameters
         self.Q = Q
         self.R = R
         
-        # Compute the LQR controller
-        self.K, self.S, self.E = ctrl.lqr(self.sys, Q, R)
+        # Compute the LQR controller for the augmented system
+        self.K, self.S, self.E = ctrl.lqr(A_aug, B_aug, Q, R)
+        
+        # Store the augmented matrices
+        self.A_aug = A_aug
+        self.B_aug = B_aug
         
         # Initial state
-        self.x = np.zeros((A.shape[0],))
+        self.x = np.zeros((A_aug.shape[0],))
         self._setpoint = 0
 
     def compute_output(self, current_speed, dt=0.01):
@@ -27,7 +37,7 @@ class LQRController:
         self.x[0] = current_speed
         
         # Desired state
-        x_desired = np.array([self._setpoint, 0])
+        x_desired = np.array([self._setpoint, 0, 0])  # Augmented desired state
         
         # Error
         e = x_desired - self.x
@@ -36,9 +46,9 @@ class LQRController:
         u = -np.dot(self.K, e)
         
         # Update state
-        self.x = self.x + (self.A @ self.x + self.B @ u) * dt
-        
-        return self.x, -u
+        self.x = self.x + (self.A_aug @ self.x + self.B_aug @ u) * dt
+                
+        return -u  # Return state excluding integral term
     
     def get_setpoint(self):
         return self._setpoint
@@ -46,10 +56,13 @@ class LQRController:
     def change_setpoint(self, setpoint):
         self._setpoint = setpoint
 
-    def set_lqr_params(self, Q, R):
+    def set_lqr_params(self, Q, R):        
+        # LQR design parameters
         self.Q = Q
         self.R = R
-        self.K, self.S, self.E = ctrl.lqr(self.sys, Q, R)
+        
+        # Compute the LQR controller for the augmented system
+        self.K, self.S, self.E = ctrl.lqr(self.A_aug, self.B_aug, Q, R)
         
 
 # Example function to read encoder speed (replace with actual encoder reading code)
