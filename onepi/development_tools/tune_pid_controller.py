@@ -32,11 +32,12 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
 # pid params that work well both free wheeling and under load at both high and low speeds
 # minimum speed tested :
-kp = 0.070
-ki = 0.015
-kd = 0.000
+# kp = 0.070
+# ki = 0.015
+# kd = 0.000
 
-pid_params = PidParams(kp, ki, kd)
+# pid_params = PidParams(kp, ki, kd)
+pid_params = PidParams()
 right_pid_controller = PidController(pid_params, -800, 800)
 left_pid_controller = PidController(pid_params, -800, 800)
 

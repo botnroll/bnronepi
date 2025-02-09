@@ -13,10 +13,7 @@ import csv
 
 one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
 
-kp = 0.2
-ki = 0.2
-kd = 0.1
-pid_params = PidParams(kp, ki, kd)
+pid_params = PidParams()
 
 MIN_SPEED_MMPS = -850
 MAX_SPEED_MMPS = 850
@@ -38,18 +35,6 @@ def print_pair(text, value1, value2):
     print(text, value1, ", ", value2)
 
 
-def maybe_change_sign(absValue, refValue):
-    """
-    brief sets the sign of the output value to match the sign of refValue
-    param absValue
-    param refValue
-    return int
-    """
-    if refValue < 0:
-        return -absValue
-    return absValue
-
-
 def test_pid():
     global right_pid_controller
     global left_pid_controller
@@ -60,24 +45,29 @@ def test_pid():
     time_previous = time.time()
     while count < 50:
         count = count + 1
-        # left_encoder = one.read_left_encoder()
-        # left_encoder = maybe_change_sign(left_encoder, left_power)
-        # left_power = left_pid_controller.compute_output(left_encoder)
+        left_encoder = one.read_left_encoder()
+        left_power = left_pid_controller.compute_output(left_encoder)
 
         right_encoder = one.read_right_encoder()
-        right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
 
         time_now = time.time()
+
         time_elapsed_ms = int((time_now - time_previous) * 1000)
         if time_elapsed_ms < 100:
             time.sleep((100-time_elapsed_ms)/1000.0)
             time_elapsed_ms = int((time.time() - time_previous) * 1000)
         time_previous = time.time()
+        print(
+            "setpoint, right_encoder, right_power, elapsed_time_ms",
+            right_pid_controller.get_setpoint(),
+            right_encoder,
+            int(right_power),
+            time_elapsed_ms,
+            "ms"
+        )
         
-        one.move(0, right_power)     
-
-        print_pair("right_encoder, right_power: ", right_encoder, int(right_power))
+        one.move(0, right_power)
 
 
 def setup():
@@ -93,18 +83,18 @@ def setup():
     one.reset_right_encoder()
 
     while(True):
-        ref_speed_mmps = 200
+        ref_speed_mmps = 400
         num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
         print("setpoint pulses:", int(num_pulses))
-        right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
-        # left_pid_controller.change_setpoint(num_pulses)
+        right_pid_controller.change_setpoint(num_pulses)
+        left_pid_controller.change_setpoint(num_pulses)
         test_pid()
 
-        ref_speed_mmps = 50
+        ref_speed_mmps = 800
         num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
         print("setpoint pulses:", int(num_pulses))
-        right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
-        # left_pid_controller.change_setpoint(num_pulses)
+        right_pid_controller.change_setpoint(num_pulses)
+        left_pid_controller.change_setpoint(num_pulses)
         test_pid()
 
     one.stop()
@@ -139,7 +129,6 @@ def change_setpoint(ref_speed_mmps):
     for i in range(0, 50):
 
         right_encoder = one.read_right_encoder()
-        right_encoder = maybe_change_sign(right_encoder, right_power)
         right_power = right_pid_controller.compute_output(right_encoder)
         data.append([timestamp, input_data, right_encoder])
         timestamp += 100

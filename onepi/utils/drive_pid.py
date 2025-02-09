@@ -10,7 +10,6 @@ the wheels start moving set it to when they stop moving.
 This allows PID more room to control the speeds at lower values.
 """
 
-import RPi.GPIO as GPIO
 from onepi.utils.pid_controller import PidController
 from onepi.utils.control_utils import ControlUtils
 from onepi.utils.simple_timer import SimpleTimer
@@ -46,11 +45,6 @@ class DrivePid:
 
         self._cut = ControlUtils(robot_params)
 
-        GPIO.setmode(GPIO.BCM)
-        self._left_dir_pin = 22  # DirL
-        self._right_dir_pin = 23  # DirR
-        GPIO.setup(self._left_dir_pin, GPIO.IN)
-        GPIO.setup(self._right_dir_pin, GPIO.IN)
         self._left_pid = PidController(
             pid_params, -robot_params.max_speed_mmps, robot_params.max_speed_mmps
         )
@@ -78,8 +72,6 @@ class DrivePid:
         computes left speed
         """
         left_encoder = self._one.read_left_encoder()
-        direction = (GPIO.input(self._left_dir_pin) * 2) - 1
-        left_encoder = left_encoder * direction
         self._left_encoder += left_encoder
         left_speed = self._left_pid.compute_output(left_encoder)
         return left_speed
@@ -89,8 +81,6 @@ class DrivePid:
         computes right speed
         """
         right_encoder = self._one.read_right_encoder()
-        direction = (GPIO.input(self._right_dir_pin) * 2) - 1
-        right_encoder = right_encoder * direction
         self._right_encoder += right_encoder
         right_speed = self._right_pid.compute_output(right_encoder)
         return right_speed

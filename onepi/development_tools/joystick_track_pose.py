@@ -1,3 +1,8 @@
+# This tools allows you to control the robot using a joystick attached to the raspberry pi
+# By using the joystick controllers you can control the robot in real time
+# The estimated motion of the robot is plotted on the stage, which you can 
+# see in the screen on a separate figure
+
 import signal
 import time
 

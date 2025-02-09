@@ -1,3 +1,7 @@
+# This test draws different poses on the stage by varying 
+# the angle and the location of the robot
+# The stage is displayed in a figure
+
 import time
 import os
 from onepi.utils.stage import Stage
