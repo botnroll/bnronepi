@@ -2,8 +2,7 @@ class PidParams:
     """
     Set of PID parameters
     """
-
-    def __init__(self, kp_in=0.2, ki_in=0.2, kd_in=0.1):
+    def __init__(self, kp_in=0.07, ki_in=0.015, kd_in=0.000):
         """
         Defines the pid parameters
         """
