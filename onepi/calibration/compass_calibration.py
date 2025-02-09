@@ -19,7 +19,7 @@ from smbus import (
 
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 # constants definition
 min_speed = 20  # if motors have been calibrated change this to 1

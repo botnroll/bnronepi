@@ -16,7 +16,7 @@ Note: Valid for TSSP4056 IR sensors shipped with robots from 2023.
 import time
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 
 def setup():

@@ -23,7 +23,7 @@ ipaddr = s.getsockname()[0]
 host = socket.gethostname()
 print ("IP:", ipaddr, " Host:", host)
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 
 def setup():

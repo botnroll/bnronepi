@@ -19,7 +19,7 @@ from collections import namedtuple
 from onepi.one import BnrOneA
 from onepi.utils.drive_pid import DrivePid
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 MAX_SPEED_MMPS = 800
 max_linear_speed = 100  # (mm/s) it will be overriten by config value

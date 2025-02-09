@@ -18,7 +18,7 @@ from smbus import (
 
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 COMPASS_ADDRESS = 0x60  # CMPS11 I2C address
 

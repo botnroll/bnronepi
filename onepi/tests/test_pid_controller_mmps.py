@@ -11,7 +11,7 @@ from onepi.utils.pid_controller import PidController
 from onepi.utils.control_utils import ControlUtils
 import csv
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 pid_params = PidParams()
 

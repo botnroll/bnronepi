@@ -267,7 +267,7 @@ def test_reset_right_encoder():
 
 def blink(one, number_of_times, delay_s):
     """
-    Blinks the led on Bot'n Roll One A
+    Blinks the led on Bot'n Roll One A+
 
     :param one: object to send the command to
     :param number_of_times: number of times to toggle the led

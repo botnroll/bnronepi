@@ -23,7 +23,7 @@ import time
 import signal
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 max_linear_speed = 55
 # function gain -> Lower Gain, higher output

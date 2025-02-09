@@ -1,6 +1,6 @@
 
 # bnronepi
-*Python library to interface with Bot'n Roll One A.*
+*Python library to interface with Bot'n Roll One A+.*
 
 ## 1. Installation:
 
@@ -74,7 +74,7 @@ pip install rpi-lgpio
 2. Copy and paste the following code:
 ```python
 from onepi.one import BnrOneA
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 one.stop()  # stop motors
 one.lcd1(" Hello Pi! ")  # print data on LCD line 1
 ```
@@ -91,7 +91,7 @@ Displays a message "Hello Pi!" on the robot lcd.
 ```python
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 one.stop()  # stop motors
 one.lcd1(" Hello Pi! ")  # print data on LCD line 1
 ```
@@ -99,13 +99,13 @@ one.lcd1(" Hello Pi! ")  # print data on LCD line 1
 ## 3. Examples
 
 You can find lots of examples in the examples folder.
-It contains several complete programs to allow you to take the most out of Bot'n Roll One A robot.
+It contains several complete programs to allow you to take the most out of Bot'n Roll One A+ robot.
 
 All the examples are documented and easy to follow.
 You can use them as a starting point for your applications.
 
 ### 3.1 basic
-The basic folder contains a series of examples for you to interact with the hardware of the Bot'n Roll One A.
+The basic folder contains a series of examples for you to interact with the hardware of the Bot'n Roll One A+.
 
 The list includes examples such as:
 - battery: displays the battery level and sets the minum value

@@ -19,7 +19,7 @@ import threading
 from onepi.one import BnrOneA
 from enum import Enum, auto
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 TIMER_INTERVAL = 1  # Set the timer interval in seconds
 

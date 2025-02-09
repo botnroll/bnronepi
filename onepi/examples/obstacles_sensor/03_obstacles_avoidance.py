@@ -15,7 +15,7 @@ import time
 import signal
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 left_motor = 0
 right_motor = 0

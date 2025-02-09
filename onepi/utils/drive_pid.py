@@ -1,5 +1,5 @@
 """
-This example shows how to use a PID controller to control the wheel speeds of Bot'n Roll ONE A
+This class uses a PID controller to control the wheel speeds of Bot'n Roll ONE A+
 The minimum speed is about 250 mm/s and the max speed is 850 mm/s for a reference battery of 12V.
 Note that these values might change depending on the battery you're using and its current charge.
 You can specify your own PID params, kp, ki, kd.
@@ -30,7 +30,7 @@ class DrivePid:
     _counter = 0
     _left_encoder = 0
     _right_encoder = 0
-    _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+    _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
     _initialised = False
 

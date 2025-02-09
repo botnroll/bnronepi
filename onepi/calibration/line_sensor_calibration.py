@@ -46,7 +46,7 @@ from onepi.one import BnrOneA
 from onepi.utils.line_sensor_config import LineSensorConfig
 from onepi.utils.line_detector import LineDetector
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 
 M1 = 1  # Motor1

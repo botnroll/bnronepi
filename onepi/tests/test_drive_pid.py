@@ -11,7 +11,7 @@ from onepi.one import BnrOneA
 from onepi.utils.drive_pid import DrivePid
 from onepi.utils.pid_params import PidParams
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 pid_params = PidParams()
 drive_pid = DrivePid()
 

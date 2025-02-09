@@ -5,7 +5,7 @@ from onepi.one import BnrOneA
 from onepi.utils.lqr_controller import LQRController
 
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 # function to stop the robot on exiting with CTRL+C
 def stop_and_exit(sig, frame):

@@ -28,7 +28,7 @@ from onepi.utils.pid_params import PidParams
 from onepi.utils.chart_plotter import ChartPlotter
 from onepi.utils.pid_controller import PidController
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 # pid params that work well both free wheeling and under load at both high and low speeds
 # minimum speed tested :

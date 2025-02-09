@@ -5,7 +5,7 @@
  http://www.botnroll.com
 
  Description:
- Read single channel encoders attached to Bot'n Roll ONE A wheels.
+ Read single channel encoders attached to Bot'n Roll ONE A+ wheels.
  This example sets the robot moving at a constant speed.")
  It reads the encoders and displays the readings in the lcd and terminal.
  Use PB1 to increase the speed and PB2 to decrease the speed of the motors.
@@ -19,7 +19,7 @@ import time
 import signal
 from onepi.one import BnrOneA
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 speed_1 = 10
 speed_2 = 10
@@ -31,7 +31,7 @@ def setup():
     one.min_battery(0)
 
     # stop motors
-    one.lcd1("Bot'n Roll ONE A")
+    one.lcd1("Bot'n Roll ONE A+")
     one.lcd2("www.botnroll.com")
 
     print("This example sets the robot moving at a constant speed.")

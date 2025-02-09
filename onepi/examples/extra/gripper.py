@@ -26,7 +26,7 @@ from gpiozero import Servo
 from gpiozero.pins.pigpio import PiGPIOFactory
 
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 GPIO.setmode(GPIO.BCM)  # Use GPIO numbering
 
@@ -50,7 +50,7 @@ servo = 1
 
 def setup():
     one.stop()  # stop motors
-    one.lcd1("Bot'n Roll ONE A")
+    one.lcd1("Bot'n Roll ONE A+")
     one.lcd2("www.botnroll.com")
     gripper1.min()
     gripper2.min()

@@ -1,4 +1,4 @@
-""" Library to interface with Bot'n Roll ONE A from www.botnroll.com """
+""" Library to interface with Bot'n Roll ONE A+ from www.botnroll.com """
 
 import time
 import spidev
@@ -30,7 +30,7 @@ class BnrOneA:
     # Read Firmware version
     _COMMAND_FIRMWARE = 0xFE  # Read firmware value (integer value)
 
-    # Write Commands->Don't require response from Bot'n Roll ONE A
+    # Write Commands->Don't require response from Bot'n Roll ONE A+
     _COMMAND_LED = 0xFD  # LED
     _COMMAND_SERVO1 = 0xFC  # Move Servo1
     _COMMAND_SERVO2 = 0xFB  # Move Servo2
@@ -76,7 +76,7 @@ class BnrOneA:
     _COMMAND_RANGE_LEFT = 0xCE  # Read IR obstacles distance range
     _COMMAND_RANGE_RIGHT = 0xCD  # Read IR obstacles distance range
 
-    # Read Commands-> Computer to Bot'n Roll ONE A
+    # Read Commands-> Computer to Bot'n Roll ONE A+
     _COMMAND_ARDUINO_ANA0 = 0xBF  # Read analog0 value
     _COMMAND_ARDUINO_ANA1 = 0xBE  # Read analog1 value
     _COMMAND_ARDUINO_ANA2 = 0xBD  # Read analog2 value

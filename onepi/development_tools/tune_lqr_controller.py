@@ -25,7 +25,7 @@ from onepi.utils.chart_plotter import ChartPlotter
 from onepi.utils.lqr_controller import LQRController
 
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A
+one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 Kt = 0.01
 J = 0.01
