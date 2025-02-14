@@ -2,6 +2,7 @@
 
 import time
 import spidev
+import struct
 from onepi.utils.line_detector import LineDetector
 
 
@@ -41,9 +42,9 @@ class BnrOneA:
     _COMMAND_MOVE = 0xF6  # Move motors
     _COMMAND_BRAKE = 0xF5  # Stop motors with brake torque
     _COMMAND_BAT_MIN = 0xF4  # Configure low battery level
-    _COMMAND_MOVE_PID = 0xF3  # Move motor with PID control
+    _COMMAND_SET_PID = 0xF3  # Set kp, ki, kd for PID control
     _COMMAND_MOVE_RAW = 0xF2  # Move motors for calibration
-    _COMMAND_SAVE_CALIBRATE = 0xF1  # Save calibration data
+    _COMMAND_SET_MOTORS = 0xF1  # Save calibration data
     _COMMAND_ENCL_RESET = 0xF0  # Preset the value of encoder1
     _COMMAND_ENCR_RESET = 0xEF  # Preset the value of encoder2
     _COMMAND_FUTURE_USE1 = 0xEE
@@ -76,6 +77,7 @@ class BnrOneA:
     _COMMAND_RANGE_LEFT = 0xCE  # Read IR obstacles distance range
     _COMMAND_RANGE_RIGHT = 0xCD  # Read IR obstacles distance range
 
+    # Arduino commands -> move to separate file
     # Read Commands-> Computer to Bot'n Roll ONE A+
     _COMMAND_ARDUINO_ANA0 = 0xBF  # Read analog0 value
     _COMMAND_ARDUINO_ANA1 = 0xBE  # Read analog1 value
@@ -191,6 +193,28 @@ class BnrOneA:
         low_byte = self._spi.readbytes(1)
         self.__close_spi()
         return (high_byte[0] << 8) + low_byte[0]
+    
+    def __request_float(self, command):
+        """
+        Reads a float from the spi device
+        
+        :param command: Command to be sent to the device
+        :return: returns a float containing the information requested by the command
+        :rtype: float
+        """
+        self.__open_spi()
+        msg = [command, self._KEY1, self._KEY2]
+        self._spi.xfer2(msg)
+        self.__us_sleep(self._delay_TR)
+        byte1 = self._spi.readbytes(1)
+        byte2 = self._spi.readbytes(1)
+        byte3 = self._spi.readbytes(1)
+        byte4 = self._spi.readbytes(1)
+        binary_string = bytes([byte1, byte2, byte3, byte4])
+        packed_float = struct.pack('f', binary_string)[0]
+        self.__close_spi()
+        return packed_float
+
 
     def __send_data(self, command, msg=""):
         """
@@ -206,6 +230,48 @@ class BnrOneA:
         self._spi.xfer2(to_send)
         self.__close_spi()
         self.__ms_sleep(2)
+
+    def read_debug(self, index):
+        """
+        reads a debug variable (float) from the spi device
+        """
+        return self.__request_word(0xB9 - index)
+
+    def read_debug_float(self):
+        """
+        reads a debug variable (float) from the spi device
+        """
+        return self.__request_float(0xB5)
+
+    def set_pid(self, kp, ki, kd):
+        """
+        Sets the pid params for motor control
+        """
+        msg = [
+            self.__high_byte(kp),
+            self.__low_byte(kp),
+            self.__high_byte(ki),
+            self.__low_byte(ki),
+            self.__high_byte(kd),
+            self.__low_byte(kd),
+        ]
+        self.__send_data(self._COMMAND_SET_PID, msg)
+
+    def set_motors(self, start_moving_power, ks, ctrl_pulses):
+        """
+        :param start_moving_power pwm applied initially when wheel is stopped
+        :param ks gain multiplier to adjust the inital pwm
+        :param ctrl_pulses pulses read at 25ms when running at full speed
+        """
+        msg = [
+            self.__high_byte(start_moving_power),
+            self.__low_byte(start_moving_power),
+            self.__high_byte(ks),
+            self.__low_byte(ks),
+            self.__high_byte(ctrl_pulses),
+            self.__low_byte(ctrl_pulses),
+        ]
+        self.__send_data(self._COMMAND_SET_MOTORS, msg)
 
     def move(self, left_speed, right_speed):
         """
@@ -373,18 +439,6 @@ class BnrOneA:
         msg = self.__float_to_bytes(batmin)
         self.__send_data(self._COMMAND_BAT_MIN, msg)
         self.__ms_sleep(25)
-
-    def save_calibrate(self, battery, left_power, right_power):
-        """
-        Sets calibration power values for each one of the motors
-
-        :param left_power: power for the left wheel (% of max)
-        :param right_power: power for the right wheel (% of max)
-        """
-        msg = self.__float_to_bytes(battery)
-        msg.extend([self.__low_byte(left_power), self.__low_byte(right_power)])
-        self.__send_data(self._COMMAND_SAVE_CALIBRATE, msg)
-        self.__ms_sleep(35)
 
     def read_button(self):
         """
