@@ -1,41 +1,67 @@
-﻿import os
+﻿import psutil
 import time
-from onepi.one import BnrOneA
+import subprocess
+import setproctitle
+import os
 
-def monitor_bnr(file_name):
-    """
-    This main function monitors the BnrOneA.txt file, checking the active PIDs, and cleaning the file when it stops.
-    """
-    pid = 0
-    while True:
+class MonitorBnrOneA:
+
+    _BNR_ONE_A_PROCESS_NAME = "BnrOneA"
+    _MONITOR_BNR_PROCESS_NAME ="MonitorBnr"
+    _MONITOR_BNR_PATH = "monitorbnr.py"
+    
+    def __init__(self):
+        """
+        Initialize the monitor with process names and the path to the MonitorBNR executable.
+        """
+        self.bnr_one_a_running = False  # Track the state of BnrOneA
+
+    def is_process_running(self, process_name):
+        """
+        Check if a process with the given name is running.
+        """
+        for proc in psutil.process_iter(['pid', 'name']):
+            if proc.info['name'] == process_name:
+                return True
+        return False
+
+    def start_monitor_bnr(self):
+        """
+        Start the MonitorBNR process.
+        """
         try:
-            print(f"Monitor attached to file: {file_name}", pid)
-            while True:
-                with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'r') as f: pid = int(f.read().strip())    # Read PID from the BnrOneA.txt file
-                if pid > 0:         # If there is an active Process using the BotnRoll
-                    print(f"Detected PID: {pid}")
-                    try:
-                        os.kill(pid, 0)         
-                    except Exception as e:          # When the process dies
-                        print(f"Process {pid} has terminated. Resetting File.", e)
-                        with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'w') as f: f.write(str("0"))      # Clear File to 0
-                        pid = 0
-                        
-                        # Creates a bnr connection, with monitor at 0, so that it doesn't get monitored
-                        bnr = BnrOneA(0, 0, monitor=0)
-                        bnr.stop()                         # Stops the Robot
-                        bnr.lcd1(f"Botn Roll ONE A+")      # Prints on the screen LCD1
-                        bnr.lcd2(f"Python Code Stop")      # Prints on the screen LCD2
-                        del bnr                            # Deletes the variable bnr
-                        break                              # breaks the loop to restart the moonitoring process
-
-                time.sleep(1)   # Only reads once a second
+            subprocess.Popen(["python3", f"{os.path.dirname(__file__)}/{self._MONITOR_BNR_PATH}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setpgrp)
+            # print(f"Started {os.path.dirname(__file__)}/{self._MONITOR_BNR_PATH}.")
         except Exception as e:
-            print("File not found. Exiting monitor.", e)
-            with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'w') as f: f.write(str("0"))
+            # print(f"Failed to start {self._MONITOR_BNR_PROCESS_NAME}: {e}")
+            pass
 
-        time.sleep(1)
+    def monitor(self):
+        """
+        Monitor the processes and take action based on their status.
+        """
         
+        from onepi.one import BnrOneA       # The import of the library must be inside this function in order to avoid ciruclar imports
+        
+        while True:
+            # Check if BnrOneA is running
+            if self.is_process_running(self._BNR_ONE_A_PROCESS_NAME):
+                if not self.bnr_one_a_running:
+                    print(f"{self._BNR_ONE_A_PROCESS_NAME} started.")
+                    self.bnr_one_a_running = True
+            else:
+                if self.bnr_one_a_running:
+                    print(f"{self._BNR_ONE_A_PROCESS_NAME} ended.")
+                    self.bnr_one_a_running = False
+                    one = BnrOneA(0, 0, monitor = 0)  # object variable to control the Bot'n Roll ONE A
+                    one.stop()
+                    one.lcd2("Python Code Stop")
+                    del one
+
+            time.sleep(1)
+
 if __name__ == "__main__":
-    shared_memory_name = "BnrOneA"
-    monitor_bnr(shared_memory_name)
+    # Initialize the monitor
+    monitor = MonitorBnrOneA()
+    setproctitle.setproctitle(monitor._MONITOR_BNR_PROCESS_NAME)
+    monitor.monitor()

@@ -7,8 +7,9 @@ import time
 import spidev
 import struct
 import time
+import setproctitle
 from onepi.utils.line_detector import LineDetector
-
+from onepi.monitorbnr import MonitorBnrOneA
 
 class BnrOneAPlus:
     """
@@ -121,53 +122,27 @@ class BnrOneAPlus:
         :param monitor: specifies if this process should be monitored
         """
 
-        if not self.is_monitor_running():       # Check if the monitorBNR is running, if not turn it on
-            subprocess.Popen(["python3", f"{os.path.dirname(__file__)}/monitorBNR.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, preexec_fn=os.setpgrp )
+        self._monitor_bnr = MonitorBnrOneA()
+        if not self._monitor_bnr.is_process_running(self._monitor_bnr._MONITOR_BNR_PROCESS_NAME):
+            self._monitor_bnr.start_monitor_bnr()
 
-        can_run = True
+        allowed_to_run = True
         if monitor:
-            can_run = self.write_pid_to_file("BnrOneA")    # Checks if the code can run, and if soo, writes the PID is using the SPI communication with the Bot'n Roll
+            if not self._monitor_bnr.is_process_running(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME):
+                allowed_to_run = True
+                setproctitle.setproctitle(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME)
+            else:               # It can not run because there is another instance of the BnrOneA class
+                allowed_to_run = False
+                print("There is already a Python Code communicating with the Bot'n Roll One A+.")
+                print("Please quit the other process first.")
+                os._exit(1)
 
-        if can_run:                 # Runs Normally
+        if allowed_to_run:
             self.bus = bus
             self.device = device
             self._spi = spidev.SpiDev()
             self.line_detector = LineDetector()
-        elif monitor:               # It can not run because other process is using the SPI communication with the Bot'n Roll
-            print("There is already a Python Code communicating with the Bot'n Roll One A+.")
-            print("Please quit the other process first.")
-            os._exit(1)
 
-
-    def is_monitor_running(self, script_name="monitorBNR"):
-        """
-        Checks if the monitorBNR process is running, wchich monitors the SPI communication with the Bot'n Roll
-        :param script_name: specifies the name of the script to check if it is running
-        """
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-            try:
-                for arg in proc.info['cmdline']:
-                    if script_name in arg:
-                        return True
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-        return False
-
-
-    def write_pid_to_file(self, file_name):
-        """
-        Reads the file that contains the active PIDs that are using the Bot'n Roll
-        If it is 0, writes this PID and returns True allowing the library to run normally
-        :param file_name: specifies the name of the text file to check
-        """
-        try:
-            with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'r') as f: pid = int(f.read().strip())
-        except:
-            pid = 0
-
-        if pid == 0:
-            with open(f'{os.path.dirname(__file__)}/{file_name}.txt', 'w') as f: f.write(str(os.getpid()))
-        return not pid
 
     def __us_sleep(self, microseconds):
         """
