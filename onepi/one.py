@@ -122,22 +122,22 @@ class BnrOneAPlus:
         :param monitor: specifies if this process should be monitored
         """
 
-        self._monitor_bnr = MonitorBnrOneA()
-        if not self._monitor_bnr.is_process_running(self._monitor_bnr._MONITOR_BNR_PROCESS_NAME):
-            self._monitor_bnr.start_monitor_bnr()
+        self._monitor_bnr = MonitorBnrOneA() # Create a _monitor_bnr object to control the MonitorBnr process
+        if not self._monitor_bnr.is_process_running(self._monitor_bnr._MONITOR_BNR_PROCESS_NAME):   # Checks if the MonitorBnr process is running
+            self._monitor_bnr.start_monitor_bnr()   # If not, starts the MonitorBnr process
 
         allowed_to_run = True
-        if monitor:
-            if not self._monitor_bnr.is_process_running(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME):
-                allowed_to_run = True
-                setproctitle.setproctitle(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME)
+        if monitor: # If the process should be monitored
+            if not self._monitor_bnr.is_process_running(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME):  # Checks if the BnrOneA process is running
+                allowed_to_run = True # This process is allowed to run
+                setproctitle.setproctitle(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME) # Sets the process name to BnrOneA
             else:               # It can not run because there is another instance of the BnrOneA class
-                allowed_to_run = False
+                allowed_to_run = False # This process is not allowed to run
                 print("There is already a Python Code communicating with the Bot'n Roll One A+.")
                 print("Please quit the other process first.")
-                os._exit(1)
+                os._exit(1) # Exit
 
-        if allowed_to_run:
+        if allowed_to_run:  # If the process is allowed to run
             self.bus = bus
             self.device = device
             self._spi = spidev.SpiDev()
