@@ -2,7 +2,6 @@
 
 import time
 import spidev
-import struct
 from onepi.utils.line_detector import LineDetector
 
 
@@ -210,11 +209,7 @@ class BnrOneA:
         byte2 = self._spi.readbytes(1)
         byte3 = self._spi.readbytes(1)
         byte4 = self._spi.readbytes(1)
-        binary_string = bytes([byte1, byte2, byte3, byte4])
-        packed_float = struct.pack('f', binary_string)[0]
-        self.__close_spi()
-        return packed_float
-
+        return (byte1[0] << 24) + (byte2[0] << 16) + (byte3[0] << 8) + byte4[0]
 
     def __send_data(self, command, msg=""):
         """
