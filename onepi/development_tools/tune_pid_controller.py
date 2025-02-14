@@ -215,7 +215,7 @@ def setup():
     print("setpoint:", setpoint)
     left_pid_controller.change_setpoint(setpoint)
     right_pid_controller.change_setpoint(setpoint)
-    plotter = ChartPlotter(100)
+    plotter = ChartPlotter(100, "Time (x100) ms", "Speed (mm/s)")
     plotter.show_plot()
     
     stop_execution = False

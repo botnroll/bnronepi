@@ -4,7 +4,7 @@ import time
 
 
 class ChartPlotter:
-    def __init__(self, buffer_size=100):
+    def __init__(self, buffer_size=100, x_label="Iter", y_label="Value"):
         self.buffer_size = buffer_size
         self.reference_buffer = np.zeros(buffer_size)
         self.actual_buffer = np.zeros(buffer_size)
@@ -20,8 +20,8 @@ class ChartPlotter:
         self.ax.set_ylim(0, 800)
         self.ax.legend()
         self.ax.set_title("Reference vs. Actual Values")
-        self.ax.set_xlabel("Time")
-        self.ax.set_ylabel("Values")
+        self.ax.set_xlabel(x_label)
+        self.ax.set_ylabel(y_label)
         self.ax.grid(True)
 
     def update_buffers(self, reference, actual):
