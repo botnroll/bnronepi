@@ -202,7 +202,7 @@ def setup():
     global plotter, stop_execution
     global my_thread
     one.stop()
-    one.min_battery(9.6)
+    one.set_min_battery_V(9.6)
 
     one.lcd1("Test PID Control")
     one.lcd2("______v1.0______")

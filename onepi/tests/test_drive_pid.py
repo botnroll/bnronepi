@@ -40,7 +40,7 @@ def setup():
     setup function
     """
     one.stop()
-    one.min_battery(9.6)
+    one.set_min_battery_V(9.6)
     one.lcd1(" Test drive pid ")
     one.lcd2("                ")
     time.sleep(0.2)

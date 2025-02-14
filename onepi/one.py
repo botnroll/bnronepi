@@ -423,7 +423,7 @@ class BnrOneA:
         dec_low_byte = self.__low_byte(decimal)
         return [int_high_byte, int_low_byte, dec_high_byte, dec_low_byte]
 
-    def min_battery(self, batmin):
+    def set_min_battery_V(self, batmin):
         """
         Sets the minimum battery level.
         If battery drops below this value the BotnRoll One A will issue a warning
