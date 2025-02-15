@@ -105,7 +105,6 @@ def update_pid_params():
             if char == "d":
                 kd = kd - correction
                 update_pid()
-            time.sleep(0.5)
 
         print("thread stopped")
         try:
@@ -154,7 +153,7 @@ def test_pid(setpoint):
         var5 = one.read_debug_float()
         
         one.move(0, setpoint)
-        chart_plotter.update_buffers([setpoint, right_encoder/20.0, 0, 0, var5/10.0])
+        chart_plotter.update_buffers([setpoint, right_encoder/20.0, 0, 0, var5/20.0])
         time_now = time.time()
 
         time_elapsed_ms = int((time_now - time_previous) * 1000)
@@ -218,7 +217,7 @@ def setup():
     while not stop_execution:
         setpoint = 80
         test_pid(setpoint)
-        setpoint = 10
+        setpoint = 30
         test_pid(setpoint)
     one.stop()
 
