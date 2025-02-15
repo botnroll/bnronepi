@@ -210,6 +210,7 @@ class BnrOneA:
         byte2 = self._spi.readbytes(1)
         byte3 = self._spi.readbytes(1)
         byte4 = self._spi.readbytes(1)
+        self.__close_spi()
         byte_data = bytes([byte1[0], byte2[0], byte3[0], byte4[0]])
         float_value = struct.unpack('f', byte_data)[0]
         return float_value

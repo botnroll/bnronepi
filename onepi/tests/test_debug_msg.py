@@ -36,13 +36,17 @@ def main():
     battery = one.read_battery()
     print("battery:", battery)
     
-    var1 = one.read_debug(0)
-    var2 = one.read_debug(1)
-    var3 = one.read_debug(2)
-    var4 = one.read_debug(3)
-    var5 = one.read_debug_float()
-    
-    print("Debug:", var1, var2, var3, var4, var5)
+    while(True):
+        one.move(0, 10)
+
+        var1 = one.read_debug(0)
+        var2 = one.read_debug(1)
+        var3 = one.read_debug(2)
+        var4 = one.read_debug(3)
+        var5 = one.read_debug_float()
+        
+        print("Debug:", var1, var2, var3, var4, round(var5, 2))
+        time.sleep(0.5)
 
 if __name__ == "__main__":
     main()

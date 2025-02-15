@@ -32,9 +32,9 @@ one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 # pid params that work well both free wheeling and under load at both high and low speeds
 # minimum speed tested :
-# kp = 0.070
-# ki = 0.015
-# kd = 0.000
+kp = 800
+ki = 250
+kd = 100
 
 
 class StoppableThread(threading.Thread):
@@ -73,7 +73,6 @@ def update_pid_params():
                 kd = 0.0
             one.set_pid(kp, ki, kd)
     
-
     try:
         correction = 5.0
         while not stop_execution:
@@ -89,30 +88,25 @@ def update_pid_params():
                 print("correction = ", correction)
                 time.sleep(0.5)
             if char == "P":
-                kp = ((kp * 1000) + correction)
-                kp /= 1000.0
+                kp = kp  + correction
                 update_pid()
             if char == "p":
-                kp = int((kp * 1000) - correction)
-                kp /= 1000.0
+                kp = kp - correction
                 update_pid()
             if char == "I":
-                ki = int((ki * 1000) + correction)
-                ki /= 1000.0
+                ki = ki + correction
                 update_pid()
             if char == "i":
-                ki = int((ki * 1000) - correction)
-                ki /= 1000.0
+                ki = ki - correction
                 update_pid()
             if char == "D":
-                kd = int((kd * 1000) + correction / 5.0)
-                kd /= 1000.0
+                kd = kd + correction
                 update_pid()
             if char == "d":
-                kd = int((kd * 1000) - correction / 5.0)
-                kd /= 1000.0
+                kd = kd - correction
                 update_pid()
-        
+            time.sleep(0.5)
+
         print("thread stopped")
         try:
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, file_descriptors)
@@ -144,13 +138,13 @@ def test_pid(setpoint):
     test pid function for 5 seconds by setting the wheel speed
     """
     global chart_plotter, stop_execution
+    global kp, ki, kd
     left_power = 0
     right_power = 0
     count = 0
     time_previous = time.time()
     while count < 50 and not stop_execution:
-        count = count + 1
-        
+        count = count + 1        
         right_encoder = one.read_right_encoder()
         
         var1 = one.read_debug(0)
@@ -160,25 +154,29 @@ def test_pid(setpoint):
         var5 = one.read_debug_float()
         
         one.move(0, setpoint)
-        chart_plotter.update_buffers([var1, var2, var3, var4, var5])
+        chart_plotter.update_buffers([setpoint, right_encoder/20.0, 0, 0, var5/10.0])
         time_now = time.time()
 
         time_elapsed_ms = int((time_now - time_previous) * 1000)
-        if time_elapsed_ms < 100:
-            time.sleep((100-time_elapsed_ms)/1000.0)
+        if time_elapsed_ms < 200:
+            time.sleep((200-time_elapsed_ms)/1000.0)
             time_elapsed_ms = int((time.time() - time_previous) * 1000)
         time_previous = time.time()
         print(
-            "setpoint, right_encoder, right_power: (kp, ki, kd) ",
+            "setpoint, r_enc, r_power: (kp, ki, kd), var1, var2, var3, var4, var5, time(ms) ",
             setpoint,
             right_encoder,
             int(right_power),
-            "(",
-            round(var1, 3),
+            "(", kp, ",", ki, ",", kd, ")",
+            var1,
             ",",
-            round(var2, 3),
+            var2,
             ",",
-            round(var3, 3),
+            var3,
+            ",",
+            var4,
+            ",",
+            round(var5, 2),
             ")",
             time_elapsed_ms,
             "ms"
@@ -207,6 +205,10 @@ def setup():
     setpoint = set_speed * 10  # emulate conversion from speed to encoder readings
     print("setpoint:", setpoint)
     chart_plotter = ChartPlotter(5, 100)
+    chart_plotter.set_title("Tuning PID controller")
+    chart_plotter.set_axis_labels("Time (x200 ms)", "Value")
+    chart_plotter.set_y_limits(-50, 150)
+    chart_plotter.set_series_labels(["setpoint", "enc", " ", " ", "errI"])
     chart_plotter.show_plot()
     
     stop_execution = False
