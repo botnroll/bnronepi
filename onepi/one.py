@@ -1,7 +1,8 @@
 """ Library to interface with Bot'n Roll ONE A+ from www.botnroll.com """
 
-import time
 import spidev
+import struct
+import time
 from onepi.utils.line_detector import LineDetector
 
 
@@ -209,7 +210,10 @@ class BnrOneA:
         byte2 = self._spi.readbytes(1)
         byte3 = self._spi.readbytes(1)
         byte4 = self._spi.readbytes(1)
-        return (byte1[0] << 24) + (byte2[0] << 16) + (byte3[0] << 8) + byte4[0]
+        byte_data = bytes([byte1[0], byte2[0], byte3[0], byte4[0]])
+        float_value = struct.unpack('f', byte_data)[0]
+        return float_value
+    
 
     def __send_data(self, command, msg=""):
         """
