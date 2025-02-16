@@ -1,10 +1,13 @@
 """ Library to interface with Bot'n Roll ONE A+ from www.botnroll.com """
 
+import os
+import time
 import spidev
 import struct
 import time
+import setproctitle
 from onepi.utils.line_detector import LineDetector
-
+from onepi.utils.monitor import Monitor
 
 class BnrOneAPlus:
     """
@@ -108,17 +111,38 @@ class BnrOneAPlus:
     _delay_TR = 20  # 20 MinStable:15  Crash:14
     _delay_SS = 20  # 20 Crash: No crash even with 0 (ZERO)
 
-    def __init__(self, bus=0, device=0):
+    def __init__(self, bus=0, device=0, monitor=1):
         """
         Constructor for BnrOneAPlus class
 
         :param bus: specifies which bus to use, in the case of raspberry pi should be 0
         :param device: is the chip select pin. Set to 0 or 1, depending on the connections
+        :param monitor: specifies if this process should be monitored
         """
-        self.bus = bus
-        self.device = device
-        self._spi = spidev.SpiDev()
-        self.line_detector = LineDetector()
+
+        self._monitor_bnr = Monitor()
+        # Checks if the Monitor process is running
+        if not self._monitor_bnr.is_process_running(self._monitor_bnr._MONITOR_NAME):
+            self._monitor_bnr.start_monitor()
+
+        allowed_to_run = True
+        if monitor:
+            if not self._monitor_bnr.is_process_running(self._monitor_bnr._PROCESS_NAME):
+                allowed_to_run = True
+                # Sets the process name to BnrOneAPlus
+                setproctitle.setproctitle(self._monitor_bnr._PROCESS_NAME)
+            else:
+                allowed_to_run = False
+                print("There is already Python Code communicating with the Bot'n Roll One A+.")
+                print("Please quit the other process first.")
+                os._exit(1)
+
+        if allowed_to_run:
+            self.bus = bus
+            self.device = device
+            self._spi = spidev.SpiDev()
+            self.line_detector = LineDetector()
+
 
     def __us_sleep(self, microseconds):
         """
