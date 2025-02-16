@@ -1,15 +1,13 @@
 """ Library to interface with Bot'n Roll ONE A+ from www.botnroll.com """
 
 import os
-import psutil
-import subprocess
 import time
 import spidev
 import struct
 import time
 import setproctitle
 from onepi.utils.line_detector import LineDetector
-from onepi.monitorbnr import MonitorBnrOneA
+from onepi.utils.monitor import Monitor
 
 class BnrOneAPlus:
     """
@@ -122,22 +120,24 @@ class BnrOneAPlus:
         :param monitor: specifies if this process should be monitored
         """
 
-        self._monitor_bnr = MonitorBnrOneA() # Create a _monitor_bnr object to control the MonitorBnr process
-        if not self._monitor_bnr.is_process_running(self._monitor_bnr._MONITOR_BNR_PROCESS_NAME):   # Checks if the MonitorBnr process is running
-            self._monitor_bnr.start_monitor_bnr()   # If not, starts the MonitorBnr process
+        self._monitor_bnr = Monitor()
+        # Checks if the Monitor process is running
+        if not self._monitor_bnr.is_process_running(self._monitor_bnr._MONITOR_NAME):
+            self._monitor_bnr.start_monitor()
 
         allowed_to_run = True
-        if monitor: # If the process should be monitored
-            if not self._monitor_bnr.is_process_running(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME):  # Checks if the BnrOneA process is running
-                allowed_to_run = True # This process is allowed to run
-                setproctitle.setproctitle(self._monitor_bnr._BNR_ONE_A_PROCESS_NAME) # Sets the process name to BnrOneA
-            else:               # It can not run because there is another instance of the BnrOneA class
-                allowed_to_run = False # This process is not allowed to run
-                print("There is already a Python Code communicating with the Bot'n Roll One A+.")
+        if monitor:
+            if not self._monitor_bnr.is_process_running(self._monitor_bnr._PROCESS_NAME):
+                allowed_to_run = True
+                # Sets the process name to BnrOneAPlus
+                setproctitle.setproctitle(self._monitor_bnr._PROCESS_NAME)
+            else:
+                allowed_to_run = False
+                print("There is already Python Code communicating with the Bot'n Roll One A+.")
                 print("Please quit the other process first.")
-                os._exit(1) # Exit
+                os._exit(1)
 
-        if allowed_to_run:  # If the process is allowed to run
+        if allowed_to_run:
             self.bus = bus
             self.device = device
             self._spi = spidev.SpiDev()
