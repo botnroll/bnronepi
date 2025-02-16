@@ -7,11 +7,11 @@ It then changes the speed a few times and finally stops both wheels.
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from onepi.utils.drive_pid import DrivePid
 from onepi.utils.pid_params import PidParams
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 pid_params = PidParams()
 drive_pid = DrivePid()
 
@@ -20,7 +20,7 @@ def test_drive_pid():
     test the drive_pid class by setting the wheels to move
     at a certain speed for a small period of time
     """
-    
+
     print("move: 200, 200")
     drive_pid.move(200, 200)
     time.sleep(3)

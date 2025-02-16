@@ -6,7 +6,7 @@ import time
 from onepi.utils.line_detector import LineDetector
 
 
-class BnrOneA:
+class BnrOneAPlus:
     """
     Class definition to interface with BotnRoll One A
     By creating an object of this class one can send and receive data
@@ -110,7 +110,7 @@ class BnrOneA:
 
     def __init__(self, bus=0, device=0):
         """
-        Constructor for BnrOneA class
+        Constructor for BnrOneAPlus class
 
         :param bus: specifies which bus to use, in the case of raspberry pi should be 0
         :param device: is the chip select pin. Set to 0 or 1, depending on the connections
@@ -193,11 +193,11 @@ class BnrOneA:
         low_byte = self._spi.readbytes(1)
         self.__close_spi()
         return (high_byte[0] << 8) + low_byte[0]
-    
+
     def __request_float(self, command):
         """
         Reads a float from the spi device
-        
+
         :param command: Command to be sent to the device
         :return: returns a float containing the information requested by the command
         :rtype: float
@@ -214,7 +214,7 @@ class BnrOneA:
         byte_data = bytes([byte1[0], byte2[0], byte3[0], byte4[0]])
         float_value = struct.unpack('f', byte_data)[0]
         return float_value
-    
+
 
     def __send_data(self, command, msg=""):
         """
@@ -506,7 +506,7 @@ class BnrOneA:
         :rtype: int
         """
         value = self.__request_word(self._COMMAND_ENCL_INC)
-        
+
         # Check if value should be negative
         if value >= 0x8000:
             value -= 0x10000

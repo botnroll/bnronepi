@@ -15,7 +15,7 @@ from onepi.utils.control_utils import ControlUtils
 from onepi.utils.simple_timer import SimpleTimer
 from onepi.utils.robot_params import RobotParams
 from onepi.utils.pid_params import PidParams
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
 
 class DrivePid:
@@ -30,7 +30,7 @@ class DrivePid:
     _counter = 0
     _left_encoder = 0
     _right_encoder = 0
-    _one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+    _one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
     _initialised = False
 

@@ -17,7 +17,7 @@ Motors Calibration.
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
 
     signal.signal(signal.SIGINT, stop_and_exit)
 
-    one = BnrOneA(0, 0)  # object to control Bot'n Roll ONE A+
+    one = BnrOneAPlus(0, 0)  # object to control Bot'n Roll ONE A+
     one.stop()  # stop motors
     one.set_min_battery_V(9.5)  # set minimum value for battery
     battery = one.read_battery()

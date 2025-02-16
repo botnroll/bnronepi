@@ -23,12 +23,12 @@ import time
 import signal
 import keyboard
 import threading
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from onepi.utils.pid_params import PidParams
 from onepi.utils.chart_plotter import ChartPlotter
 from onepi.utils.pid_controller import PidController
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 # pid params that work well both free wheeling and under load at both high and low speeds
 # minimum speed tested :
@@ -51,7 +51,7 @@ class StoppableThread(threading.Thread):
     def run(self):
         while not self._stop_event.is_set():
             self.target()
-    
+
     def stop(self):
         self._stop_event.set()
 
@@ -78,12 +78,12 @@ def update_pid_params():
                 kd = 0.0
             right_pid_controller.set_pid_params(PidParams(kp, ki, kd))
             left_pid_controller.set_pid_params(PidParams(kp, ki, kd))
-    
+
 
     try:
         correction = 5.0
         while not stop_execution:
-            char = sys.stdin.read(1)[0]            
+            char = sys.stdin.read(1)[0]
             if char == "C":
                 correction += 1.0
                 print("correction = ", correction)
@@ -91,7 +91,7 @@ def update_pid_params():
             if char == "c":
                 correction -= 1.0
                 if correction < 0:
-                    correction = 0 
+                    correction = 0
                 print("correction = ", correction)
                 time.sleep(0.5)
             if char == "P":
@@ -118,7 +118,7 @@ def update_pid_params():
                 kd = int((kd * 1000) - correction / 5.0)
                 kd /= 1000.0
                 update_pid()
-        
+
         print("thread stopped")
         try:
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, file_descriptors)
@@ -190,7 +190,7 @@ def test_pid():
             time_elapsed_ms,
             "ms"
         )
-        
+
 
 
 def setup():
@@ -217,7 +217,7 @@ def setup():
     right_pid_controller.change_setpoint(setpoint)
     plotter = ChartPlotter(100, "Time (x100) ms", "Speed (mm/s)")
     plotter.show_plot()
-    
+
     stop_execution = False
     my_thread = StoppableThread(target=update_pid_params)
     my_thread.start()
@@ -239,7 +239,7 @@ def loop():
 def stop_and_exit(sig, frame):
     global my_thread, plotter
     global stop_execution
-    
+
     print("Exiting application")
     stop_execution = True
     my_thread.stop()

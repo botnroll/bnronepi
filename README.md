@@ -65,7 +65,7 @@ deactivate
 ```
 Within the virtual environment you can install the external library e.g.
 ```
-pip install rpi-lgpio 
+pip install rpi-lgpio
 ```
 
 ### 1.4. Verify the installation:
@@ -73,8 +73,8 @@ pip install rpi-lgpio
 1. Create a file “nano test.py”
 2. Copy and paste the following code:
 ```python
-from onepi.one import BnrOneA
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+from onepi.one import BnrOneAPlus
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 one.stop()  # stop motors
 one.lcd1(" Hello Pi! ")  # print data on LCD line 1
 ```
@@ -89,9 +89,9 @@ Simple example:
 Displays a message "Hello Pi!" on the robot lcd.
 
 ```python
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 one.stop()  # stop motors
 one.lcd1(" Hello Pi! ")  # print data on LCD line 1
 ```
@@ -232,7 +232,7 @@ cd ~
 mkdir RunAtStartup
 copy ~/src/onepi_v1.0.6/examples/basic/welcome.py ~/RunAtStartup/run_at_startup.py
 
-### 8.2 Add command to ~/.bashrc 
+### 8.2 Add command to ~/.bashrc
 nano ~/.bashrc
 At the end of the file add:
 python ~/RunAtStartup/run_at_startup.py

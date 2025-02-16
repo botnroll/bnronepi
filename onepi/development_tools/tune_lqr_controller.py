@@ -20,12 +20,12 @@ import signal
 import keyboard
 import numpy as np
 
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from onepi.utils.chart_plotter import ChartPlotter
 from onepi.utils.lqr_controller import LQRController
 
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 Kt = 0.01
 J = 0.01
@@ -37,12 +37,12 @@ C = np.array([[1, 0]])
 D = np.array([[0]])
 
 # best so far
-# q0, q1, r = 0.3 , 13.8 , 5.7 
+# q0, q1, r = 0.3 , 13.8 , 5.7
 
 # better at low, worst at high
 # q0, q1, r = 0.5, 13.8, 7.5
 
-q0 = 0.3 # velocity 
+q0 = 0.3 # velocity
 q1 = 13.8 # acceleration: A smaller Q reduces the emphasis on state errors, making the controller less sensitive to deviations.
 r = 7.5  # A larger R value will reduce the control effort, making the system less aggressive.
 # Increase R from 10 to 20 to reduce control effort and stabilize low-speed performance.
@@ -71,7 +71,7 @@ class StoppableThread(threading.Thread):
     def run(self):
         while not self._stop_event.is_set():
             self.target()
-    
+
     def stop(self):
         self._stop_event.set()
 
@@ -192,7 +192,7 @@ def test_lqr():
             time_elapsed_ms,
             "ms"
         )
-        
+
 
 
 def setup():
@@ -221,7 +221,7 @@ def setup():
     right_lqr_controller.change_setpoint(setpoint)
     plotter = ChartPlotter(100)
     plotter.show_plot()
-    
+
     stop_execution = False
     my_thread = StoppableThread(target=update_lqr_params)
     my_thread.start()
@@ -243,7 +243,7 @@ def loop():
 def stop_and_exit(sig, frame):
     global my_thread, plotter
     global stop_execution
-    
+
     print("Exiting application")
     stop_execution = True
     my_thread.stop()

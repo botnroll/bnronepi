@@ -5,7 +5,7 @@
  http://www.botnroll.com
 
 IMPORTANT!!!!
-Before you use this example you MUST calibrate the line sensor. 
+Before you use this example you MUST calibrate the line sensor.
 Run line_sensor_calibration.py (in calibration folder) first!
 Line reading provides a linear value between -100 to 100
 
@@ -20,9 +20,9 @@ import os
 import json
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 max_linear_speed = 60
 speed_boost = 3  # Curve outside wheel max speed limit

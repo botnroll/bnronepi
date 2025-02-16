@@ -14,9 +14,9 @@ import os
 import time
 import signal
 from collections import namedtuple
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 max_linear_speed = 600  # (mm/s)
 speed_conversion_factor = 1  # conversion factor from real speeds to percentage

@@ -1,11 +1,11 @@
 """
-Test functions to verify methods of BnrOneA class
+Test functions to verify methods of BnrOneAPlus class
 """
 
 import os
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
 
 def scroll_text(text, size_of_line):
@@ -29,7 +29,7 @@ def test_scroll_text():
     Text should be displayed in lcd line 2
     """
     print("=== Testing LCD scrolling text ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     text = "Hi Raspberry Pi!"
     for text in scroll_text(text, 16):
@@ -44,7 +44,7 @@ def test_move():
     Test move method
     """
     print("=== Testing move ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     delay_s = 1
     print("Move forward")
     one.move(30, 30)
@@ -67,7 +67,7 @@ def test_move_calibrate():
     Test move calibrate method
     """
     print("=== Testing move calibrate ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     delay_ms = 2000
     for i in range(0, 101, 5):
         print("Duty_cycle:", i)
@@ -86,7 +86,7 @@ def test_move_1m():
     Test move one motor
     """
     print("=== Testing move one motor ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     left_motor = 1
     right_motor = 2
     speed = 30
@@ -118,7 +118,7 @@ def test_stop():
     Test stop
     """
     print("=== Testing stop ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     speed = 30
     delay_s = 2
     print("Move forward")
@@ -140,7 +140,7 @@ def test_stop_1m():
     Test stop 1 motor
     """
     print("=== Testing stop 1 motor ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     left_motor = 1
     right_motor = 2
     speed = 30
@@ -170,7 +170,7 @@ def test_brake():
     Test brake
     """
     print("=== Testing brake ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     speed = 30
     delay_s = 2
     print("Move forward")
@@ -191,7 +191,7 @@ def test_brake_1m():
     Test brake 1 motor
     """
     print("=== Testing brake 1 motor ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     left_motor = 1
     right_motor = 2
     speed = 30
@@ -219,7 +219,7 @@ def reset_encoder(side):
     """
     reset encoder
     """
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     motor = side
     left_motor = 1
     speed = 20
@@ -286,7 +286,7 @@ def test_led():
     Test led
     """
     print("=== Testing led blinking ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     blink(one, 6, 1)
 
 
@@ -295,7 +295,7 @@ def test_obstacle_emitters():
     Test obstacle emitters
     """
     print("=== Testing obstacle emitters ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     one.obstacle_emitters(1)
     state = 0
     number_of_times = 6
@@ -310,7 +310,7 @@ def test_obstacle_emitters():
 
 
 def servo(id):
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     delay_s = 0.1
     print("Rotate in one way")
     for i in range(10, 170, 10):
@@ -350,7 +350,7 @@ def test_min_battery():
     Test min battery
     """
     print("=== Testing min battery ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Setting to a normal value.")
     print("Robot should move in response to a move command.")
     one.min_battery(8.4)
@@ -376,7 +376,7 @@ def test_save_calibrate_1():
     print(
         "!!! You will need to re-calibrate the motors after this test as calibration is lost !!!"
     )
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("1st time running this test the wheels are expected to move.")
     print("2nd time running this test the wheels should NOT move.")
     one.move(30, 30)
@@ -395,7 +395,7 @@ def test_save_calibrate_2():
     print(
         "!!! You will need to re-calibrate the motors after this test as calibration is lost !!!"
     )
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print(
         "1st time running this test: if test_save_calibrate_1 was run before this one the wheels should not move otherwise they will."
     )
@@ -414,7 +414,7 @@ def test_read_button():
     Note: User should press the buttons on the robot
     """
     print("=== Testing read button ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     print("Please press a button on the robot")
     time.sleep(2)
@@ -428,12 +428,12 @@ def test_read_battery():
     Test voltage battery reading
     """
     print("=== Testing read battery ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Battery voltage = ", one.read_battery())
 
 
 def read_encoder(side):
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     motor = side
     left_motor = 1
     speed = 20
@@ -488,7 +488,7 @@ def test_read_right_encoder():
 
 
 def read_encoder_increment(side):
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     motor = side
     left_motor = 1
     speed = 20
@@ -547,7 +547,7 @@ def test_read_firmware():
     Test read firmware
     """
     print("=== Testing read firmware ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     firmware = one.read_firmware()
     print("Firmware = ", firmware[0], ".", firmware[1], ".", firmware[2])
 
@@ -557,7 +557,7 @@ def test_obstacle_sensors():
     Test obstacle sensors
     """
     print("=== Testing obstacle sensors ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     for i in range(100):
         print("Test", i + 1, "of 100: Output:", one.obstacle_sensors())
         time.sleep(0.2)
@@ -568,7 +568,7 @@ def test_read_IR_sensors():
     Test read IR sensors
     """
     print("=== Testing read IR sensors ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     for i in range(100):
         print("Test", i + 1, "of 100: Output:", one.read_ir_sensors())
         time.sleep(0.2)
@@ -579,7 +579,7 @@ def test_read_left_range():
     Test read left range sensor
     """
     print("=== Testing read left range sensor ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     for i in range(100):
         print("Test", i + 1, "of 100: Output:", one.read_left_range())
         time.sleep(0.2)
@@ -590,7 +590,7 @@ def test_read_right_range():
     Test read right range sensor
     """
     print("=== Testing read right range sensor ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     for i in range(100):
         print("Test", i + 1, "of 100: Output:", one.read_right_range())
         time.sleep(0.2)
@@ -601,7 +601,7 @@ def test_read_adc():
     Test read adc
     """
     print("=== Testing read adc ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     for i in range(8):
         print("Read adc", i, ":", one.read_adc(i))
         time.sleep(0.2)
@@ -612,7 +612,7 @@ def test_read_adc_0():
     Test read adc 0
     """
     print("=== Testing read adc 0 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 0:", one.read_adc_0())
 
 
@@ -621,7 +621,7 @@ def test_read_adc_1():
     Test read adc 1
     """
     print("=== Testing read adc 1 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 1:", one.read_adc_1())
 
 
@@ -630,7 +630,7 @@ def test_read_adc_2():
     Test read adc 2
     """
     print("=== Testing read adc 2 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 2:", one.read_adc_2())
 
 
@@ -639,7 +639,7 @@ def test_read_adc_3():
     Test read adc 3
     """
     print("=== Testing read adc 3 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 3:", one.read_adc_3())
 
 
@@ -648,7 +648,7 @@ def test_read_adc_4():
     Test read adc 4
     """
     print("=== Testing read adc 4 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 4:", one.read_adc_4())
 
 
@@ -657,7 +657,7 @@ def test_read_adc_5():
     Test read adc 5
     """
     print("=== Testing read adc 5 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 5:", one.read_adc_5())
 
 
@@ -666,7 +666,7 @@ def test_read_adc_6():
     Test read adc 6
     """
     print("=== Testing read adc 6 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 6:", one.read_adc_6())
 
 
@@ -675,7 +675,7 @@ def test_read_adc_7():
     Test read adc 7
     """
     print("=== Testing read adc 7 ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     print("Read adc 7:", one.read_adc_7())
 
 
@@ -684,7 +684,7 @@ def test_read_DBG():
     Test read DBG
     """
     print("=== Testing read DBG ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
     for i in range(4):
         print("Read dbg", i, ":", one.read_dbg(i))
 
@@ -695,7 +695,7 @@ def test_lcd():
     User should verify the output by looking at the lcd on the robot
     """
     print("=== Testing writing data to LCD ===")
-    one = BnrOneA(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
+    one = BnrOneAPlus(0, 0)  # creates a BotnRoll interface at bus 0 and channel 0
 
     delay_s = 1.6
     one.lcd1("")

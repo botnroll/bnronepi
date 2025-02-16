@@ -42,11 +42,11 @@ import json
 import os
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from onepi.utils.line_sensor_config import LineSensorConfig
 from onepi.utils.line_detector import LineDetector
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 
 M1 = 1  # Motor1

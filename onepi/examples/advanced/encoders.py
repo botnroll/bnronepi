@@ -17,9 +17,9 @@
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 speed_1 = 10
 speed_2 = 10
@@ -92,7 +92,7 @@ def read_encoders():
     " " * 10,
     end="\r",
 )
-        
+
 def main():
 
     # function to stop the robot on exiting with CTRL+C

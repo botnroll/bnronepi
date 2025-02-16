@@ -12,9 +12,9 @@
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)
+one = BnrOneAPlus(0, 0)
 
 
 def automatic_start():

@@ -9,9 +9,9 @@ Step 3: send data to PIC to be stored in EEPROM
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object to control Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object to control Bot'n Roll ONE A+
 motor_power  =  20
 left_encoder_max  =  0
 right_encoder_max  =  0
@@ -26,7 +26,7 @@ def start_movement_detection():
     left_encoder = one.read_left_encoder()       # Clear encoder count
     right_encoder = one.read_right_encoder()     # Clear encoder count
     t1sec = time.time() + ONE_SEC
-    
+
     while(not exit_flag):
 
         if(time.time() >=  t1sec):
@@ -44,12 +44,12 @@ def start_movement_detection():
                     one.lcd1("Motor 1 -> ERROR")
                     print("ERROR: Motor 1 encoder is counting in reverse!!")
                     error_flag = True
-                
+
                 elif(right_encoder < 0): # if encoderR is Not ok
                     one.lcd2("Motor 2 -> ERROR")
                     print("ERROR: Motor 2 encoder is counting in reverse!!")
                     error_flag = True
-                
+
                 exit_flag = True
 
 
@@ -75,7 +75,7 @@ def max_pulses_detection():
                 if(right_encoder > right_encoder_max):
                     right_encoder_max = right_encoder
                 print("  left_encoder:", left_encoder, "  right_encoder:", right_encoder)
-    
+
         one.stop()
         one.lcd2(0, left_encoder_max, right_encoder_max)
         print("  left_encoder_max:", left_encoder_max)

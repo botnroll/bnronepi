@@ -11,12 +11,12 @@ stop moving. Save the config at that point.
 This allows PID more room to control the speeds at lower values.
 """
 
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from onepi.utils.drive_pid import DrivePid
 import time
 import signal
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 
 def test_move_pid():

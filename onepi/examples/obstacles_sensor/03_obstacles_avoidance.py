@@ -13,9 +13,9 @@ to that sensor reading (multiplied by a constant gain kL)
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 left_motor = 0
 right_motor = 0

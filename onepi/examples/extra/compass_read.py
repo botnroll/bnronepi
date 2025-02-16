@@ -16,9 +16,9 @@ from smbus import (
     SMBus,
 )  # for I2C communication (https://www.abelectronics.co.uk/kb/article/1094/i2c-part-4---programming-i-c-with-python)
 
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 COMPASS_ADDRESS = 0x60  # CMPS11 I2C address
 

@@ -5,13 +5,13 @@ For that it needs the methods in ControlUtils class
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from onepi.utils.pid_params import PidParams
 from onepi.utils.pid_controller import PidController
 from onepi.utils.control_utils import ControlUtils
 import csv
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 pid_params = PidParams()
 
@@ -66,7 +66,7 @@ def test_pid():
             time_elapsed_ms,
             "ms"
         )
-        
+
         one.move(0, right_power)
 
 

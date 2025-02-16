@@ -12,9 +12,9 @@ The speed of the motors is adjusted using a linear approach and gain (k)
 
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object to control the Bot'n Roll ONE A+
 
 M1 = 1  # Motor1
 M2 = 2  # Motor2

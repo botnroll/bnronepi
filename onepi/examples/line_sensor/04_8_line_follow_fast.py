@@ -17,9 +17,9 @@ import os
 import json
 import time
 import signal
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 max_linear_speed = 60
 speed_boost = 3  # Curve outside wheel max speed limit

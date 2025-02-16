@@ -16,10 +16,10 @@ changes the state to retreat (start moving backwards)
 import time
 import signal
 import threading
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 from enum import Enum, auto
 
-one = BnrOneA(0, 0)  # object variable to control the Bot'n Roll ONE A+
+one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 TIMER_INTERVAL = 1  # Set the timer interval in seconds
 

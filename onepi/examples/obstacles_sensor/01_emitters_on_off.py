@@ -19,9 +19,9 @@ Placing an obstacle 2cm in front of the LEDS should switch IRS1 and IRS2 ON.
 """
 
 import time
-from onepi.one import BnrOneA
+from onepi.one import BnrOneAPlus
 
-one = BnrOneA(0, 0)
+one = BnrOneAPlus(0, 0)
 
 
 def setup():
