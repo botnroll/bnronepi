@@ -355,12 +355,20 @@ class BnrOneAPlus:
         self._spi.xfer2(to_send)
         self.__us_sleep(self._delay_TR)
 
-        # Read 4 bytes for encoder values
-        values = self._spi.readbytes(4)
+        def handle_negative(value):
+            if value >= 0x8000:
+                value -= 0x10000
+            return value
 
-        # Convert bytes to encoder values
-        left_encoder = (values[0] << 8) + values[1]
-        right_encoder = (values[2] << 8) + values[3]
+        high_byte = self._spi.readbytes(1)
+        low_byte = self._spi.readbytes(1)
+        left_encoder = (high_byte[0] << 8) + low_byte[0]
+        left_encoder = handle_negative(left_encoder)
+
+        high_byte = self._spi.readbytes(1)
+        low_byte = self._spi.readbytes(1)
+        right_encoder = (high_byte[0] << 8) + low_byte[0]
+        right_encoder = handle_negative(right_encoder)
 
         self.__close_spi()
 
