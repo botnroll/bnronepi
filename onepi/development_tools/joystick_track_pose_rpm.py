@@ -48,13 +48,14 @@ def main():
         # convert from pose speeds to wheel speeds
         wheel_speeds = cut.compute_wheel_speeds(linear_speed, angular_speed)
 
-        one.move_rpm(apply_filter(wheel_speeds.left), apply_filter(wheel_speeds.right))
-        left_encoder = one.read_left_encoder()
-        right_encoder = one.read_right_encoder()
+        left_encoder, right_encoder = one.move_rpm_get_encoders(
+            apply_filter(wheel_speeds.left), apply_filter(wheel_speeds.right))
+         
         pose = pose_tracker.update_location(left_encoder, right_encoder)
         stage.update_pose(pose)
 
         print(f"linear: {linear_speed:.2f}, angular: {angular_speed:.2f}, \
+                left_encoder: {left_encoder:.2f}, right_encoder: {right_encoder:.2f}, \
                 left: {wheel_speeds.left:.2f}, right: {wheel_speeds.right:.2f}, \
                 pose: {pose.x_mm:.0f}, {pose.y_mm:.0f}, {pose.theta_rad:.2f},", end='         \r')
 
