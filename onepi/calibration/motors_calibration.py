@@ -17,7 +17,7 @@ left_encoder_max  =  0
 right_encoder_max  =  0
 error_flag  =  False
 ks  =  750
-ONE_SEC = 0.5
+CYCLE_INTERVAL = 0.5
 FIVE_SEC = 5
 HUNDRED_MS = 0.1
 TWENTY_FIVE_MS = 0.025
@@ -28,12 +28,12 @@ def start_movement_detection():
     exit_flag = False
     left_encoder = one.read_left_encoder()       # Clear encoder count
     right_encoder = one.read_right_encoder()     # Clear encoder count
-    t1sec = time.time() + ONE_SEC
+    t1sec = time.time() + CYCLE_INTERVAL
 
     while(not exit_flag):
 
         if(time.time() >=  t1sec):
-            t1sec +=  ONE_SEC   # Every second
+            t1sec +=  CYCLE_INTERVAL
             one.move_raw(motor_power, motor_power)
             left_encoder = one.read_left_encoder()
             right_encoder = one.read_right_encoder()
