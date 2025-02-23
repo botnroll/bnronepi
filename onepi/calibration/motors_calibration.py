@@ -20,6 +20,9 @@ ks  =  750
 ONE_SEC = 0.5
 FIVE_SEC = 5
 HUNDRED_MS = 0.1
+TWENTY_FIVE_MS = 0.025
+CYCLES = HUNDRED_MS / HUNDRED_MS
+
 def start_movement_detection():
     global motor_power, left_encoder_max, right_encoder_max, error_flag, ks
     exit_flag = False
@@ -77,6 +80,8 @@ def max_pulses_detection():
                 print("  left_encoder:", left_encoder, "  right_encoder:", right_encoder)
 
         one.stop()
+        right_encoder_max = right_encoder_max / CYCLES
+        left_encoder_max = left_encoder_max / CYCLES
         one.lcd2(0, left_encoder_max, right_encoder_max)
         print("  left_encoder_max:", left_encoder_max)
         print("  right_encoder_max:", right_encoder_max)
