@@ -21,7 +21,7 @@ CYCLE_INTERVAL = 0.5
 FIVE_SEC = 5
 HUNDRED_MS = 0.1
 TWENTY_FIVE_MS = 0.025
-CYCLES = HUNDRED_MS / HUNDRED_MS
+CYCLES = HUNDRED_MS / TWENTY_FIVE_MS
 
 def start_movement_detection():
     global motor_power, left_encoder_max, right_encoder_max, error_flag, ks
