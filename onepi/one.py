@@ -52,7 +52,9 @@ class BnrOneAPlus:
     _COMMAND_ENCL_RESET = 0xF0  # Preset the value of encoder1
     _COMMAND_ENCR_RESET = 0xEF  # Preset the value of encoder2
     _COMMAND_MOVE_RPM = 0xEE  # Move motors with speed in rpm
-    _COMMAND_MOVE_RPM_R_ENC = 0xED  # Move motors with speed in rpm and read encoders value
+    _COMMAND_MOVE_RPM_R_ENC = (
+        0xED  # Move motors with speed in rpm and read encoders value
+    )
     _COMMAND_FUTURE_USE3 = 0xEC
     _COMMAND_FUTURE_USE4 = 0xEB
     _COMMAND_MOVE_1M = 0xEA  # Move 1 motor
@@ -343,14 +345,14 @@ class BnrOneAPlus:
 
         # Send move rpm command with values
         msg = [
-            self._COMMAND_MOVE_RPM_R_ENC,
             self.__high_byte(left_rpm),
             self.__low_byte(left_rpm),
             self.__high_byte(right_rpm),
             self.__low_byte(right_rpm),
         ]
-        self._spi.xfer2(msg)
-
+        to_send = [self._COMMAND_MOVE_RPM_R_ENC, self._KEY1, self._KEY2]
+        to_send.extend(msg)
+        self._spi.xfer2(to_send)
         self.__us_sleep(self._delay_TR)
 
         # Read 4 bytes for encoder values
