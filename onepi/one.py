@@ -50,7 +50,7 @@ class BnrOneAPlus:
     _COMMAND_SET_MOTORS = 0xF1  # Save calibration data
     _COMMAND_ENCL_RESET = 0xF0  # Preset the value of encoder1
     _COMMAND_ENCR_RESET = 0xEF  # Preset the value of encoder2
-    _COMMAND_FUTURE_USE1 = 0xEE
+    _COMMAND_MOVE_RPM = 0xEE # Move motors with speed in rpm
     _COMMAND_FUTURE_USE2 = 0xED
     _COMMAND_FUTURE_USE3 = 0xEC
     _COMMAND_FUTURE_USE4 = 0xEB
@@ -311,6 +311,21 @@ class BnrOneAPlus:
             self.__low_byte(right_speed),
         ]
         self.__send_data(self._COMMAND_MOVE, msg)
+
+    def move_rpm(self, left_rpm, right_rpm):
+        """
+        Sends left and right wheel speeds to the spi device.
+
+        :param left_speed: desired left wheel speed
+        :param right_speed: desired right wheel speed
+        """
+        msg = [
+            self.__high_byte(left_rpm),
+            self.__low_byte(left_rpm),
+            self.__high_byte(right_rpm),
+            self.__low_byte(right_rpm)
+        ]
+        self.__send_data(self._COMMAND_MOVE_RPM, msg)
 
     def move_raw(self, left_power, right_power):
         """

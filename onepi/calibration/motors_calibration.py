@@ -12,12 +12,12 @@ import signal
 from onepi.one import BnrOneAPlus
 
 one = BnrOneAPlus(0, 0)  # object to control Bot'n Roll ONE A+
-motor_power  =  20
+motor_power  =  40
 left_encoder_max  =  0
 right_encoder_max  =  0
 error_flag  =  False
 ks  =  750
-ONE_SEC = 1
+ONE_SEC = 0.5
 FIVE_SEC = 5
 HUNDRED_MS = 0.1
 def start_movement_detection():
@@ -87,16 +87,16 @@ def send_values():
     enc_min = 30000  # Find minimum encoder value
     if(not error_flag):
         if(left_encoder_max < enc_min):
-            enc_min = int(left_encoder_max / 4.0)
+            enc_min = int(left_encoder_max)
         if(right_encoder_max < enc_min):
-            enc_min = int(right_encoder_max / 4.0)
+            enc_min = int(right_encoder_max)
         one.set_motors(motor_power, ks, enc_min)
         print("Save values for def setMotors(int Smotor_power, int Ks, int ctrlPulses)")
         print("Set motor pow:", motor_power, "  ctrl pulses:", enc_min)
         print("Calibration Finished!!")
         while(True):
-            one.lcd1("Set motor pow:", motor_power)
-            one.lcd2("ctrl pulses:  ", enc_min)
+            one.lcd1("motor pow: ", motor_power)
+            one.lcd2("ctr pulses:", enc_min)
             time.sleep(2.5)
             one.lcd1("Save values for ")
             one.lcd2("  set motors    ")
