@@ -28,12 +28,12 @@ def start_movement_detection():
     exit_flag = False
     left_encoder = one.read_left_encoder()       # Clear encoder count
     right_encoder = one.read_right_encoder()     # Clear encoder count
-    t1sec = time.time() + CYCLE_INTERVAL
+    time_alarm = time.time() + CYCLE_INTERVAL
 
     while(not exit_flag):
 
-        if(time.time() >=  t1sec):
-            t1sec +=  CYCLE_INTERVAL
+        if(time.time() >=  time_alarm):
+            time_alarm +=  CYCLE_INTERVAL
             one.move_raw(motor_power, motor_power)
             left_encoder = one.read_left_encoder()
             right_encoder = one.read_right_encoder()

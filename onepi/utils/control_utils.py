@@ -67,7 +67,7 @@ class ControlUtils:
 
     _axis_length_mm = 163.0
     _wheel_diameter_mm = 65.0
-    _pulses_per_rev = 80
+    _pulses_per_rev = 2240
     _max_speed_mmps = 850
     _min_speed_mmps = 0
     _spot_rotation_delta = -14.5  # For spot rotations only

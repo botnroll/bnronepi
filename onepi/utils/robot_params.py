@@ -8,7 +8,7 @@ class RobotParams:
         max_speed_mmps_in=850,
         axis_length_mm_in=163.0,
         wheel_diameter_mm_in=65.0,
-        pulses_per_rev_in=1490,
+        pulses_per_rev_in=2240,
     ):
         """
         Defines the robot parameters

@@ -19,9 +19,9 @@ def main():
     stage = Stage()
     one = BnrOneAPlus()
 
-    MIN_SPEED_RPM = 10
-    MAX_LINEAR_SPEED_RPM = 600   #mm per sec
-    MAX_ANGULAR_SPEED_RPM = 3.14 #rads per sec
+    MIN_SPEED_RPM = 40
+    MAX_LINEAR_SPEED_RPM = 150   #mm per sec
+    MAX_ANGULAR_SPEED_RPM = 3.14/5.0 #rads per sec
 
     # function to stop the robot on exiting with CTRL+C
     def stop_and_exit(sig, frame):
