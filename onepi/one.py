@@ -9,6 +9,7 @@ import setproctitle
 from onepi.utils.line_detector import LineDetector
 from onepi.utils.monitor import Monitor
 
+
 class BnrOneAPlus:
     """
     Class definition to interface with BotnRoll One A
@@ -50,14 +51,15 @@ class BnrOneAPlus:
     _COMMAND_SET_MOTORS = 0xF1  # Save calibration data
     _COMMAND_ENCL_RESET = 0xF0  # Preset the value of encoder1
     _COMMAND_ENCR_RESET = 0xEF  # Preset the value of encoder2
-    _COMMAND_MOVE_RPM = 0xEE # Move motors with speed in rpm
-    _COMMAND_FUTURE_USE2 = 0xED
+    _COMMAND_MOVE_RPM = 0xEE  # Move motors with speed in rpm
+    _COMMAND_MOVE_RPM_R_ENC = 0xED  # Move motors with speed in rpm and read encoders value
     _COMMAND_FUTURE_USE3 = 0xEC
     _COMMAND_FUTURE_USE4 = 0xEB
     _COMMAND_MOVE_1M = 0xEA  # Move 1 motor
     _COMMAND_STOP_1M = 0xE9  # Stop 1 motor
     _COMMAND_BRAKE_1M = 0xE8  # Brake 1 motor
     _COMMAND_FUTURE_USE5 = 0xE7
+s
 
     # Read Commands-> requests to Bot'n Roll ONE
     _COMMAND_ADC0 = 0xDF  # Read ADC0
@@ -127,13 +129,17 @@ class BnrOneAPlus:
 
         allowed_to_run = True
         if monitor:
-            if not self._monitor_bnr.is_process_running(self._monitor_bnr._PROCESS_NAME):
+            if not self._monitor_bnr.is_process_running(
+                self._monitor_bnr._PROCESS_NAME
+            ):
                 allowed_to_run = True
                 # Sets the process name to BnrOneAPlus
                 setproctitle.setproctitle(self._monitor_bnr._PROCESS_NAME)
             else:
                 allowed_to_run = False
-                print("There is already Python Code communicating with the Bot'n Roll One A+.")
+                print(
+                    "There is already Python Code communicating with the Bot'n Roll One A+."
+                )
                 print("Please quit the other process first.")
                 os._exit(1)
 
@@ -142,7 +148,6 @@ class BnrOneAPlus:
             self.device = device
             self._spi = spidev.SpiDev()
             self.line_detector = LineDetector()
-
 
     def __us_sleep(self, microseconds):
         """
@@ -174,7 +179,7 @@ class BnrOneAPlus:
         """
         self._spi.open(self.bus, self.device)
         self._spi.max_speed_hz = (
-            244000 # see https://www.takaitra.com/spi-device-raspberry-pi/
+            244000  # see https://www.takaitra.com/spi-device-raspberry-pi/
         )
         self._spi.mode = 1
 
@@ -236,9 +241,8 @@ class BnrOneAPlus:
         byte4 = self._spi.readbytes(1)
         self.__close_spi()
         byte_data = bytes([byte1[0], byte2[0], byte3[0], byte4[0]])
-        float_value = struct.unpack('f', byte_data)[0]
+        float_value = struct.unpack("f", byte_data)[0]
         return float_value
-
 
     def __send_data(self, command, msg=""):
         """
@@ -323,9 +327,43 @@ class BnrOneAPlus:
             self.__high_byte(left_rpm),
             self.__low_byte(left_rpm),
             self.__high_byte(right_rpm),
-            self.__low_byte(right_rpm)
+            self.__low_byte(right_rpm),
         ]
         self.__send_data(self._COMMAND_MOVE_RPM, msg)
+
+    def move_rpm_get_encoders(self, left_rpm, right_rpm):
+        """
+        Sends left and right wheel speeds to the spi device and reads back encoder values.
+
+        :param left_rpm (int): Desired left wheel speed in RPM
+        :param right_rpm (int): Desired right wheel speed in RPM
+
+        :return tuple: Left and right encoder values (left_encoder, right_encoder)
+        """
+        self.__open_spi()
+
+        # Send move rpm command with values
+        msg = [
+            self._COMMAND_MOVE_RPM_R_ENC,
+            self.__high_byte(left_rpm),
+            self.__low_byte(left_rpm),
+            self.__high_byte(right_rpm),
+            self.__low_byte(right_rpm),
+        ]
+        self._spi.xfer2(msg)
+
+        self.__us_sleep(self._delay_TR)
+
+        # Read 4 bytes for encoder values
+        values = self._spi.readbytes(4)
+
+        # Convert bytes to encoder values
+        left_encoder = (values[0] << 8) + values[1]
+        right_encoder = (values[2] << 8) + values[3]
+
+        self.__close_spi()
+
+        return left_encoder, right_encoder
 
     def move_raw(self, left_power, right_power):
         """
