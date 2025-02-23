@@ -59,7 +59,6 @@ class BnrOneAPlus:
     _COMMAND_STOP_1M = 0xE9  # Stop 1 motor
     _COMMAND_BRAKE_1M = 0xE8  # Brake 1 motor
     _COMMAND_FUTURE_USE5 = 0xE7
-s
 
     # Read Commands-> requests to Bot'n Roll ONE
     _COMMAND_ADC0 = 0xDF  # Read ADC0
