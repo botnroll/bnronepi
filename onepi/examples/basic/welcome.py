@@ -21,23 +21,22 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect((testIP, 0))
 ipaddr = s.getsockname()[0]
 host = socket.gethostname()
-print ("IP:", ipaddr, " Host:", host)
+print("IP:", ipaddr, " Host:", host)
 
 one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 
 def setup():
     one.stop()  # stop motors
-    one.min_battery(
-        10.5
-    )  # define de minimum battery voltage. Robot stops if voltage is below the specified value!
+    # define de minimum battery voltage. Robot stops if voltage is below the specified value!
+    one.set_min_battery_V(10.5)
 
 
 def welcome():
     global ipaddr
     battery = round(one.read_battery(), 2)  # read battery voltage
-    one.lcd1("  Hello OnePi!  ")            # print data on LCD line 1
-    one.lcd2("Battery V: ", battery)        # print data on LCD line 2
+    one.lcd1("  Hello OnePi!  ")  # print data on LCD line 1
+    one.lcd2("Battery V: ", battery)  # print data on LCD line 2
     print("  Hello OnePi!  ")
     print("Battery V: ", battery)
     time.sleep(3)  # wait 2 seconds
