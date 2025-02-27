@@ -15,13 +15,13 @@ one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 pid_params = PidParams()
 
-MIN_SPEED_MMPS = -850
-MAX_SPEED_MMPS = 850
+MIN_SPEED_RPM = -300
+MAX_SPEED_RPM = 300
 
 update_time_ms = 100
 
-right_pid_controller = PidController(pid_params, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
-left_pid_controller = PidController(pid_params, MIN_SPEED_MMPS, MAX_SPEED_MMPS)
+right_pid_controller = PidController(pid_params, MIN_SPEED_RPM, MAX_SPEED_RPM)
+left_pid_controller = PidController(pid_params, MIN_SPEED_RPM, MAX_SPEED_RPM)
 cut = ControlUtils()
 
 timestamp = 0
@@ -55,7 +55,7 @@ def test_pid():
 
         time_elapsed_ms = int((time_now - time_previous) * 1000)
         if time_elapsed_ms < 100:
-            time.sleep((100-time_elapsed_ms)/1000.0)
+            time.sleep((100 - time_elapsed_ms) / 1000.0)
             time_elapsed_ms = int((time.time() - time_previous) * 1000)
         time_previous = time.time()
         print(
@@ -64,17 +64,17 @@ def test_pid():
             right_encoder,
             int(right_power),
             time_elapsed_ms,
-            "ms"
+            "ms",
         )
 
-        one.move(0, right_power)
+        one.move_rpm(0, right_power)
 
 
 def setup():
     global right_pid_controller, left_pid_controller
     global cut, update_time_ms
     one.stop()
-    one.min_battery(9.6)
+    one.set_min_battery_V(9.6)
 
     one.lcd1("  PID Control")
     one.lcd2("______v1.0______")
@@ -82,22 +82,20 @@ def setup():
     one.reset_left_encoder()
     one.reset_right_encoder()
 
-    while(True):
-        ref_speed_mmps = 400
-        num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+    while True:
+        ref_speed_rpm = 100
+        num_pulses = cut.compute_pulses_from_speed(ref_speed_rpm, update_time_ms)
         print("setpoint pulses:", int(num_pulses))
         right_pid_controller.change_setpoint(num_pulses)
         left_pid_controller.change_setpoint(num_pulses)
         test_pid()
 
-        ref_speed_mmps = 800
-        num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+        ref_speed_rpm = 200
+        num_pulses = cut.compute_pulses_from_speed(ref_speed_rpm, update_time_ms)
         print("setpoint pulses:", int(num_pulses))
         right_pid_controller.change_setpoint(num_pulses)
         left_pid_controller.change_setpoint(num_pulses)
         test_pid()
-
-    one.stop()
 
 
 def loop():
@@ -116,11 +114,11 @@ def write_to_csv():
         writer.writerows(data)
 
 
-def change_setpoint(ref_speed_mmps):
+def change_setpoint(ref_speed_rpm):
     global update_time_ms
     global data, cut, timestamp
 
-    num_pulses = cut.compute_pulses_from_speed(ref_speed_mmps, update_time_ms)
+    num_pulses = cut.compute_pulses_from_speed(ref_speed_rpm, update_time_ms)
     print("setpoint pulses:", int(num_pulses))
     right_pid_controller.change_setpoint(num_pulses)  # min 10, max 70
     input_data = num_pulses
@@ -134,7 +132,7 @@ def change_setpoint(ref_speed_mmps):
         timestamp += 100
         time.sleep(update_time_ms / 1000.0)
 
-        one.move(0, right_power)
+        one.move_rpm(0, right_power)
 
 
 def step_response():

@@ -5,6 +5,7 @@ Collection of utility methods to perform useful conversions and calculations
 from onepi.utils.robot_params import RobotParams
 import math
 
+
 def cap_to_limits(value, min_value, max_value):
     """
     Cap input value within the given min and max limits
@@ -21,6 +22,7 @@ class Pose:
      y coordinate points left
      theta_rad orientation positive direction is counterclockwise
     """
+
     x_mm = 0
     y_mm = 0
     theta_rad = 0
@@ -29,10 +31,14 @@ class Pose:
         self.x_mm = x_mm_in
         self.y_mm = y_mm_in
         self.theta_rad = theta_rad_in
-    
+
     def update_pose(self, delta_distance_mm, delta_theta_rad):
-        self.x_mm += delta_distance_mm * math.cos(self.theta_rad + delta_theta_rad / 2.0)
-        self.y_mm += delta_distance_mm * math.sin(self.theta_rad + delta_theta_rad / 2.0)
+        self.x_mm += delta_distance_mm * math.cos(
+            self.theta_rad + delta_theta_rad / 2.0
+        )
+        self.y_mm += delta_distance_mm * math.sin(
+            self.theta_rad + delta_theta_rad / 2.0
+        )
         self.theta_rad += delta_theta_rad
 
 
@@ -40,6 +46,7 @@ class PoseSpeeds:
     """
     Encodes the speed of the robot in terms of linear and angular speeds
     """
+
     linear_mmps = 0
     angular_rad = 0
 
@@ -52,6 +59,7 @@ class WheelSpeeds:
     """
     Encodes the speed of the robot in terms of left and right wheel speeds
     """
+
     left = 0
     right = 0
 
@@ -84,7 +92,9 @@ class ControlUtils:
         self._axis_length_mm = params.axis_length_mm
         self._wheel_diameter_mm = params.wheel_diameter_mm
         self._pulses_per_rev = params.pulses_per_rev
-        self._max_speed_mmps = params.max_speed_mmps
+        self._max_speed_mmps = (
+            params.max_speed_rpm * self._pi * self._wheel_diameter_mm / 60
+        )
         self._min_speed_mmps = min_speed_mmps
 
     def convert_range(self, x_value, x_min, x_max, y_min, y_max):
@@ -116,7 +126,7 @@ class ControlUtils:
         """
         distance_mm = self._pi * float(self._wheel_diameter_mm) * revolutions
         return distance_mm
-    
+
     def compute_distance_from_pulses(self, pulses):
         """
         computes distance given the number of pulses
@@ -164,8 +174,7 @@ class ControlUtils:
             arc_length_mm = angle_rad * radius_of_curvature_mm
         else:
             arc_length_mm = (
-                angle_rad * float(self._axis_length_mm +
-                                  self._spot_rotation_delta)
+                angle_rad * float(self._axis_length_mm + self._spot_rotation_delta)
             ) / 2.0
         return arc_length_mm
 
@@ -182,6 +191,14 @@ class ControlUtils:
         """
         distance_mm = self.compute_distance_from_speed(speed_mmps, time_ms)
         revolutions = self.compute_revolutions_from_distance(distance_mm)
+        num_pulses = self.compute_pulses_from_rev(revolutions)
+        return num_pulses
+
+    def compute_pulses_from_distance(self, distance):
+        """
+        computes number of pulses given distance
+        """
+        revolutions = self.compute_revolutions_from_distance(distance)
         num_pulses = self.compute_pulses_from_rev(revolutions)
         return num_pulses
 
@@ -202,19 +219,11 @@ class ControlUtils:
         capped_speed = cap_to_limits(desired_speed_percentage, -100, 100)
         if capped_speed < 0:
             return self.convert_range(
-                capped_speed,
-                -100,
-                0,
-                -self._max_speed_mmps,
-                -self._min_speed_mmps
+                capped_speed, -100, 0, -self._max_speed_mmps, -self._min_speed_mmps
             )
         if capped_speed > 0:
             return self.convert_range(
-                capped_speed,
-                0,
-                100,
-                self._min_speed_mmps,
-                self._max_speed_mmps
+                capped_speed, 0, 100, self._min_speed_mmps, self._max_speed_mmps
             )
         return 0
 
@@ -223,25 +232,15 @@ class ControlUtils:
         convert real speed to speed percentage
         """
         capped_speed = cap_to_limits(
-            desired_speed_mmps,
-            -self._max_speed_mmps,
-            self._max_speed_mmps
+            desired_speed_mmps, -self._max_speed_mmps, self._max_speed_mmps
         )
         if capped_speed <= -self._min_speed_mmps:
             return self.convert_range(
-                capped_speed,
-                -self._max_speed_mmps,
-                -self._min_speed_mmps,
-                -100,
-                0
+                capped_speed, -self._max_speed_mmps, -self._min_speed_mmps, -100, 0
             )
         if capped_speed >= self._min_speed_mmps:
             return self.convert_range(
-                capped_speed,
-                self._min_speed_mmps,
-                self._max_speed_mmps,
-                0,
-                100
+                capped_speed, self._min_speed_mmps, self._max_speed_mmps, 0, 100
             )
         return 0
 
@@ -259,8 +258,10 @@ class ControlUtils:
         Computes the wheel speeds from linear and angular speeds
         """
         wheel_speeds = WheelSpeeds()
-        wheel_speeds.left = linear_speed - \
-            ((angular_speed_rad * self._axis_length_mm) / 2.0)
-        wheel_speeds.right = linear_speed + \
-            ((angular_speed_rad * self._axis_length_mm) / 2.0)
+        wheel_speeds.left = linear_speed - (
+            (angular_speed_rad * self._axis_length_mm) / 2.0
+        )
+        wheel_speeds.right = linear_speed + (
+            (angular_speed_rad * self._axis_length_mm) / 2.0
+        )
         return wheel_speeds
