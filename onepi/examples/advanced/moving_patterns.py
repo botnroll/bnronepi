@@ -16,7 +16,7 @@ WHEEL_RADIUS_MM = WHEEL_DIAMETER / 2.0
 STRAIGHT_MOTION = 32767
 
 sim_time = 0
-canvas = Stage()
+stage = Stage()
 robot_pose = Pose(0, 0, 0)
 
 
@@ -63,7 +63,7 @@ def move_and_slow_down(
     @param straight boolean specifying if this is a straight line or not
     """
     global sim_time
-    global canvas
+    global stage
     global robot_pose
     quadratic_coeff = 100.0 / (TICKS_PER_REV * TICKS_PER_REV)
     linear_speed, angular_speed_rad = compute_angular_speed(
@@ -90,7 +90,7 @@ def move_and_slow_down(
             )
 
             robot_pose = update_pose(robot_pose, pose_speeds, dt)
-            canvas.update_pose(robot_pose)
+            stage.update_pose(robot_pose)
             sim_time += dt
             plt.pause(0.001)
         else:
@@ -373,8 +373,17 @@ def draw_heart():
     move_straight_at_speed(230, speed)
 
 
+def reset(pose):
+    global stage
+    global robot_pose
+    time.sleep(2)
+    robot_pose = pose
+    stage.clear()
+    stage.update_pose(robot_pose)
+
+
 def main():
-    global canvas
+    global stage
     global robot_pose
     reset(Pose(-400, 0, 0))
     # move_straight_at_speed(800, 50, 300)
