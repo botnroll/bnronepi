@@ -286,17 +286,14 @@ class BnrOneAPlus:
         ]
         self.__send_data(self._COMMAND_SET_PID, msg)
 
-    def set_motors(self, start_moving_power, ks, ctrl_pulses):
+    def set_motors(self, start_moving_power, ctrl_pulses):
         """
         :param start_moving_power pwm applied initially when wheel is stopped
-        :param ks gain multiplier to adjust the inital pwm
         :param ctrl_pulses pulses read at 25ms when running at full speed
         """
         msg = [
             self.__high_byte(start_moving_power),
             self.__low_byte(start_moving_power),
-            self.__high_byte(ks),
-            self.__low_byte(ks),
             self.__high_byte(ctrl_pulses),
             self.__low_byte(ctrl_pulses),
         ]
