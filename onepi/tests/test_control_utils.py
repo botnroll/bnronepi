@@ -92,7 +92,19 @@ def compute_speed_from_distance():
     assert round(cut.compute_speed_from_distance(-100, 1000), 1) == -100.0
     assert round(cut.compute_speed_from_distance(-500, 1000), 1) == -500.0
 
-    # compute_speed_from_pulses
+
+def compute_speed_from_pulses():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.compute_speed_from_pulses(0, 1000), 1) == 0.0
+    assert round(cut.compute_speed_from_pulses(1125.5, 1000), 1) == 99.0
+    assert round(cut.compute_speed_from_pulses(2251, 1000), 1) == 192.9
+    assert round(cut.compute_speed_from_pulses(112550, 1000), 1) == 9896.0
+    assert round(cut.compute_speed_from_pulses(225100, 1000), 1) == 19792.0
+    assert round(cut.compute_speed_from_pulses(6753000, 1000), 1) == 593761.0
+    assert round(cut.compute_speed_from_pulses(-22510, 1000), 1) == -1979.2
+    assert round(cut.compute_speed_from_pulses(-675300, 1000), 1) == -59376.1
+    assert round(cut.compute_speed_from_pulses(-6753000, 1000), 1) == -593761.0
 
     # compute_distance_from_speed
 
