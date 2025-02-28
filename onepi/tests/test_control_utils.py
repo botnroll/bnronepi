@@ -133,9 +133,17 @@ def test_compute_revolutions_from_distance():
     assert round(cut.compute_revolutions_from_distance(-59376.1), 2) == -300.0
     assert round(cut.compute_revolutions_from_distance(-593761.0), 2) == -3000.0
 
-    # compute_revolutions_from_distance
 
-    # compute_arc_length
+def test_compute_arc_length():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.compute_arc_length(0, 100), 1) == 0.0
+    assert round(cut.compute_arc_length(1, 100), 1) == 100.0
+    assert round(cut.compute_arc_length(1, 200), 1) == 200.0
+    assert round(cut.compute_arc_length(3.14, 100), 1) == 314.0
+    assert round(cut.compute_arc_length(3.14, 0), 1) == 0.0
+    assert round(cut.compute_arc_length(3.14, -100), 1) == -314.0
+    assert round(cut.compute_arc_length(-3.14, 100), 1) == -314.0
 
     # compute_pulses_from_rev
 
