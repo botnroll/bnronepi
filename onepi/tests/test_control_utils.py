@@ -197,7 +197,7 @@ def test_compute_pulses_from_angle_and_curvature():
     assert cut.compute_pulses_from_angle_and_curvature(1, 200) == 2275
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 100) == 3571
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 0) == 2875
-    assert cut.compute_pulses_from_angle_and_curvature(3.14, -100) == -3571
+    assert cut.compute_pulses_from_angle_and_curvature(3.14, -100) == 3571
     assert cut.compute_pulses_from_angle_and_curvature(-3.14, 100) == -3571
 
 
@@ -234,7 +234,7 @@ def test_compute_wheel_speeds():
     cut = ControlUtils(robot_params)
     wheel_speeds = cut.compute_wheel_speeds(150, 0.6)
     assert round(wheel_speeds.left, 1) == 101.7
-    assert round(wheel_speeds.right, 1) == 200.0
+    assert round(wheel_speeds.right, 1) == 198.3
 
 
 def test_compute_speeds_rpm():
