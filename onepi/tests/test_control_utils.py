@@ -70,7 +70,7 @@ def test_compute_distance_from_pulses():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     assert round(cut.compute_distance_from_pulses(0), 1) == 0.0
-    assert round(cut.compute_distance_from_pulses(1125), 1) == 99.0
+    assert round(cut.compute_distance_from_pulses(1125), 1) == 98.9
     assert round(cut.compute_distance_from_pulses(2251), 1) == 197.9
     assert round(cut.compute_distance_from_pulses(112550), 1) == 9896.0
     assert round(cut.compute_distance_from_pulses(225100), 1) == 19792.0
