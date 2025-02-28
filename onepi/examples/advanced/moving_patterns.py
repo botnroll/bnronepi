@@ -8,7 +8,7 @@ from onepi.utils.control_utils import PoseSpeeds
 from onepi.one import BnrOneAPlus
 
 PI = 3.14159265
-TICKS_LEFT_LOW_SPEED = 2000
+TICKS_LEFT_LOW_SPEED = 4000
 STRAIGHT_MOTION = 32767
 MIN_SPEED_MMPS = 100
 
@@ -62,7 +62,7 @@ def move_and_slow_down(
     @param straight boolean specifying if this is a straight line or not
     """
 
-    coeff = 100.0 / TICKS_LEFT_LOW_SPEED
+    coeff = 10000.0 / (TICKS_LEFT_LOW_SPEED * TICKS_LEFT_LOW_SPEED)
     linear_speed, angular_speed_rad = compute_angular_speed(
         speed, radius_of_curvature_mm, direction
     )
@@ -71,14 +71,14 @@ def move_and_slow_down(
 
     dt = 0.1
     encoder_count = 0
-    print("encoder_count: ", encoder_count, " total: ", total_pulses)
+    print("encoder_count: ", encoder_count, " total: ", total_pulses, " slow coeff: ", coeff)
 
     while encoder_count < total_pulses:
         left_encoder = abs(one.read_left_encoder())
         right_encoder = abs(one.read_right_encoder())
         encoder_count += (left_encoder + right_encoder) / 2.0
         pulses_remaining = total_pulses - encoder_count
-        print("pulses_remaining", pulses_remaining)
+        # print("pulses_remaining", pulses_remaining)
         pose_speeds = maybe_slow_down(
             pose_speeds,
             linear_speed,
@@ -98,6 +98,7 @@ def move_and_slow_down(
 
 
 def maybe_slow_down(
+
     pose_speeds,
     speed,
     pulses_remaining,
@@ -106,12 +107,16 @@ def maybe_slow_down(
     coeff,
     direction,
 ):
+    """
+    Note: At the moment slowing down doesn't work for rotations only
+    """
     if (pulses_remaining < TICKS_LEFT_LOW_SPEED) and (
         pulses_remaining < slow_down_thresh
     ):  # slowing down
-        percentage = coeff * pulses_remaining * pulses_remaining
-        slow_speed = (speed * percentage) / 100
+        ratio = pulses_remaining / min(TICKS_LEFT_LOW_SPEED, slow_down_thresh)
+        slow_speed = speed * ratio
         slow_speed = max(MIN_SPEED_MMPS, slow_speed)  # cap to min
+        print("ratio: ", ratio, " speed ", slow_speed)
         angular_speed_rad = 0
         linear_speed, angular_speed_rad = compute_angular_speed(
             slow_speed, radius_of_curvature_mm, direction
@@ -335,7 +340,7 @@ def move_pattern():
     # move_straight_at_speed(800, 50, 300)
 
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
-    rotate_angle_deg_at_speed(720, 500, 0, 0)
+    rotate_angle_deg_at_speed(720, 200, 0, 360)
     # draw_circle(150)
     # draw_mickey_mouse()
     # draw_house()
@@ -362,6 +367,9 @@ def move_pattern():
 
 
 def setup():
+    print("Get ready")
+    time.sleep(3)
+    print("Go")
     move_pattern()
 
 
