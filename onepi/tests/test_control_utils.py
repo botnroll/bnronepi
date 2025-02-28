@@ -145,23 +145,109 @@ def test_compute_arc_length():
     assert round(cut.compute_arc_length(3.14, -100), 1) == -314.0
     assert round(cut.compute_arc_length(-3.14, 100), 1) == -314.0
 
-    # compute_pulses_from_rev
 
-    # compute_pulses_from_speed
+def test_compute_pulses_from_rev():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert cut.compute_pulses_from_rev(0.0) == 0
+    assert cut.compute_pulses_from_rev(0.5) == 1125
+    assert cut.compute_pulses_from_rev(1.0) == 2251
+    assert cut.compute_pulses_from_rev(50.0) == 112550
+    assert cut.compute_pulses_from_rev(100.0) == 225100
+    assert cut.compute_pulses_from_rev(3000.0) == 6753000
+    assert cut.compute_pulses_from_rev(-10.0) == -22510
+    assert cut.compute_pulses_from_rev(-300.0) == -675300
+    assert cut.compute_pulses_from_rev(-3000.0) == -6753000
 
-    # compute_pulses_from_distance
 
-    # compute_pulses_from_angle_and_curvature
+def test_compute_pulses_from_speed():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert cut.compute_pulses_from_speed(0, 1000) == 0
+    assert cut.compute_pulses_from_speed(99, 1000) == 1125
+    assert cut.compute_pulses_from_speed(197.9, 1000) == 2251
+    assert cut.compute_pulses_from_speed(9896.0, 1000) == 112550
+    assert cut.compute_pulses_from_speed(19792.0, 1000) == 225100
+    assert cut.compute_pulses_from_speed(593761.0, 1000) == 6753000
+    assert cut.compute_pulses_from_speed(-1979.2, 500) == -1125
+    assert cut.compute_pulses_from_speed(-1979.2, 1000) == -22510
+    assert cut.compute_pulses_from_speed(-59376.1, 1000) == -675300
+    assert cut.compute_pulses_from_speed(-593761.0, 1000) == -6753000
 
-    # convert_to_mmps
 
-    # convert_to_percentage
+def test_compute_pulses_from_distance():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert cut.compute_pulses_from_distance(0.0) == 0
+    assert cut.compute_pulses_from_distance(99.0) == 1125
+    assert cut.compute_pulses_from_distance(197.9) == 2251
+    assert cut.compute_pulses_from_distance(9896.0) == 112550
+    assert cut.compute_pulses_from_distance(19792.0) == 225100
+    assert cut.compute_pulses_from_distance(593761.0) == 6753000
+    assert cut.compute_pulses_from_distance(-1979.2) == -22510
+    assert cut.compute_pulses_from_distance(-59376.1) == -675300
+    assert cut.compute_pulses_from_distance(-593761.0) == -6753000
 
-    # compute_pose_speeds
 
-    # compute_wheel_speeds
+def test_compute_pulses_from_angle_and_curvature():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert cut.compute_pulses_from_angle_and_curvature(0, 100) == 0
+    assert cut.compute_pulses_from_angle_and_curvature(1, 100) == 1137
+    assert cut.compute_pulses_from_angle_and_curvature(1, 200) == 2274
+    assert cut.compute_pulses_from_angle_and_curvature(3.14, 100) == 3571
+    assert cut.compute_pulses_from_angle_and_curvature(3.14, 0) == 2876
+    assert cut.compute_pulses_from_angle_and_curvature(3.14, -100) == -3571
+    assert cut.compute_pulses_from_angle_and_curvature(-3.14, 100) == -3571
 
-    # compute_speeds_rpm
+
+def test_convert_to_mmps():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.convert_to_mmps(0), 1) == 0.0
+    assert round(cut.convert_to_mmps(50), 1) == 425.0
+    assert round(cut.convert_to_mmps(100), 1) == 850.0
+    assert round(cut.convert_to_mmps(-50), 1) == -425.0
+    assert round(cut.convert_to_mmps(-100), 1) == -850.0
+
+
+def test_convert_to_percentage():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.convert_to_percentage(0), 1) == 0.0
+    assert round(cut.convert_to_percentage(425), 1) == 50.0
+    assert round(cut.convert_to_percentage(850), 1) == 100.0
+    assert round(cut.convert_to_percentage(-425), 1) == -50.0
+    assert round(cut.convert_to_percentage(-850), 1) == -100.0
+
+
+def test_compute_pose_speeds():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    pose_speeds = cut.compute_pose_speeds(100, 200)
+    assert round(pose_speeds.linear_mmps, 1) == 150.0
+    assert round(pose_speeds.angular_rad, 1) == 0.6
+
+
+def test_compute_wheel_speeds():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    wheel_speeds = cut.compute_wheel_speeds(150, 0.6)
+    assert round(wheel_speeds.left, 1) == 100.0
+    assert round(wheel_speeds.right, 1) == 200.0
+
+
+def test_compute_speeds_rpm():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    wheel_speeds_mmps = WheelSpeeds(100, 200)
+    wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
+    assert round(wheel_speeds_rpm.left, 1) == 29.3
+    assert round(wheel_speeds_rpm.right, 1) == 58.6
+    wheel_speeds_mmps = WheelSpeeds(-200, -100)
+    wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
+    assert round(wheel_speeds_rpm.left, 1) == -58.6
+    assert round(wheel_speeds_rpm.right, 1) == -29.3
 
 
 def main():
