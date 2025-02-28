@@ -7,8 +7,8 @@ class RobotParams:
         self,
         max_speed_rpm_in=300,
         axis_length_mm_in=163.0,
-        wheel_diameter_mm_in=65.0,
-        pulses_per_rev_in=2240,
+        wheel_diameter_mm_in=63.0,
+        pulses_per_rev_in=2251,
     ):
         """
         Defines the robot parameters

@@ -9,7 +9,7 @@ from onepi.utils.control_utils import Pose
 from onepi.one import BnrOneAPlus
 
 PI = 3.14159
-AXIS_LENGTH_MM = 162
+AXIS_LENGTH_MM = 161
 TICKS_PER_REV = 2240
 WHEEL_DIAMETER = 63
 WHEEL_RADIUS_MM = WHEEL_DIAMETER / 2.0
@@ -74,31 +74,31 @@ def move_and_slow_down(
     dt = 0.1
     encoder_count = 0
     print("encoder_count: ", encoder_count, " total: ", total_pulses)
-    for i in range(30000):
-        if encoder_count < total_pulses:
-            left_encoder = abs(one.read_left_encoder())
-            right_encoder = abs(one.read_right_encoder())
-            encoder_count += (left_encoder + right_encoder) / 2.0
-            pulses_remaining = total_pulses - encoder_count
-            pose_speeds = maybe_slow_down(
-                pose_speeds,
-                linear_speed,
-                pulses_remaining,
-                slow_down_thresh,
-                radius_of_curvature_mm,
-                coeff,
-                direction,
-            )
-            wheel_speeds_mmps = cut.compute_wheel_speeds(
-                pose_speeds.linear_mmps, pose_speeds.angular_rad
-            )
-            wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
-            print(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
-            one.move_rpm(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
-        else:
-            one.brake(100, 100)
-            break
+    
+    while (encoder_count < total_pulses):
+        left_encoder = abs(one.read_left_encoder())
+        right_encoder = abs(one.read_right_encoder())
+        encoder_count += (left_encoder + right_encoder) / 2.0
+        pulses_remaining = total_pulses - encoder_count
+        print ("pulses_remaining", pulses_remaining)
+        pose_speeds = maybe_slow_down(
+            pose_speeds,
+            linear_speed,
+            pulses_remaining,
+            slow_down_thresh,
+            radius_of_curvature_mm,
+            coeff,
+            direction,
+        )
+        wheel_speeds_mmps = cut.compute_wheel_speeds(
+            pose_speeds.linear_mmps, pose_speeds.angular_rad
+        )
+        wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
+        print(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
+        one.move_rpm(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
 
+    one.brake(100, 100)
+    
 
 def maybe_slow_down(
     pose_speeds,
@@ -338,7 +338,7 @@ def move_pattern():
     # move_straight_at_speed(800, 50, 300)
 
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
-    rotate_angle_deg_at_speed(90, 100, 0, 0)
+    rotate_angle_deg_at_speed(720, 100, 0, 0)
     # draw_circle(150)
     # draw_mickey_mouse()
     # draw_house()
