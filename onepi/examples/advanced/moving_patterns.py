@@ -78,6 +78,8 @@ def move_and_slow_down(
         encoder_count += (left_encoder + right_encoder) / 2.0
         pulses_remaining = total_pulses - encoder_count
         print("pulses_remaining", pulses_remaining)
+        if (pulses_remaining < 0):
+            break
         pose_speeds = maybe_slow_down(
             pose_speeds,
             linear_speed,
@@ -227,6 +229,17 @@ def draw_semi_circle(radius_mm, speed=50):
     rotate_angle_deg_at_speed(180, speed, radius_mm)
 
 
+def draw_rounded_polygon(side_mm, num_sides, speed=55):
+    """
+    describes a polygon shaped motion given the side length and the number of sides
+    """
+    angle_deg = 180 - ((num_sides - 2) * 180.0) / num_sides
+    print("angle_deg: ", angle_deg)
+    for i in range(num_sides):
+        move_straight_at_speed(side_mm, speed)
+        rotate_angle_deg_at_speed(90, speed, 80, 0)
+        
+
 def draw_polygon(side_mm, num_sides, speed=55):
     """
     describes a polygon shaped motion given the side length and the number of sides
@@ -339,7 +352,10 @@ def move_pattern():
     # move_straight_at_speed(800, 50, 300)
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
 
-    rotate_angle_deg_at_speed(720, 200, 0, 360)
+    # rotate_angle_deg_at_speed(720, 200, 0, 360)
+    rotate_angle_deg_at_speed(720, 200, 80, 0)
+    # draw_rounded_polygon(150, 4, 200)
+
     # draw_circle(150)
     # draw_mickey_mouse()
     # draw_house()
