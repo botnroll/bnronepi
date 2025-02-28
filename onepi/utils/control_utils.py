@@ -78,7 +78,7 @@ class ControlUtils:
     _pulses_per_rev = 2240
     _max_speed_mmps = 850
     _min_speed_mmps = 0
-    _spot_rotation_delta = 0 # correction for spot rotations only
+    _spot_rotation_delta = 0  # correction for spot rotations only
     _pi = 3.14159265
 
     def __init__(
@@ -209,7 +209,9 @@ class ControlUtils:
         computes number of pulses given the angle and radius of curvature curvature
         """
         abs_angle_rad = abs(angle_rad)
-        arc_length_mm = self.compute_arc_length(abs_angle_rad, radius_of_curvature_mm)
+        arc_length_mm = self.compute_arc_length(
+            abs_angle_rad, abs(radius_of_curvature_mm)
+        )
         revolutions = self.compute_revolutions_from_distance(arc_length_mm)
         num_pulses = self.compute_pulses_from_rev(revolutions)
         return num_pulses

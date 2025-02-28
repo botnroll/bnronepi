@@ -198,7 +198,7 @@ def test_compute_pulses_from_angle_and_curvature():
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 100) == 3571
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 0) == 2875
     assert cut.compute_pulses_from_angle_and_curvature(3.14, -100) == 3571
-    assert cut.compute_pulses_from_angle_and_curvature(-3.14, 100) == -3571
+    assert cut.compute_pulses_from_angle_and_curvature(-3.14, 100) == 3571
 
 
 def test_convert_to_mmps():
@@ -243,10 +243,10 @@ def test_compute_speeds_rpm():
     wheel_speeds_mmps = WheelSpeeds(100, 200)
     wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
     assert round(wheel_speeds_rpm.left, 1) == 30.3
-    assert round(wheel_speeds_rpm.right, 1) == 58.6
+    assert round(wheel_speeds_rpm.right, 1) == 60.6
     wheel_speeds_mmps = WheelSpeeds(-200, -100)
     wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
-    assert round(wheel_speeds_rpm.left, 1) == -58.6
+    assert round(wheel_speeds_rpm.left, 1) == -60.6
     assert round(wheel_speeds_rpm.right, 1) == -30.3
 
 
