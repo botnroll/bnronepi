@@ -119,6 +119,20 @@ def test_compute_distance_from_speed():
     assert round(cut.compute_distance_from_speed(-100, 1000), 1) == -100.0
     assert round(cut.compute_distance_from_speed(-500, 1000), 1) == -500.0
 
+
+def test_compute_revolutions_from_distance():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.compute_revolutions_from_distance(0.0), 2) == 0.0
+    assert round(cut.compute_revolutions_from_distance(99.0), 2) == 0.5
+    assert round(cut.compute_revolutions_from_distance(197.9), 2) == 1.0
+    assert round(cut.compute_revolutions_from_distance(9896.0), 2) == 50.0
+    assert round(cut.compute_revolutions_from_distance(19792.0), 2) == 100.0
+    assert round(cut.compute_revolutions_from_distance(593761.0), 2) == 3000.0
+    assert round(cut.compute_revolutions_from_distance(-1979.2), 2) == -10.0
+    assert round(cut.compute_revolutions_from_distance(-59376.1), 2) == -300.0
+    assert round(cut.compute_revolutions_from_distance(-593761.0), 2) == -3000.0
+
     # compute_revolutions_from_distance
 
     # compute_arc_length
