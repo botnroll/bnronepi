@@ -20,6 +20,7 @@ one = BnrOneAPlus()
 one.reset_left_encoder()
 one.reset_right_encoder()
 
+
 def print_value(text, value):
     print(text, str(round(value)))
 
@@ -62,7 +63,7 @@ def move_and_slow_down(
     @param slow_down_thresh number of ticks to when the robot should start reducing speed
     @param straight boolean specifying if this is a straight line or not
     """
-    
+
     coeff = 100.0 / TICKS_PER_REV
     linear_speed, angular_speed_rad = compute_angular_speed(
         speed, radius_of_curvature_mm, direction
@@ -73,11 +74,11 @@ def move_and_slow_down(
     dt = 0.1
     encoder_count = 0
     print("encoder_count: ", encoder_count, " total: ", total_pulses)
-    for i in range(30000): 
+    for i in range(30000):
         if encoder_count < total_pulses:
             left_encoder = abs(one.read_left_encoder())
             right_encoder = abs(one.read_right_encoder())
-            encoder_count += ((left_encoder + right_encoder) / 2.0)
+            encoder_count += (left_encoder + right_encoder) / 2.0
             pulses_remaining = total_pulses - encoder_count
             pose_speeds = maybe_slow_down(
                 pose_speeds,
@@ -88,7 +89,9 @@ def move_and_slow_down(
                 coeff,
                 direction,
             )
-            wheel_speeds_mmps = cut.compute_wheel_speeds(pose_speeds.linear_mmps, pose_speeds.angular_rad)
+            wheel_speeds_mmps = cut.compute_wheel_speeds(
+                pose_speeds.linear_mmps, pose_speeds.angular_rad
+            )
             wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
             print(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
             one.move_rpm(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
@@ -331,61 +334,43 @@ def draw_heart():
     move_straight_at_speed(230, speed)
 
 
-
 def move_pattern():
     # move_straight_at_speed(800, 50, 300)
-    
+
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
-    # rotate_angle_deg_at_speed(90, 50, 0, 0)
+    rotate_angle_deg_at_speed(90, 100, 0, 0)
     # draw_circle(150)
-    
     # draw_mickey_mouse()
-    
     # draw_house()
-    
     # draw_heart()
-    
     # draw_triangle(300)
-    
-    draw_polygon(200, 4, 100)
-    
+    # draw_polygon(200, 4, 100)
     # draw_polygon(300, 5)
-    
     # draw_polygon(300, 6)
-    
     # draw_polygon(300, 7)
-    
     # draw_polygon(220, 10)
-    
     # draw_fibonacci_spiral(50, 7)
-    
     # draw_archimedean_spiral(0.3, 360 * 3)
-    
     # draw_snake(800, 5, 50, 90)
-    
     # draw_snake(800, 12, 50, 30)
-    
     # draw_snake(800, 2, 50, 45, 0)
-    
     # draw_snake(800, 4, 50, 180, 0)
-    
     # draw_snake(1000, 14, 50, 60, 30)
-    
     # draw_snake(1200, 8, 50, 270, 45)
-    
     # draw_snake(400, 4, 50, 300, 90)
-    
     # draw_snake(400, 6, 50, 300, 120)
-    
     # draw_snake(600, 16, 50, 320, 155)
 
     time.sleep(5)
 
+
 def setup():
     move_pattern()
 
+
 def loop():
     pass
+
 
 def main():
 
