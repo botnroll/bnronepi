@@ -78,7 +78,7 @@ class ControlUtils:
     _pulses_per_rev = 2240
     _max_speed_mmps = 850
     _min_speed_mmps = 0
-    _spot_rotation_delta = -14.5  # For spot rotations only
+    _spot_rotation_delta = 0 # correction for spot rotations only
     _pi = 3.14159265
 
     def __init__(

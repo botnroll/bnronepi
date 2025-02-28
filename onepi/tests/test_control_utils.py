@@ -141,7 +141,7 @@ def test_compute_arc_length():
     assert round(cut.compute_arc_length(1, 100), 1) == 100.0
     assert round(cut.compute_arc_length(1, 200), 1) == 200.0
     assert round(cut.compute_arc_length(3.14, 100), 1) == 314.0
-    assert round(cut.compute_arc_length(3.14, 0), 1) == 0.0
+    assert round(cut.compute_arc_length(3.14, 0), 1) == 252.8
     assert round(cut.compute_arc_length(3.14, -100), 1) == -314.0
     assert round(cut.compute_arc_length(-3.14, 100), 1) == -314.0
 
