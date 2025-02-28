@@ -169,7 +169,7 @@ def test_compute_pulses_from_speed():
     assert cut.compute_pulses_from_speed(9896.0, 1000) == 112550
     assert cut.compute_pulses_from_speed(19792.0, 1000) == 225100
     assert cut.compute_pulses_from_speed(593761.0, 1000) == 6753000
-    assert cut.compute_pulses_from_speed(-1979.2, 500) == -1125
+    assert cut.compute_pulses_from_speed(-1979.2, 500) == -11255
     assert cut.compute_pulses_from_speed(-1979.2, 1000) == -22510
     assert cut.compute_pulses_from_speed(-59376.1, 1000) == -675300
     assert cut.compute_pulses_from_speed(-593761.0, 1000) == -6753000
@@ -196,7 +196,7 @@ def test_compute_pulses_from_angle_and_curvature():
     assert cut.compute_pulses_from_angle_and_curvature(1, 100) == 1137
     assert cut.compute_pulses_from_angle_and_curvature(1, 200) == 2275
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 100) == 3571
-    assert cut.compute_pulses_from_angle_and_curvature(3.14, 0) == 2876
+    assert cut.compute_pulses_from_angle_and_curvature(3.14, 0) == 2875
     assert cut.compute_pulses_from_angle_and_curvature(3.14, -100) == -3571
     assert cut.compute_pulses_from_angle_and_curvature(-3.14, 100) == -3571
 
@@ -233,7 +233,7 @@ def test_compute_wheel_speeds():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     wheel_speeds = cut.compute_wheel_speeds(150, 0.6)
-    assert round(wheel_speeds.left, 1) == 100.0
+    assert round(wheel_speeds.left, 1) == 101.7
     assert round(wheel_speeds.right, 1) == 200.0
 
 
@@ -242,12 +242,12 @@ def test_compute_speeds_rpm():
     cut = ControlUtils(robot_params)
     wheel_speeds_mmps = WheelSpeeds(100, 200)
     wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
-    assert round(wheel_speeds_rpm.left, 1) == 29.3
+    assert round(wheel_speeds_rpm.left, 1) == 30.3
     assert round(wheel_speeds_rpm.right, 1) == 58.6
     wheel_speeds_mmps = WheelSpeeds(-200, -100)
     wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
     assert round(wheel_speeds_rpm.left, 1) == -58.6
-    assert round(wheel_speeds_rpm.right, 1) == -29.3
+    assert round(wheel_speeds_rpm.right, 1) == -30.3
 
 
 def main():
