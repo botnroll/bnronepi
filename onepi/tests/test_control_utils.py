@@ -32,12 +32,14 @@ def test_cap_to_limits():
 
 
 def test_convert_range():
-    assert ControlUtils.convert_range(50, 0, 100, 0, 10) == 5
-    assert ControlUtils.convert_range(50, 0, 100, 10, 0) == 5
-    assert ControlUtils.convert_range(50, 0, 100, 0, -10) == -5
-    assert ControlUtils.convert_range(50, 0, 100, -10, 0) == -5
-    assert ControlUtils.convert_range(50, 0, 100, -10, 10) == 0
-    assert ControlUtils.convert_range(50, 0, 100, 10, -10) == 0
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert cut.convert_range(50, 0, 100, 0, 10) == 5
+    assert cut.convert_range(50, 0, 100, 10, 0) == 5
+    assert cut.convert_range(50, 0, 100, 0, -10) == -5
+    assert cut.convert_range(50, 0, 100, -10, 0) == -5
+    assert cut.convert_range(50, 0, 100, -10, 10) == 0
+    assert cut.convert_range(50, 0, 100, 10, -10) == 0
 
 
 def test_compute_rev_from_pulses():
@@ -51,11 +53,18 @@ def test_compute_rev_from_pulses():
 
 
 def test_compute_distance_from_rev():
-    assert ControlUtils.compute_distance_from_rev(0, 300) == 0
-    assert ControlUtils.compute_distance_from_rev(0.09, 300) == 1.41
-    assert ControlUtils.compute_distance_from_rev(0.44, 300) == 6.93
-    assert ControlUtils.compute_distance_from_rev(0.89, 300) == 13.86
-    assert ControlUtils.compute_distance_from_rev(1.00, 300) == 15.75
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.compute_distance_from_rev(0.0), 1) == 0.0
+    assert round(cut.compute_distance_from_rev(0.5), 1) == 99.0
+    assert round(cut.compute_distance_from_rev(1), 1) == 197.9
+    assert round(cut.compute_distance_from_rev(50), 1) == 9896.0
+    assert round(cut.compute_distance_from_rev(100), 1) == 19792.0
+    assert round(cut.compute_distance_from_rev(3000), 1) == 593761.0
+    assert round(cut.compute_distance_from_rev(-10), 1) == -1979.2
+    assert round(cut.compute_distance_from_rev(-300), 1) == -59376.1
+    assert round(cut.compute_distance_from_rev(-3000), 1) == -593761.0
+    
 
 
 def main():
