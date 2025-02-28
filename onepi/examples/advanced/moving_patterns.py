@@ -69,16 +69,15 @@ def move_and_slow_down(
 
     pose_speeds = PoseSpeeds(linear_speed, angular_speed_rad)
 
-    dt = 0.1
     encoder_count = 0
-    print("encoder_count: ", encoder_count, " total: ", total_pulses, " slow coeff: ", coeff)
+    # print("encoder_count: ", encoder_count, " total: ", total_pulses, " slow coeff: ", coeff)
 
     while encoder_count < total_pulses:
         left_encoder = abs(one.read_left_encoder())
         right_encoder = abs(one.read_right_encoder())
         encoder_count += (left_encoder + right_encoder) / 2.0
         pulses_remaining = total_pulses - encoder_count
-        # print("pulses_remaining", pulses_remaining)
+        print("pulses_remaining", pulses_remaining)
         pose_speeds = maybe_slow_down(
             pose_speeds,
             linear_speed,
@@ -98,7 +97,6 @@ def move_and_slow_down(
 
 
 def maybe_slow_down(
-
     pose_speeds,
     speed,
     pulses_remaining,
@@ -111,9 +109,9 @@ def maybe_slow_down(
     Note: At the moment slowing down doesn't work for rotations only
     """
     if (pulses_remaining < TICKS_LEFT_LOW_SPEED) and (
-        pulses_remaining < slow_down_thresh
-    ):  # slowing down
-        ratio = pulses_remaining / min(TICKS_LEFT_LOW_SPEED, slow_down_thresh)
+        pulses_remaining < slow_down_thresh) and (
+        pulses_remaining > 0):
+        ratio = pulses_remaining / TICKS_LEFT_LOW_SPEED
         slow_speed = speed * ratio
         slow_speed = max(MIN_SPEED_MMPS, slow_speed)  # cap to min
         print("ratio: ", ratio, " speed ", slow_speed)
@@ -234,6 +232,7 @@ def draw_polygon(side_mm, num_sides, speed=55):
     describes a polygon shaped motion given the side length and the number of sides
     """
     angle_deg = 180 - ((num_sides - 2) * 180.0) / num_sides
+    print("angle_deg: ", angle_deg)
     for i in range(num_sides):
         move_straight_at_speed(side_mm, speed)
         rotate_angle_deg_at_speed(angle_deg, speed)
@@ -338,15 +337,16 @@ def draw_heart():
 
 def move_pattern():
     # move_straight_at_speed(800, 50, 300)
-
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
+
     rotate_angle_deg_at_speed(720, 200, 0, 360)
     # draw_circle(150)
     # draw_mickey_mouse()
     # draw_house()
     # draw_heart()
     # draw_triangle(300)
-    # draw_polygon(200, 4, 100)
+
+    # draw_polygon(200, 4, -200)
     # draw_polygon(300, 5)
     # draw_polygon(300, 6)
     # draw_polygon(300, 7)
