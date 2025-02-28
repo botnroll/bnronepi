@@ -567,7 +567,7 @@ class BnrOneAPlus:
         """
         value = self.__request_word(self._COMMAND_ENCL)
         if value >= 0x8000:
-            value -= 0x10000
+            value -= 0xffff
         return value
 
     def read_right_encoder(self):
@@ -580,7 +580,7 @@ class BnrOneAPlus:
         """
         value = self.__request_word(self._COMMAND_ENCR)
         if value >= 0x8000:
-            value -= 0x10000
+            value -= 0xffff
         return value
 
     def read_left_encoder_increment(self):

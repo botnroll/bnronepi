@@ -5,10 +5,10 @@ class RobotParams:
 
     def __init__(
         self,
-        max_speed_rpm_in=300,
-        axis_length_mm_in=160.5,
-        wheel_diameter_mm_in=63,
-        pulses_per_rev_in=2240, #2251 in theory, 2240 in practice
+        max_speed_rpm_in=300,    #
+        axis_length_mm_in=165,   # increase to move for longer
+        wheel_diameter_mm_in=63, # decrease to move for longer
+        pulses_per_rev_in=2251,  # increase to move for longer 2251 in theory, 2240 in practice
     ):
         """
         Defines the robot parameters

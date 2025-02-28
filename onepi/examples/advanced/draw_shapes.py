@@ -1,12 +1,16 @@
 # @author botnroll.com
 
-import math
 import time
 import signal
 from onepi.utils.shape_generator import ShapeGenerator
 from onepi.one import BnrOneAPlus
 
-SLIP_FACTOR = 0.98  # Depends on the surface
+# Depends on the surface
+# wood: 1.0
+# vynil: 0.985
+# carpet: 0.985
+
+SLIP_FACTOR = 0.985
 
 one = BnrOneAPlus()
 one_draw = ShapeGenerator(one, SLIP_FACTOR)
@@ -60,8 +64,8 @@ def draw_shapes():
     # one_draw.move_straight_at_speed(800, 50, 300)
     # one_draw.rotate_angle_deg_at_speed(360, 50, 100, 60)
 
-    # one_draw.rotate_angle_deg_at_speed(720, 200, 0, 360)
-    one_draw.rotate_angle_deg_at_speed(720, 200, 80, 0)
+    one_draw.rotate_angle_deg_at_speed(720, 200, 0, 360) 
+    # one_draw.rotate_angle_deg_at_speed(720, 200, 0, 0)
 
     # one_draw.rounded_polygon(150, 4, 200)
     # one_draw.circle(150)
@@ -86,14 +90,13 @@ def draw_shapes():
     # one_draw.snake(400, 6, 50, 300, 120)
     # one_draw.snake(600, 16, 50, 320, 155)
 
-    time.sleep(5)
-
 
 def setup():
     print("Get ready")
     time.sleep(3)
     print("Go")
     draw_shapes()
+    exit(0)
 
 
 def loop():

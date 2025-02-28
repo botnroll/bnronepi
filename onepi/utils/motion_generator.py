@@ -115,8 +115,8 @@ class MotionGenerator:
             left_encoder = abs(self._one.read_left_encoder())
             right_encoder = abs(self._one.read_right_encoder())
             encoder_count += (left_encoder + right_encoder) / 2.0
-            pulses_remaining = total_pulses - encoder_count
-            print("pulses_remaining", pulses_remaining)
+            pulses_remaining = round(total_pulses - encoder_count, 0)
+            print("pulses_remaining", pulses_remaining, "left_enc:", left_encoder, "right_enc:", right_encoder)
             if pulses_remaining < 0:
                 break
             pose_speeds = self._maybe_slow_down(
@@ -151,6 +151,9 @@ class MotionGenerator:
         self._check_wheel_speed_limit(wheel_speeds.left)
         self._check_wheel_speed_limit(wheel_speeds.right)
 
+    def _apply_slip(self, value):
+        return round(value / self._slip_factor, 0)
+
     def move_straight_at_speed(self, distance, speed=50, slow_down_distance=0):
         """
         moves the robot for the given distance at the given speed.
@@ -160,7 +163,7 @@ class MotionGenerator:
         abs_distance = abs(distance)
         abs_slow_down_distance = abs(slow_down_distance)
         total_pulses = self._cut.compute_pulses_from_distance(abs_distance)
-        total_pulses /= self._slip_factor
+        total_pulses = self._apply_slip(total_pulses)
         slow_down_pulses = self._cut.compute_pulses_from_distance(
             abs_slow_down_distance
         )
@@ -181,7 +184,7 @@ class MotionGenerator:
         total_pulses = self._cut.compute_pulses_from_angle_and_curvature(
             math.radians(angle_deg), radius_of_curvature_mm
         )
-        total_pulses /= self._slip_factor
+        total_pulses = self._apply_slip(total_pulses)
         print("total_pulses: ", total_pulses)
         slow_down_pulses_thresh = self._cut.compute_pulses_from_angle_and_curvature(
             math.radians(slow_down_thresh_deg), radius_of_curvature_mm
