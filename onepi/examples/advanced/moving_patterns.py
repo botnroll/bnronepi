@@ -10,6 +10,7 @@ from onepi.one import BnrOneAPlus
 PI = 3.14159265
 TICKS_LEFT_LOW_SPEED = 2000
 STRAIGHT_MOTION = 32767
+MIN_SPEED_MMPS = 100
 
 cut = ControlUtils()
 AXIS_LENGTH_MM = cut.get_axis_length_mm()
@@ -71,13 +72,13 @@ def move_and_slow_down(
     dt = 0.1
     encoder_count = 0
     print("encoder_count: ", encoder_count, " total: ", total_pulses)
-    
-    while (encoder_count < total_pulses):
+
+    while encoder_count < total_pulses:
         left_encoder = abs(one.read_left_encoder())
         right_encoder = abs(one.read_right_encoder())
         encoder_count += (left_encoder + right_encoder) / 2.0
         pulses_remaining = total_pulses - encoder_count
-        print ("pulses_remaining", pulses_remaining)
+        print("pulses_remaining", pulses_remaining)
         pose_speeds = maybe_slow_down(
             pose_speeds,
             linear_speed,
@@ -94,7 +95,7 @@ def move_and_slow_down(
         one.move_rpm(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
 
     one.brake(100, 100)
-    
+
 
 def maybe_slow_down(
     pose_speeds,
@@ -110,7 +111,7 @@ def maybe_slow_down(
     ):  # slowing down
         percentage = coeff * pulses_remaining * pulses_remaining
         slow_speed = (speed * percentage) / 100
-        slow_speed = max(10, slow_speed)  # cap to min
+        slow_speed = max(MIN_SPEED_MMPS, slow_speed)  # cap to min
         angular_speed_rad = 0
         linear_speed, angular_speed_rad = compute_angular_speed(
             slow_speed, radius_of_curvature_mm, direction
@@ -334,7 +335,7 @@ def move_pattern():
     # move_straight_at_speed(800, 50, 300)
 
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
-    rotate_angle_deg_at_speed(720, 100, 0, 0)
+    rotate_angle_deg_at_speed(720, 500, 0, 0)
     # draw_circle(150)
     # draw_mickey_mouse()
     # draw_house()
