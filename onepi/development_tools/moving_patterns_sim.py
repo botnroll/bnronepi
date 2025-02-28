@@ -2,23 +2,23 @@
 
 import math
 import time
-import signal
 from onepi.utils.control_utils import ControlUtils
 from onepi.utils.control_utils import PoseSpeeds
 from onepi.utils.control_utils import Pose
-from onepi.one import BnrOneAPlus
+from onepi.utils.stage import Stage
+
 
 PI = 3.14159
 AXIS_LENGTH_MM = 162
-TICKS_PER_REV = 2240
+TICKS_PER_REV = 80
 WHEEL_DIAMETER = 63
 WHEEL_RADIUS_MM = WHEEL_DIAMETER / 2.0
 STRAIGHT_MOTION = 32767
 
+sim_time = 0
+stage = Stage()
+robot_pose = Pose(0, 0, 0)
 cut = ControlUtils()
-one = BnrOneAPlus()
-one.reset_left_encoder()
-one.reset_right_encoder()
 
 def print_value(text, value):
     print(text, str(round(value)))
@@ -62,8 +62,10 @@ def move_and_slow_down(
     @param slow_down_thresh number of ticks to when the robot should start reducing speed
     @param straight boolean specifying if this is a straight line or not
     """
-    
-    coeff = 100.0 / TICKS_PER_REV
+    global sim_time
+    global stage
+    global robot_pose
+    quadratic_coeff = 100.0 / (TICKS_PER_REV * TICKS_PER_REV)
     linear_speed, angular_speed_rad = compute_angular_speed(
         speed, radius_of_curvature_mm, direction
     )
@@ -72,12 +74,10 @@ def move_and_slow_down(
 
     dt = 0.1
     encoder_count = 0
-    print("encoder_count: ", encoder_count, " total: ", total_pulses)
-    for i in range(30000): 
+
+    for i in range(1000):
         if encoder_count < total_pulses:
-            left_encoder = abs(one.read_left_encoder())
-            right_encoder = abs(one.read_right_encoder())
-            encoder_count += ((left_encoder + right_encoder) / 2.0)
+            encoder_count += read_encoder(pose_speeds, radius_of_curvature_mm, dt)
             pulses_remaining = total_pulses - encoder_count
             pose_speeds = maybe_slow_down(
                 pose_speeds,
@@ -85,15 +85,14 @@ def move_and_slow_down(
                 pulses_remaining,
                 slow_down_thresh,
                 radius_of_curvature_mm,
-                coeff,
+                quadratic_coeff,
                 direction,
             )
-            wheel_speeds_mmps = cut.compute_wheel_speeds(pose_speeds.linear_mmps, pose_speeds.angular_rad)
-            wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
-            print(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
-            one.move_rpm(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
+
+            robot_pose = update_pose(robot_pose, pose_speeds, dt)
+            stage.update_pose(robot_pose)
+            sim_time += dt
         else:
-            one.brake(100, 100)
             break
 
 
@@ -103,13 +102,13 @@ def maybe_slow_down(
     pulses_remaining,
     slow_down_thresh,
     radius_of_curvature_mm,
-    coeff,
+    quadratic_coeff,
     direction,
 ):
     if (pulses_remaining < TICKS_PER_REV) and (
         pulses_remaining < slow_down_thresh
     ):  # slowing down
-        percentage = coeff * pulses_remaining * pulses_remaining
+        percentage = quadratic_coeff * pulses_remaining * pulses_remaining
         slow_speed = (speed * percentage) / 100
         slow_speed = max(10, slow_speed)  # cap to min
         angular_speed_rad = 0
@@ -163,6 +162,19 @@ def check_speed_limits(pose_speeds: PoseSpeeds):
     check_wheel_speed_limit(wheel_speeds.right)
 
 
+def update_pose(robot_pose: Pose, pose_speeds: PoseSpeeds, dt) -> Pose:
+    check_speed_limits(pose_speeds)
+    x_new = (
+        robot_pose.x_mm + pose_speeds.linear_mmps * math.cos(robot_pose.theta_rad) * dt
+    )
+    y_new = (
+        robot_pose.y_mm + pose_speeds.linear_mmps * math.sin(robot_pose.theta_rad) * dt
+    )
+    theta_new = robot_pose.theta_rad + pose_speeds.angular_rad * dt
+    new_pose = Pose(x_new, y_new, theta_new)
+    return new_pose
+
+
 def move_straight_at_speed(distance, speed=50, slow_down_distance=0):
     """
     moves the robot for the given distance at the given speed.
@@ -174,6 +186,26 @@ def move_straight_at_speed(distance, speed=50, slow_down_distance=0):
     total_pulses = cut.compute_pulses_from_distance(abs_distance)
     slow_down_pulses = cut.compute_pulses_from_distance(abs_slow_down_distance)
     move_and_slow_down(total_pulses, speed, 1, STRAIGHT_MOTION, slow_down_pulses)
+
+
+def read_encoder(pose_speeds: PoseSpeeds, radius_of_curvature_mm, dt):
+    if radius_of_curvature_mm == STRAIGHT_MOTION:
+        distance = abs(pose_speeds.linear_mmps) * dt
+        return cut.compute_pulses_from_distance(distance)
+    else:
+        angle_rad = abs(pose_speeds.angular_rad) * dt
+        return cut.compute_pulses_from_angle_and_curvature(
+            angle_rad, radius_of_curvature_mm
+        )
+
+
+def print_pose():
+    print(
+        "robot_pose: ",
+        round(robot_pose.x_mm),
+        round(robot_pose.y_mm),
+        round(rad_to_deg(robot_pose.theta_rad)),
+    )
 
 
 def first_figure():
@@ -331,75 +363,68 @@ def draw_heart():
     move_straight_at_speed(230, speed)
 
 
+def reset(pose):
+    global stage
+    global robot_pose
+    time.sleep(2)
+    robot_pose = pose
+    stage.clear()
+    stage.update_pose(robot_pose)
 
-def move_pattern():
+
+def main():
+    global stage
+    global robot_pose
+    reset(Pose(-400, 0, 0))
     # move_straight_at_speed(800, 50, 300)
-    
+    # reset(Pose(0, 0, 0))
     # rotate_angle_deg_at_speed(360, 50, 100, 60)
+    # reset(Pose(0, 0, 0))
     # rotate_angle_deg_at_speed(90, 50, 0, 0)
+    # reset(Pose(0, 0, 0))
     # draw_circle(150)
-    
+    # reset(Pose(0, 0, 0))
     # draw_mickey_mouse()
-    
+    # reset(Pose(0, 0, 0))
     # draw_house()
-    
+    # reset(Pose(0, 0, 0))
     # draw_heart()
-    
+    # reset(Pose(0, 0, 0))
     # draw_triangle(300)
-    
-    draw_polygon(200, 4, 100)
-    
+    reset(Pose(0, 0, 0))
+    draw_polygon(300, 4)
+    # reset(Pose(0, 0, 0))
     # draw_polygon(300, 5)
-    
+    # reset(Pose(0, 0, 0))
     # draw_polygon(300, 6)
-    
+    # reset(Pose(0, 0, 0))
     # draw_polygon(300, 7)
-    
+    # reset(Pose(0, 0, 0))
     # draw_polygon(220, 10)
-    
+    # reset(Pose(0, 0, 0))
     # draw_fibonacci_spiral(50, 7)
-    
+    # reset(Pose(0, 0, 0))
     # draw_archimedean_spiral(0.3, 360 * 3)
-    
+    # reset(Pose(-400, 0, 0))
     # draw_snake(800, 5, 50, 90)
-    
+    # reset(Pose(-400, 0, 0))
     # draw_snake(800, 12, 50, 30)
-    
+    # reset(Pose(-400, 0, 0))
     # draw_snake(800, 2, 50, 45, 0)
-    
+    # reset(Pose(-400, 0, 0))
     # draw_snake(800, 4, 50, 180, 0)
-    
+    # reset(Pose(0, 0, 0))
     # draw_snake(1000, 14, 50, 60, 30)
-    
+    # reset(Pose(0, 0, 0))
     # draw_snake(1200, 8, 50, 270, 45)
-    
+    # reset(Pose(0, 0, 0))
     # draw_snake(400, 4, 50, 300, 90)
-    
+    # reset(Pose(0, 0, 0))
     # draw_snake(400, 6, 50, 300, 120)
-    
+    # reset(Pose(0, 0, 0))
     # draw_snake(600, 16, 50, 320, 155)
 
     time.sleep(5)
-
-def setup():
-    move_pattern()
-
-def loop():
-    pass
-
-def main():
-
-    # function to stop the robot on exiting with CTRL+C
-    def stop_and_exit(sig, frame):
-        one.stop()
-        time.sleep(0.1)
-        exit(0)
-
-    signal.signal(signal.SIGINT, stop_and_exit)
-
-    setup()
-    while True:
-        loop()
 
 
 if __name__ == "__main__":
