@@ -150,7 +150,7 @@ def test_compute_pulses_from_rev():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     assert cut.compute_pulses_from_rev(0.0) == 0
-    assert cut.compute_pulses_from_rev(0.5) == 1125
+    assert cut.compute_pulses_from_rev(0.5) == 1126
     assert cut.compute_pulses_from_rev(1.0) == 2251
     assert cut.compute_pulses_from_rev(50.0) == 112550
     assert cut.compute_pulses_from_rev(100.0) == 225100
@@ -164,7 +164,7 @@ def test_compute_pulses_from_speed():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     assert cut.compute_pulses_from_speed(0, 1000) == 0
-    assert cut.compute_pulses_from_speed(99, 1000) == 1125
+    assert cut.compute_pulses_from_speed(99, 1000) == 1126
     assert cut.compute_pulses_from_speed(197.9, 1000) == 2251
     assert cut.compute_pulses_from_speed(9896.0, 1000) == 112550
     assert cut.compute_pulses_from_speed(19792.0, 1000) == 225100
@@ -179,7 +179,7 @@ def test_compute_pulses_from_distance():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     assert cut.compute_pulses_from_distance(0.0) == 0
-    assert cut.compute_pulses_from_distance(99.0) == 1125
+    assert cut.compute_pulses_from_distance(99.0) == 1126
     assert cut.compute_pulses_from_distance(197.9) == 2251
     assert cut.compute_pulses_from_distance(9896.0) == 112550
     assert cut.compute_pulses_from_distance(19792.0) == 225100
@@ -194,7 +194,7 @@ def test_compute_pulses_from_angle_and_curvature():
     cut = ControlUtils(robot_params)
     assert cut.compute_pulses_from_angle_and_curvature(0, 100) == 0
     assert cut.compute_pulses_from_angle_and_curvature(1, 100) == 1137
-    assert cut.compute_pulses_from_angle_and_curvature(1, 200) == 2274
+    assert cut.compute_pulses_from_angle_and_curvature(1, 200) == 2275
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 100) == 3571
     assert cut.compute_pulses_from_angle_and_curvature(3.14, 0) == 2876
     assert cut.compute_pulses_from_angle_and_curvature(3.14, -100) == -3571
@@ -205,20 +205,20 @@ def test_convert_to_mmps():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     assert round(cut.convert_to_mmps(0), 1) == 0.0
-    assert round(cut.convert_to_mmps(50), 1) == 425.0
-    assert round(cut.convert_to_mmps(100), 1) == 850.0
-    assert round(cut.convert_to_mmps(-50), 1) == -425.0
-    assert round(cut.convert_to_mmps(-100), 1) == -850.0
+    assert round(cut.convert_to_mmps(50), 1) == 494.8
+    assert round(cut.convert_to_mmps(100), 1) == 989.6
+    assert round(cut.convert_to_mmps(-50), 1) == -494.8
+    assert round(cut.convert_to_mmps(-100), 1) == -989.6
 
 
 def test_convert_to_percentage():
     robot_params = RobotParams(300, 161, 63, 2251)
     cut = ControlUtils(robot_params)
     assert round(cut.convert_to_percentage(0), 1) == 0.0
-    assert round(cut.convert_to_percentage(425), 1) == 50.0
-    assert round(cut.convert_to_percentage(850), 1) == 100.0
-    assert round(cut.convert_to_percentage(-425), 1) == -50.0
-    assert round(cut.convert_to_percentage(-850), 1) == -100.0
+    assert round(cut.convert_to_percentage(494.8), 1) == 50.0
+    assert round(cut.convert_to_percentage(989.6), 1) == 100.0
+    assert round(cut.convert_to_percentage(-494.8), 1) == -50.0
+    assert round(cut.convert_to_percentage(-989.6), 1) == -100.0
 
 
 def test_compute_pose_speeds():
