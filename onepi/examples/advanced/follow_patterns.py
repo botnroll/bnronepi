@@ -7,6 +7,8 @@ from onepi.utils.control_utils import ControlUtils
 from onepi.utils.control_utils import PoseSpeeds
 from onepi.one import BnrOneAPlus
 
+SLIP_FACTOR = 0.98  # Depends on the surface
+
 PI = 3.14159265
 TICKS_LEFT_LOW_SPEED = 4000
 STRAIGHT_MOTION = 32767
@@ -78,7 +80,7 @@ def move_and_slow_down(
         encoder_count += (left_encoder + right_encoder) / 2.0
         pulses_remaining = total_pulses - encoder_count
         print("pulses_remaining", pulses_remaining)
-        if (pulses_remaining < 0):
+        if pulses_remaining < 0:
             break
         pose_speeds = maybe_slow_down(
             pose_speeds,
@@ -110,9 +112,11 @@ def maybe_slow_down(
     """
     Note: At the moment slowing down doesn't work for rotations only
     """
-    if (pulses_remaining < TICKS_LEFT_LOW_SPEED) and (
-        pulses_remaining < slow_down_thresh) and (
-        pulses_remaining > 0):
+    if (
+        (pulses_remaining < TICKS_LEFT_LOW_SPEED)
+        and (pulses_remaining < slow_down_thresh)
+        and (pulses_remaining > 0)
+    ):
         ratio = pulses_remaining / TICKS_LEFT_LOW_SPEED
         slow_speed = speed * ratio
         slow_speed = max(MIN_SPEED_MMPS, slow_speed)  # cap to min
@@ -238,7 +242,7 @@ def draw_rounded_polygon(side_mm, num_sides, speed=55):
     for i in range(num_sides):
         move_straight_at_speed(side_mm, speed)
         rotate_angle_deg_at_speed(90, speed, 80, 0)
-        
+
 
 def draw_polygon(side_mm, num_sides, speed=55):
     """
