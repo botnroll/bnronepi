@@ -10,7 +10,7 @@ from onepi.one import BnrOneAPlus
 # vynil: 0.985
 # carpet: 0.985
 
-SLIP_FACTOR = 0.985
+SLIP_FACTOR = 0.920
 
 one = BnrOneAPlus()
 one_draw = ShapeGenerator(one, SLIP_FACTOR)
@@ -64,16 +64,20 @@ def draw_shapes():
     # one_draw.move_straight_at_speed(800, 50, 300)
     # one_draw.rotate_angle_deg_at_speed(360, 50, 100, 60)
 
-    one_draw.rotate_angle_deg_at_speed(720, 200, 0, 360) 
-    # one_draw.rotate_angle_deg_at_speed(720, 200, 0, 0)
+    # one_draw.rotate_angle_deg_at_speed(720, 200, 0, 360) 
+    # one_draw.rotate_angle_deg_at_speed(720, 200, 80, 0)
 
     # one_draw.rounded_polygon(150, 4, 200)
+    one_draw.square(500, 150) # slip 0.92
+    
+    #one_draw.polygon(200, 4, 200)
+
     # one_draw.circle(150)
     # one_draw.mickey_mouse()
     # one_draw.house()
     # one_draw.heart()
     # one_draw.triangle(300)
-    # one_draw.polygon(200, 4, -200)
+    
     # one_draw.polygon(300, 5)
     # one_draw.polygon(300, 6)
     # one_draw.polygon(300, 7)
