@@ -5,17 +5,14 @@ import time
 import signal
 from onepi.utils.control_utils import ControlUtils
 from onepi.utils.control_utils import PoseSpeeds
-from onepi.utils.control_utils import Pose
 from onepi.one import BnrOneAPlus
 
-PI = 3.14159
-AXIS_LENGTH_MM = 161
-TICKS_PER_REV = 2240
-WHEEL_DIAMETER = 63
-WHEEL_RADIUS_MM = WHEEL_DIAMETER / 2.0
+PI = 3.14159265
+TICKS_LEFT_LOW_SPEED = 2000
 STRAIGHT_MOTION = 32767
 
 cut = ControlUtils()
+AXIS_LENGTH_MM = cut.get_axis_length_mm()
 one = BnrOneAPlus()
 one.reset_left_encoder()
 one.reset_right_encoder()
@@ -48,12 +45,12 @@ def move_and_slow_down(
     speed=50,
     direction=1,
     radius_of_curvature_mm=0,
-    slow_down_thresh=TICKS_PER_REV,
+    slow_down_thresh=TICKS_LEFT_LOW_SPEED,
 ):
     """
     @brief Moves and slows down when pulses remaining are less than slow_down_thresh
     If slow_down_thresh is set to zero (or negative number) it does not slow down.
-    By default it starts slowing down when a full rotation (TICKS_PER_REV) remains.
+    By default it starts slowing down when a full rotation (TICKS_LEFT_LOW_SPEED) remains.
     The slow down is a quadratic function of the form y = a * x^2
 
     @param total_pulses number of pulses necessary from the encoders (average) to complete the manoeuvre
@@ -64,7 +61,7 @@ def move_and_slow_down(
     @param straight boolean specifying if this is a straight line or not
     """
 
-    coeff = 100.0 / TICKS_PER_REV
+    coeff = 100.0 / TICKS_LEFT_LOW_SPEED
     linear_speed, angular_speed_rad = compute_angular_speed(
         speed, radius_of_curvature_mm, direction
     )
@@ -94,7 +91,6 @@ def move_and_slow_down(
             pose_speeds.linear_mmps, pose_speeds.angular_rad
         )
         wheel_speeds_rpm = cut.compute_speeds_rpm(wheel_speeds_mmps)
-        print(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
         one.move_rpm(wheel_speeds_rpm.left, wheel_speeds_rpm.right)
 
     one.brake(100, 100)
@@ -109,7 +105,7 @@ def maybe_slow_down(
     coeff,
     direction,
 ):
-    if (pulses_remaining < TICKS_PER_REV) and (
+    if (pulses_remaining < TICKS_LEFT_LOW_SPEED) and (
         pulses_remaining < slow_down_thresh
     ):  # slowing down
         percentage = coeff * pulses_remaining * pulses_remaining

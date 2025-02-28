@@ -97,6 +97,11 @@ class ControlUtils:
         )
         self._min_speed_mmps = min_speed_mmps
 
+
+    def get_axis_length_mm(self):
+        return self._axis_length_mm
+
+
     def convert_range(self, x_value, x_min, x_max, y_min, y_max):
         """
         Converts a value x given in the range [x_min : x_max]
