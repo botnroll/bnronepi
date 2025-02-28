@@ -202,7 +202,9 @@ class ControlUtils:
         num_pulses = self.compute_pulses_from_rev(revolutions)
         return num_pulses
 
-    def compute_pulses_from_angle_and_curvature(self, angle_rad, radius_of_curvature_mm=0):
+    def compute_pulses_from_angle_and_curvature(
+        self, angle_rad, radius_of_curvature_mm=0
+    ):
         """
         computes number of pulses given the angle and radius of curvature curvature
         """
@@ -211,16 +213,6 @@ class ControlUtils:
         revolutions = self.compute_revolutions_from_distance(arc_length_mm)
         num_pulses = self.compute_pulses_from_rev(revolutions)
         return num_pulses
-
-    def maybe_change_sign(self, abs_value, ref_value, previous_ref_value):
-        """
-        sets the sign of the output value to match the sign of refValue
-        """
-        if (ref_value * previous_ref_value) < 0:
-            return 0  # return 0 as there was a change of sign
-        if ref_value < 0:
-            return -abs_value
-        return abs_value
 
     def convert_to_mmps(self, desired_speed_percentage):
         """
@@ -281,5 +273,7 @@ class ControlUtils:
         computes the speeds in rpm given the speeds in mm/s
         """
         left_rpm = (wheel_speeds_mmps.left * 60) / (self._wheel_diameter_mm * self._pi)
-        right_rpm = (wheel_speeds_mmps.right * 60) / (self._wheel_diameter_mm * self._pi)  
+        right_rpm = (wheel_speeds_mmps.right * 60) / (
+            self._wheel_diameter_mm * self._pi
+        )
         return WheelSpeeds(left_rpm, right_rpm)

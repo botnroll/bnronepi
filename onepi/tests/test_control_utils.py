@@ -64,7 +64,48 @@ def test_compute_distance_from_rev():
     assert round(cut.compute_distance_from_rev(-10), 1) == -1979.2
     assert round(cut.compute_distance_from_rev(-300), 1) == -59376.1
     assert round(cut.compute_distance_from_rev(-3000), 1) == -593761.0
-    
+
+
+def test_compute_distance_from_pulses():
+    robot_params = RobotParams(300, 161, 63, 2251)
+    cut = ControlUtils(robot_params)
+    assert round(cut.compute_distance_from_pulses(0), 1) == 0.0
+    assert round(cut.compute_distance_from_pulses(1125), 1) == 99.0
+    assert round(cut.compute_distance_from_pulses(2251), 1) == 197.9
+    assert round(cut.compute_distance_from_pulses(112550), 1) == 9896.0
+    assert round(cut.compute_distance_from_pulses(225100), 1) == 19792.0
+    assert round(cut.compute_distance_from_pulses(6753000), 1) == 593761.0
+    assert round(cut.compute_distance_from_pulses(-22510), 1) == -1979.2
+    assert round(cut.compute_distance_from_pulses(-675300), 1) == -59376.1
+    assert round(cut.compute_distance_from_pulses(-6753000), 1) == -593761.0
+
+    # compute_speed_from_distance
+
+    # compute_speed_from_pulses
+
+    # compute_distance_from_speed
+
+    # compute_revolutions_from_distance
+
+    # compute_arc_length
+
+    # compute_pulses_from_rev
+
+    # compute_pulses_from_speed
+
+    # compute_pulses_from_distance
+
+    # compute_pulses_from_angle_and_curvature
+
+    # convert_to_mmps
+
+    # convert_to_percentage
+
+    # compute_pose_speeds
+
+    # compute_wheel_speeds
+
+    # compute_speeds_rpm
 
 
 def main():
