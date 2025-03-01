@@ -1,4 +1,19 @@
+# Python library to interface with Bot'n Roll One A+ (for Raspberry Pi 5)
 
+Welcome to the Bot'n Roll One A+ Pyhton library! 
+This library enables seamless control of the Bot'n Roll One A+, allowing you to quickly program and interact with your Bot'n Roll One A+.<br>
+
+## About
+The Bot'n Roll One A+ is a versatile and customizable robot designed for students, hobbyists, and educators. With its robust hardware and software capabilities, it is an excellent tool for learning and experimenting with robotics and Arduino programming.
+
+![Bot'n Roll One A+](https://botnroll.com/one-a-plus/BotnrollOneAPlus.png)
+
+## Features
+- Easy integration with Arduino® IDE, Raspberry Pi® 5, Open Roberta® Lab, Matlab Simulink® and others.
+- Provides functions to control motors, sensors, and other peripherals.
+- Full documentation and support provided.
+
+## Installation
 # bnronepi
 *Python library to interface with Bot'n Roll One A+.*
 
