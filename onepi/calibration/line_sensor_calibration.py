@@ -384,7 +384,7 @@ def setup():
     Setup methods, execute once at the start
     """
     one.stop()  # stop motors
-    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.set_min_battery_V(10.5)  # safety voltage for discharging the battery
     time.sleep(1)
     do_full_calibration = full_calibration()
     calibrate_line(do_full_calibration)  # calibrate line sensor
