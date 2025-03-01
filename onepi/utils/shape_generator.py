@@ -24,7 +24,7 @@ class ShapeGenerator:
             angle_deg, speed, radius_of_curvature_mm, slow_down_thresh_deg
         )
 
-    def move_straight_at_speed(self, distance, speed=50, slow_down_distance=0):
+    def move_straight_at_speed(self, distance, speed=200, slow_down_distance=0):
         """
         wrapper for move_straight_at_speed in motion_generator
         """
@@ -36,7 +36,7 @@ class ShapeGenerator:
         """
         return self._mg.rotate_angle_deg_at_speed(90, speed, 0, slow_down_thresh_deg)
 
-    def polygon(self, side_mm, num_sides, speed=55):
+    def polygon(self, side_mm, num_sides, speed=200):
         """
         describes a polygon shaped motion given the side length and the number of sides
         """
@@ -46,7 +46,7 @@ class ShapeGenerator:
             self._mg.move_straight_at_speed(side_mm, speed)
             self._mg.rotate_angle_deg_at_speed(angle_deg, speed)
 
-    def rounded_polygon(self, side_mm, num_sides, speed=55):
+    def rounded_polygon(self, side_mm, num_sides, speed=200):
         """
         describes a polygon shaped motion given the side length and the number of sides
         """
@@ -56,31 +56,31 @@ class ShapeGenerator:
             self._mg.move_straight_at_speed(side_mm, speed)
             self._mg.rotate_angle_deg_at_speed(90, speed, 80, 0)
 
-    def triangle(self, side_mm, speed=50):
+    def triangle(self, side_mm, speed=200):
         """
         moves by decribing a triangular motion with side given as the input parameter
         """
         self.polygon(side_mm, 3, speed)
 
-    def square(self, side_mm, speed=60):
+    def square(self, side_mm, speed=150):
         """
         describes a quared motion with side given as input parameter
         """
         self.polygon(side_mm, 4, speed)
 
-    def circle(self, radius_mm, speed=60):
+    def circle(self, radius_mm, speed=200):
         """
         describes a circular motion with radius given as input parameter
         """
         self._mg.rotate_angle_deg_at_speed(360, speed, radius_mm)
 
-    def semi_circle(self, radius_mm, speed=50):
+    def semi_circle(self, radius_mm, speed=200):
         """
         describes a semi-circle motion with radius given as input parameter
         """
         self._mg.rotate_angle_deg_at_speed(180, speed, radius_mm)
 
-    def _compute_fibonacci_sequence(number_of_elements):
+    def _compute_fibonacci_sequence(self, number_of_elements):
         """
         computes a fibonacci sequence with a predetermined number of elements
         Note: number_of_elements should be more than 1
@@ -93,7 +93,7 @@ class ShapeGenerator:
                 )
         return fibonacci_sequence
 
-    def fibonacci_spiral(self, seed_radius, num_segments, speed=50):
+    def fibonacci_spiral(self, seed_radius, num_segments, speed=200):
         """
         The fibonacci spiral changes the radius of curvature every 90 degrees
         according to the fibonacci sequence:
@@ -107,7 +107,7 @@ class ShapeGenerator:
             radius_of_curvature = numbers[i] * seed_radius
             self._mg.rotate_angle_deg_at_speed(90, speed, radius_of_curvature)
 
-    def archimedean_spiral(self, spiral_factor, total_angle_deg, speed=50):
+    def archimedean_spiral(self, spiral_factor, total_angle_deg, speed=200):
         """
         The archimedean spiral has an increasing radius of curvature
         radius_of_curvature = a * theta, where a is a constant (spiral_factor)
@@ -151,7 +151,7 @@ class ShapeGenerator:
         """
         example on how to set a motion with the shape of a heart
         """
-        speed = 50
+        speed = 200
         self._mg.rotate_angle_deg_at_speed(45, speed)
         self._mg.move_straight_at_speed(200, speed)
         self._mg.rotate_angle_deg_at_speed(230, speed, 100)
