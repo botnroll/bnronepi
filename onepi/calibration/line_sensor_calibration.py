@@ -108,7 +108,7 @@ def calibrate_min_max():
     print("Computing min and max for sensor readings...")
     sensor_value_min = [1024] * 8
     sensor_value_max = [0] * 8
-    one.move(5, -5)
+    one.move(10, -10)
     start_time = time.time()
     while time.time() < (start_time + 3):
         readings = one.read_line_sensors()
