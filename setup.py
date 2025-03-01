@@ -38,6 +38,6 @@ setup(
     classifiers=classifiers,
     packages=find_packages(),
     include_package_data=True,
-    package_data={'onepi':['utils/*.png'], 'onepi':['diagnostics/*.png']},
+    package_data={'onepi':['utils/*.png'],'onepi':['utils/*.json'], 'onepi':['diagnostics/*.png']},
     install_requires=install_requires,
 )
