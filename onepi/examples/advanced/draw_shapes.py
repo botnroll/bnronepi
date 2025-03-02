@@ -18,6 +18,7 @@ one_draw = ShapeGenerator(one, SLIP_FACTOR)
 
 def my_shape():
     # angle_deg, speed, radius_of_curvature_mm
+    speed = 200
     one_draw.rotate_angle_deg_at_speed(180, speed, 100)
     one_draw.rotate_angle_deg_at_speed(-180, speed, 60)
     one_draw.rotate_angle_deg_at_speed(360, 70, 150)
@@ -65,7 +66,7 @@ def draw_shapes():
     speed = 200
     # one_draw.move_straight_at_speed(800, speed, 200)
     # one_draw.rotate_angle_deg_at_speed(360, speed, 100, 60)
-    # one_draw.rotate_angle_deg_at_speed(720, speed, 0, 360) 
+    # one_draw.rotate_angle_deg_at_speed(720, speed, 0, 360)
     # one_draw.rotate_angle_deg_at_speed(720, speed, 80, 0)
     # one_draw.rounded_polygon(150, 4, speed)
     # one_draw.square(300, 200) # slip 0.93
@@ -79,7 +80,7 @@ def draw_shapes():
     # one_draw.polygon(300, 6)
     # one_draw.polygon(300, 7)
     # one_draw.polygon(220, 10)
-    
+
     # one_draw.fibonacci_spiral(50, 7)
     # one_draw.archimedean_spiral(0.3, 360 * 3)
     # one_draw.snake(800, 5, speed, 90)
