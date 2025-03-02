@@ -44,9 +44,9 @@ class MotionGenerator:
                 angular_speed_rad = 0
                 linear_speed = speed
             else:
-                angular_speed_rad = (direction) * ((speed) / (radius_of_curvature_mm))
+                angular_speed_rad = direction * (speed / radius_of_curvature_mm)
         else:
-            angular_speed_rad = (direction) * (speed / (self._axis_length_mm / 2))
+            angular_speed_rad = direction * (speed / (self._axis_length_mm / 2))
             linear_speed = 0
 
         return PoseSpeeds(linear_speed, angular_speed_rad)
