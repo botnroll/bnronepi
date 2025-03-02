@@ -15,9 +15,9 @@ class Monitor:
     3. Stop the robot if the BnrOneAPlus process ends.
     """
 
-    _PROCESS_NAME = "BnrOneAPlus"       # name of the process to be monitored
-    _MONITOR_NAME = "BnrMonitor"        # name of the monitor process
-    _MONITOR_PATH = "utils/monitor.py"  # path to the Monitor
+    _PROCESS_NAME = "BnrOneAPlus"  # name of the process to be monitored
+    _MONITOR_NAME = "BnrMonitor"  # name of the monitor process
+    _MONITOR_PATH = "monitor.py"  # path to the Monitor
 
     def __init__(self):
         """
@@ -29,8 +29,8 @@ class Monitor:
         """
         Check if a process with the given name is running.
         """
-        for proc in psutil.process_iter(['pid', 'name']):
-            if proc.info['name'] == process_name:
+        for proc in psutil.process_iter(["pid", "name"]):
+            if proc.info["name"] == process_name:
                 return True
         return False
 
@@ -43,7 +43,7 @@ class Monitor:
                 ["python3", f"{os.path.dirname(__file__)}/{self._MONITOR_PATH}"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                start_new_session=True
+                start_new_session=True,
             )
         except Exception as e:
             print(f"Failed to start {self._MONITOR_NAME}: {e}")
@@ -70,7 +70,7 @@ class Monitor:
                     one = BnrOneAPlus(0, 0, monitor=0)
                     one.stop()
                     one.lcd2("Python Code Stop")
-                    del one # free the SPI communication
+                    del one  # free the SPI communication
 
             time.sleep(1)
 
