@@ -451,6 +451,13 @@ class BnrOneAPlus:
         """
         self.__send_data(self._COMMAND_ENCR_RESET)
 
+    def reset_encoders(self):
+        """
+        Resets both left and right encoders
+        """
+        self.reset_left_encoder()
+        self.reset_right_encoder()
+
     def led(self, state):
         """
         Turns on/off the led
@@ -567,7 +574,7 @@ class BnrOneAPlus:
         """
         value = self.__request_word(self._COMMAND_ENCL)
         if value >= 0x8000:
-            value -= 0xffff
+            value -= 0xFFFF
         return value
 
     def read_right_encoder(self):
@@ -580,7 +587,7 @@ class BnrOneAPlus:
         """
         value = self.__request_word(self._COMMAND_ENCR)
         if value >= 0x8000:
-            value -= 0xffff
+            value -= 0xFFFF
         return value
 
     def read_left_encoder_increment(self):

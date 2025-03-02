@@ -31,8 +31,7 @@ class MotionGenerator:
         """
         Resets both encoders
         """
-        self._one.reset_left_encoder()
-        self._one.reset_right_encoder()
+        self._one.reset_encoders()
 
     def _compute_angular_speed(self, speed, radius_of_curvature_mm, direction=1):
         """
@@ -116,7 +115,14 @@ class MotionGenerator:
             right_encoder = abs(self._one.read_right_encoder())
             encoder_count += (left_encoder + right_encoder) / 2.0
             pulses_remaining = round(total_pulses - encoder_count, 0)
-            print("pulses_remaining", pulses_remaining, "left_enc:", left_encoder, "right_enc:", right_encoder)
+            print(
+                "pulses_remaining",
+                pulses_remaining,
+                "left_enc:",
+                left_encoder,
+                "right_enc:",
+                right_encoder,
+            )
             if pulses_remaining < 0:
                 break
             pose_speeds = self._maybe_slow_down(
