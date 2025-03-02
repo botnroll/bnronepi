@@ -33,7 +33,7 @@ class MotionGenerator:
         """
         self._one.reset_encoders()
 
-    def _compute_angular_speed(self, speed, radius_of_curvature_mm, direction=1):
+    def _compute_pose_speeds(self, speed, radius_of_curvature_mm, direction=1):
         """
         calculates the angular speed given the linear speed,
         the radius of curvature and the direction
@@ -49,7 +49,7 @@ class MotionGenerator:
             angular_speed_rad = (direction) * (speed / (self._axis_length_mm / 2))
             linear_speed = 0
 
-        return linear_speed, angular_speed_rad
+        return PoseSpeeds(linear_speed, angular_speed_rad)
 
     def _maybe_slow_down(
         self,
@@ -72,11 +72,9 @@ class MotionGenerator:
             slow_speed = speed * ratio
             slow_speed = max(self.MIN_SPEED_MMPS, slow_speed)  # cap to min
             print("ratio: ", ratio, " speed ", slow_speed)
-            angular_speed_rad = 0
-            linear_speed, angular_speed_rad = self._compute_angular_speed(
+            pose_speeds = self._compute_pose_speeds(
                 slow_speed, radius_of_curvature_mm, direction
             )
-            pose_speeds = PoseSpeeds(linear_speed, angular_speed_rad)
         return pose_speeds
 
     def _move_and_slow_down(
@@ -101,11 +99,9 @@ class MotionGenerator:
         @param straight boolean specifying if this is a straight line or not
         """
 
-        linear_speed, angular_speed_rad = self._compute_angular_speed(
+        pose_speeds = self._compute_pose_speeds(
             speed, radius_of_curvature_mm, direction
         )
-
-        pose_speeds = PoseSpeeds(linear_speed, angular_speed_rad)
 
         encoder_count = 0
         # print("encoder_count: ", encoder_count, " total: ", total_pulses, " slow coeff: ", coeff)
