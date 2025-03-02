@@ -163,12 +163,15 @@ class MotionGenerator:
         remaining distance is less than the slow_down_distance
         """
         abs_distance = abs(distance)
-        abs_slow_down_distance = abs(slow_down_distance)
         total_pulses = self._cut.compute_pulses_from_distance(abs_distance)
         total_pulses = self._apply_slip(total_pulses)
+
+        abs_slow_down_distance = abs(slow_down_distance)
         slow_down_pulses = self._cut.compute_pulses_from_distance(
             abs_slow_down_distance
         )
+        slow_down_pulses = self._apply_slip(slow_down_pulses)
+
         self._reset_encoders()
         self._move_and_slow_down(
             total_pulses, speed, 1, self.STRAIGHT_MOTION, slow_down_pulses
@@ -191,6 +194,8 @@ class MotionGenerator:
         slow_down_pulses_thresh = self._cut.compute_pulses_from_angle_and_curvature(
             math.radians(slow_down_thresh_deg), radius_of_curvature_mm
         )
+        slow_down_pulses_thresh = self._apply_slip(slow_down_pulses_thresh)
+
         print("slow_down_pulses_thresh: ", slow_down_pulses_thresh)
         self._reset_encoders()
         self._move_and_slow_down(
