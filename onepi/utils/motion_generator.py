@@ -123,7 +123,7 @@ class MotionGenerator:
                 break
             pose_speeds = self._maybe_slow_down(
                 pose_speeds,
-                linear_speed,
+                pose_speeds.linear_mmps,
                 pulses_remaining,
                 slow_down_thresh,
                 radius_of_curvature_mm,
