@@ -2,6 +2,7 @@
 
 Welcome to the Bot'n Roll One A+ Pyhton library! 
 This library enables seamless control of the Bot'n Roll One A+, allowing you to quickly program and interact with your Bot'n Roll One A+.<br>
+Please check the available documentation at: https://botnroll.github.io/bnronepi/
 
 ## About
 The Bot'n Roll One A+ is a versatile and customizable robot designed for students, hobbyists, and educators. With its robust hardware and software capabilities, it is an excellent tool for learning and experimenting with robotics and Arduino programming.
