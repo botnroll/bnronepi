@@ -20,7 +20,7 @@ one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 def setup():
     one.stop()  # stop motors
-    one.min_battery(
+    one.set_min_battery_V(
         10.5
     )  # define de minimum battery voltage. Robot stops if voltage is below the specified value!
 
