@@ -562,7 +562,8 @@ class BnrOneAPlus:
         :return: voltage (V) of input power supply
         :rtype: float
         """
-        return self.__request_word(self._COMMAND_BAT_READ) / 50.7
+        battery = self.__request_word(self._COMMAND_BAT_READ) / 50.7
+        return battery if battery > 0 else 0
 
     def read_left_encoder(self):
         """
