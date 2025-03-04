@@ -49,7 +49,7 @@ pip3 install onepi
 
 1. Open a terminal (CTRL + ALT + T)
 2. Create a directory to clone the repo: “mkdir src; cd src”
-source ~/env/onepi/bin/activate3. Download the zip file (https://github.com/ninopereira/bnronepi/archive/refs/heads/release.zip) and extract it into the src directory.
+source ~/env/onepi/bin/activate3. Download the zip file (https://github.com/botnroll/bnronepi/releases) and extract it into the src directory.
 4. Navigate to directory “cd bnronepi-release/
 5. Run:
 ```python
@@ -231,7 +231,7 @@ You can test the line sensor and visualise the raw readings from the sensors in 
 In the title you can see the value of the line that gets output from the line_detector.
 
 <p align="left">
-<img src="https://github.com/ninopereira/bnronepi/blob/main/onepi/diagnostics/line_detection.png?raw=true&auto=format&fit=crop&w=2772&q=80" width="300" height="250" border="10"/>
+<img src="https://github.com/botnroll/bnronepi/blob/main/onepi/diagnostics/line_detection.png?raw=true&auto=format&fit=crop&w=2772&q=80" width="300" height="250" border="10"/>
 </p>
 
 ### 7.2 simulate_gaussian
