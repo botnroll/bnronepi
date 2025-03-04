@@ -3,11 +3,11 @@
 from setuptools import setup, find_packages
 
 name = "onepi"
-version = "1.0.6"
-description = "Python library to interface with BotnRoll One A"
-url = "https://github.com/ninopereira/bnronepi/tree/main/onepi"
-author = "Nino Pereira"
-author_email = "ninopereira.pt@gmail.com"
+version = "1.1.0"
+description = "Python library to interface with Bot'n Roll One A+"
+url = "https://github.com/botnroll/bnronepi"
+author = "Bot'n Roll"
+author_email = "botnroll@botnroll.com"
 license = "MIT"
 packages = find_packages()
 py_modules = ["onepi.one"]
@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-install_requires = ["spidev", "matplotlib"]  # Package dependencies
+install_requires = ["spidev", "matplotlib", "rpi-lgpio", "setproctitle"]  # Package dependencies
 
 setup(
     name=name,
