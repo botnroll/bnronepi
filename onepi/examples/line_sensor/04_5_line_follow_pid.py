@@ -237,8 +237,8 @@ def loop():
     vel_m1 = max_linear_speed - output
     vel_m2 = max_linear_speed + output
     # Limit motors maximum and minimum speed
-    vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
-    vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
+    vel_m1 = cap_value(vel_m1, -5, max_linear_speed + speed_boost)
+    vel_m2 = cap_value(vel_m2, -5, max_linear_speed + speed_boost)
 
     print(
         " Line:",
