@@ -29,7 +29,7 @@ setup(
     name=name,
     version=version,
     description=description,
-    long_description=open("README.md").read(),
+    long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url=url,
     author=author,
