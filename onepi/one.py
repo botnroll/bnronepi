@@ -414,7 +414,7 @@ class BnrOneAPlus:
         msg = [self.__low_byte(motor)]
         self.__send_data(self._COMMAND_STOP_1M, msg)
 
-    def brake(self, left_torque, right_torque):
+    def brake(self, left_torque = 100, right_torque = 100):
         """
         Applies brake torques to motors
 

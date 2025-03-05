@@ -17,6 +17,11 @@ one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 def setup():
     one.stop()  # stop motors
+    one.lcd2(" Press a button ")
+    one.lcd1(" Motors Testing ")
+    print("Press a button!")
+    while one.read_button() == 0:
+        time.sleep(0.050)
 
 
 def loop():
