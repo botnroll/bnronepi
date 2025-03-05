@@ -30,9 +30,9 @@ from onepi.one import BnrOneAPlus
 
 one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
-max_linear_speed = 60
-gain = 1.10  # Linear gain
-speed_boost = 8  # Curve outside wheel max speed limit
+max_linear_speed = 30
+gain = 0.750  # Linear gain
+speed_boost = 4  # Curve outside wheel max speed limit
 file_name = "config_line_follow.json"
 filename = os.path.join(os.path.dirname(__file__), file_name)
 
@@ -168,7 +168,7 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def setup():
-    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.set_min_battery_V(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()
     menu()
@@ -180,8 +180,8 @@ def loop():
     vel_m2 = max_linear_speed - line * gain  # Linear function for Motor2
 
     # Limit motors maximum and minimum speed
-    vel_m1 = cap_value(vel_m1, -1, max_linear_speed + speed_boost)
-    vel_m2 = cap_value(vel_m2, -1, max_linear_speed + speed_boost)
+    vel_m1 = cap_value(vel_m1, -5, max_linear_speed + speed_boost)
+    vel_m2 = cap_value(vel_m2, -5, max_linear_speed + speed_boost)
 
     one.move(vel_m1, vel_m2)
 

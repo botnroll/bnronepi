@@ -166,7 +166,7 @@ def menu():
 
 
 def setup():
-    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.set_min_battery_V(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()  # read control values from file
     menu()

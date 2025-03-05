@@ -24,7 +24,7 @@ from onepi.one import BnrOneAPlus
 
 one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
-max_linear_speed = 60
+max_linear_speed = 40
 speed_boost = 3  # Curve outside wheel max speed limit
 kp = 1.3
 ki = 0.0013
@@ -195,7 +195,7 @@ def cap_value(value, lower_limit, upper_limit):
 
 
 def setup():
-    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.set_min_battery_V(10.5)  # safety voltage for discharging the battery
     one.stop()  # stop motors
     load_config()
     menu()
