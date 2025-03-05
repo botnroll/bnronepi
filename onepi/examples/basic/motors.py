@@ -17,46 +17,64 @@ one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 def setup():
     one.stop()  # stop motors
+    one.lcd2(" Press a button ")
+    one.lcd1(" Motors Testing ")
+    print("Press a button!")
+    while one.read_button() == 0:
+        time.sleep(0.050)
 
 
 def loop():
     one.lcd2("    Forward ")  # print data on LCD line 2
+    print("Forward")
     one.move(50, 50)  # Forward
     time.sleep(1)  # wait 1 second
     one.lcd2("     Stop   ")
+    print("Stop")
     one.stop()  # Stop Motors
     time.sleep(0.5)
     one.lcd2("   Backwards ")
+    print("Backwards")
     one.move(-50, -50)  # Backwards
     time.sleep(1)
     one.lcd2("     Stop   ")
+    print("Stop")
     one.move(0, 0)  # Stop Motors
     time.sleep(0.5)
     one.lcd2("  Rotate Right ")
+    print("Rotate Right")
     one.move(50, -50)  # Rotate Right
     time.sleep(0.5)
     one.lcd2("     Stop   ")
+    print("Stop")
     one.stop()  # Stop
     time.sleep(0.5)
     one.lcd2("  Rotate Left ")
+    print("Rotate Left")
     one.move(-50, 50)  # Rotate Left
     time.sleep(0.5)
     one.lcd2("     Stop   ")
+    print("Stop")
     one.stop()  # Stop Motors
     time.sleep(0.5)
     one.lcd2("    Forward ")
+    print("Forward")
     one.move(100, 100)  # Forward
     time.sleep(1)
     one.lcd2("     Brake    ")
+    print("Brake")
     one.brake(100, 100)  # Stop motors with torque
     time.sleep(0.8)
     one.lcd2("   Backwards ")
+    print("Backwards")
     one.move(-100, -100)  # Backwards
     time.sleep(1)
     one.lcd2("     Brake    ")
+    print("Brake")
     one.brake(100, 100)  # Stop motors with torque
     time.sleep(0.8)
     one.lcd2("     Stop   ")
+    print("Stop")
     one.stop()  # Stop Motors
     time.sleep(1.5)
 

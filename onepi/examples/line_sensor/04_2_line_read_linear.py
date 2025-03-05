@@ -22,7 +22,7 @@ one = BnrOneAPlus(0, 0)  # object variable to control the Bot'n Roll ONE A+
 
 def setup():
     one.stop()  # stop motors
-    one.min_battery(10.5)  # safety voltage for discharging the battery
+    one.set_min_battery_V(10.5)  # safety voltage for discharging the battery
     one.lcd1("== Line read == ")
     time.sleep(1)
 

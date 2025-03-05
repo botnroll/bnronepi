@@ -25,7 +25,7 @@ def setup():
     one.stop()  # stop motors
     # Battery protection (lower voltage)
     bat_min = 10.5
-    one.min_battery(bat_min)
+    one.set_min_battery_V(bat_min)
     one.lcd1(" Bot'n Roll ONE")
     # Wait for a button to be pressed to move motors
     while one.read_button() == 0:
@@ -49,7 +49,7 @@ def loop():
 
     # From left to centre
     if sensor0 > THRESHOLD:  # 10000000
-        one.move(-1, 40)
+        one.move(-7, 40)
     elif sensor1 > THRESHOLD:  # 01000000
         one.move(5, 40)
     elif sensor2 > THRESHOLD:  # 00100000
@@ -58,7 +58,7 @@ def loop():
         one.move(40, 40)
     # From right to centre
     elif sensor7 > THRESHOLD:  # 00000001
-        one.move(40, -1)
+        one.move(40, -7)
     elif sensor6 > THRESHOLD:  # 00000010
         one.move(40, 5)
     elif sensor5 > THRESHOLD:  # 00000100

@@ -63,7 +63,7 @@ def read_line():
 
 def setup():
     one.stop()  # stop motors
-    one.min_battery(10.5)  # Battery protection (lower voltage)
+    one.set_min_battery_V(10.5)  # Battery protection (lower voltage)
     one.lcd1(" Bot'n Roll ONE")
     one.lcd2("  Line Reading")
     time.sleep(1)

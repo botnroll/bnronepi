@@ -1,5 +1,5 @@
 {
-    "max_linear_speed": 45,
+    "max_linear_speed": 20,
     "speed_boost": 20,
     "gain": 80
 }

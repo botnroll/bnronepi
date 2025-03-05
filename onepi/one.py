@@ -414,7 +414,7 @@ class BnrOneAPlus:
         msg = [self.__low_byte(motor)]
         self.__send_data(self._COMMAND_STOP_1M, msg)
 
-    def brake(self, left_torque, right_torque):
+    def brake(self, left_torque = 100, right_torque = 100):
         """
         Applies brake torques to motors
 
@@ -562,7 +562,8 @@ class BnrOneAPlus:
         :return: voltage (V) of input power supply
         :rtype: float
         """
-        return self.__request_word(self._COMMAND_BAT_READ) / 50.7
+        battery = self.__request_word(self._COMMAND_BAT_READ) / 50.7
+        return battery if battery > 0 else 0.0
 
     def read_left_encoder(self):
         """

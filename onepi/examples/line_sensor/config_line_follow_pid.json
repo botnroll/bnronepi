@@ -1,6 +1,6 @@
 {
-    "max_linear_speed": 67,
-    "speed_boost": 3,
+    "max_linear_speed": 30,
+    "speed_boost": 4,
     "kp": 1.3,
     "ki": 0.0019,
     "kd": 0.35

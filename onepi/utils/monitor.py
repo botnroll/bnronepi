@@ -78,5 +78,5 @@ class Monitor:
 if __name__ == "__main__":
     # Initialize the monitor
     monitor = Monitor()
-    setproctitle.setproctitle(monitor._PROCESS_NAME)
+    setproctitle.setproctitle(monitor._MONITOR_NAME)
     monitor.monitor()

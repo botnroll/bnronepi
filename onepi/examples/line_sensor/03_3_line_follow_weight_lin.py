@@ -20,17 +20,7 @@ M1 = 1  # Motor1
 M2 = 2  # Motor2
 
 THRESHOLD = 300  # THRESHOLD value to distinguish between black and white
-
-V25 = 10  # Speed for line value 25
-V37 = 15
-V50 = 20
-V62 = 25
-V75 = 30
-V87 = 30
-V100 = 35
-
-VEL = 40
-
+VEL = 10
 
 def read_line():
     line_value = 0
@@ -69,7 +59,7 @@ def read_line():
 
 def setup():
     one.stop()  # stop motors
-    one.min_battery(10.5)  # Battery protection (lower voltage)
+    one.set_min_battery_V(10.5)  # Battery protection (lower voltage)
     time.sleep(1)
 
 
@@ -101,3 +91,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
