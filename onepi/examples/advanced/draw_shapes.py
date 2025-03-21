@@ -10,7 +10,7 @@ from onepi.one import BnrOneAPlus
 # vynil: 0.985
 # carpet: 0.985
 
-SLIP_FACTOR = 0.94
+SLIP_FACTOR = 0.98
 
 one = BnrOneAPlus()
 one_draw = ShapeGenerator(one, SLIP_FACTOR)
@@ -63,20 +63,20 @@ def house():
 
 
 def draw_shapes():
-    speed = 200
+    speed = 300
     # one_draw.move_straight_at_speed(800, speed, 200)
-    # one_draw.rotate_angle_deg_at_speed(360, speed, 100, 60)
+    # one_draw.rotate_angle_deg_at_speed(360, speed, 200, 60)
     # one_draw.rotate_angle_deg_at_speed(720, speed, 0, 360)
     # one_draw.rotate_angle_deg_at_speed(720, speed, 80, 0)
     # one_draw.rounded_polygon(150, 4, speed)
-    # one_draw.square(300, 200) # slip 0.93
+    # one_draw.square(1000, 200)
     # one_draw.polygon(200, 4, speed)
-    # one_draw.circle(150) # slip 0.94
+    # one_draw.circle(1000, 150) # slip 0.94
     # one_draw.mickey_mouse()
     # one_draw.house()
     # one_draw.heart()
     # one_draw.triangle(300)
-    # one_draw.polygon(300, 5)
+    one_draw.polygon(300, 4)
     # one_draw.polygon(300, 6)
     # one_draw.polygon(300, 7)
     # one_draw.polygon(220, 10)
@@ -88,7 +88,7 @@ def draw_shapes():
     # one_draw.snake(800, 2, speed, 45, 0)
     # one_draw.snake(800, 4, speed, 180, 0)
     # one_draw.snake(1000, 14, speed, 60, 30)
-    one_draw.snake(1200, 8, speed, 270, 45)
+    # one_draw.snake(1200, 8, speed, 270, 45)
     # one_draw.snake(400, 4, speed, 300, 90)
     # one_draw.snake(400, 6, speed, 300, 120)
     # one_draw.snake(600, 16, speed, 320, 155)

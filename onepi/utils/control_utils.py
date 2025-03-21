@@ -273,12 +273,30 @@ class ControlUtils:
         )
         return wheel_speeds
 
-    def compute_speeds_rpm(self, wheel_speeds_mmps: WheelSpeeds):
+    def mmps_to_rpm(self, speed_mmps):
         """
         computes the speeds in rpm given the speeds in mm/s
         """
-        left_rpm = (wheel_speeds_mmps.left * 60) / (self._wheel_diameter_mm * self._pi)
-        right_rpm = (wheel_speeds_mmps.right * 60) / (
-            self._wheel_diameter_mm * self._pi
-        )
+        return (speed_mmps * 60) / (self._wheel_diameter_mm * self._pi)
+
+    def compute_speeds_rpm(self, wheel_speeds_mmps: WheelSpeeds):
+        """
+        computes both wheel speeds in rpm given the speeds in mm/s
+        """
+        left_rpm = self.mmps_to_rpm(wheel_speeds_mmps.left)
+        right_rpm = self.mmps_to_rpm(wheel_speeds_mmps.right)
         return WheelSpeeds(left_rpm, right_rpm)
+
+    def rpm_to_mmps(self, speed_rpm):
+        """
+        computes the speeds in mm/s given the speed in rpm
+        """
+        return (speed_rpm / 60.0) * (self._wheel_diameter_mm * self._pi)
+
+    def compute_speeds_mmps(self, wheel_speeds_rpm: WheelSpeeds):
+        """
+        computes both wheel speeds in mm/s given the speeds in rpm
+        """
+        left_mmps = self.rpm_to_mmps(wheel_speeds_rpm.left)
+        right_mmps = self.rpm_to_mmps(wheel_speeds_rpm.right)
+        return WheelSpeeds(left_mmps, right_mmps)

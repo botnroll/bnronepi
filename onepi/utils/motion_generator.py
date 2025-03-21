@@ -19,7 +19,7 @@ class MotionGenerator:
 
     STRAIGHT_MOTION = 32767
     TICKS_LEFT_LOW_SPEED = 4000
-    MIN_SPEED_MMPS = 100
+    MIN_SPEED_MMPS = 50
 
     def __init__(self, one: BnrOneAPlus, slip_factor=1.0, robot_params=RobotParams()):
         self._slip_factor = slip_factor
@@ -68,10 +68,10 @@ class MotionGenerator:
             and (pulses_remaining < slow_down_thresh)
             and (pulses_remaining > 0)
         ):
-            ratio = pulses_remaining / self.TICKS_LEFT_LOW_SPEED
+            ratio = pulses_remaining / min(self.TICKS_LEFT_LOW_SPEED, slow_down_thresh)
             slow_speed = speed * ratio
             slow_speed = max(self.MIN_SPEED_MMPS, slow_speed)  # cap to min
-            print("ratio: ", ratio, " speed ", slow_speed)
+            # print("ratio: ", ratio, " original speed ", speed, " slow speed", slow_speed)
             pose_speeds = self._compute_pose_speeds(
                 slow_speed, radius_of_curvature_mm, direction
             )
@@ -104,26 +104,28 @@ class MotionGenerator:
         )
 
         encoder_count = 0
-        # print("encoder_count: ", encoder_count, " total: ", total_pulses, " slow coeff: ", coeff)
+        linear_mmps = pose_speeds.linear_mmps
+        if abs(linear_mmps) < 0.01:
+            linear_mmps = speed
 
         while encoder_count < total_pulses:
             left_encoder = abs(self._one.read_left_encoder())
             right_encoder = abs(self._one.read_right_encoder())
             encoder_count += (left_encoder + right_encoder) / 2.0
             pulses_remaining = round(total_pulses - encoder_count, 0)
-            print(
-                "pulses_remaining",
-                pulses_remaining,
-                "left_enc:",
-                left_encoder,
-                "right_enc:",
-                right_encoder,
-            )
+            # print(
+            #     "pulses_remaining",
+            #     pulses_remaining,
+            #     "left_enc:",
+            #     left_encoder,
+            #     "right_enc:",
+            #     right_encoder,
+            # )
             if pulses_remaining < 0:
                 break
             pose_speeds = self._maybe_slow_down(
                 pose_speeds,
-                pose_speeds.linear_mmps,
+                linear_mmps,
                 pulses_remaining,
                 slow_down_thresh,
                 radius_of_curvature_mm,

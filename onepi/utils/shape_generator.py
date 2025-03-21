@@ -43,8 +43,8 @@ class ShapeGenerator:
         angle_deg = 180 - ((num_sides - 2) * 180.0) / num_sides
         print("angle_deg: ", angle_deg)
         for i in range(num_sides):
-            self._mg.move_straight_at_speed(side_mm, speed)
-            self._mg.rotate_angle_deg_at_speed(angle_deg, speed)
+            self._mg.move_straight_at_speed(side_mm, speed, side_mm/5.0)
+            self._mg.rotate_angle_deg_at_speed(angle_deg, speed, 0, 45)
 
     def rounded_polygon(self, side_mm, num_sides, speed=200):
         """
