@@ -7,7 +7,7 @@ Please check the available documentation at: https://botnroll.github.io/bnronepi
 ## About
 The Bot'n Roll One A+ is a versatile and customizable robot designed for students, hobbyists, and educators. With its robust hardware and software capabilities, it is an excellent tool for learning and experimenting with robotics and Arduino programming.
 
-![Bot'n Roll One A+](https://botnroll.com/one-a-plus/BotnrollOneAPlus.png)
+![Bot'n Roll One A+](https://botnroll.com/one-a-plus/imgs/bnr_robot_extras.jpg)
 
 ## Features
 - Easy integration with Arduino® IDE, Raspberry Pi® 5, Open Roberta® Lab, Matlab Simulink® and others.
